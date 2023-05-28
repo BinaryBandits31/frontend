@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/org/auth.dart';
-import 'package:frontend/utils/colors.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,15 +11,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'EPR Frontend',
-      color: AppColor.blackBG,
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: AppColor.orange3),
-      //   useMaterial3: true,
-      // ),
       home: const OrgAuth(),
+      theme: ThemeData.dark(
+        useMaterial3: true,
+      ),
     );
   }
 }
