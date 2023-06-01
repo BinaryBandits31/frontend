@@ -4,7 +4,9 @@ import 'package:frontend/pages/auth/user_login.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
+import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
+import 'package:frontend/widgets/text_field.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key, required this.signUp});
@@ -18,7 +20,7 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   String _organizationID = '';
 
-  void _submitForm() {
+  void _loginOrg() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       debugPrint('Organization ID: $_organizationID');
@@ -31,14 +33,13 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Center(
-            child: Form(
+        child: Form(
           key: _formKey,
           child: Column(
             children: [
-              addVerticalSpace(100),
+              addVerticalSpace(sH(100)),
               const BigText('Login to Your Organization'),
-              addVerticalSpace(20),
+              addVerticalSpace(sH(20)),
               Container(
                 padding: EdgeInsets.all(sH(10)),
                 margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.35),
@@ -46,43 +47,13 @@ class _LoginState extends State<Login> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Organization ID'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter the organization ID';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _organizationID = value!;
-                      },
+                    LabeledTextField(
+                      label: 'Organization ID',
+                      isRequired: true,
+                      onSaved: (value) => _organizationID = value!,
                     ),
                     addVerticalSpace(20),
-                    SizedBox(
-                      height: 50,
-                      width: 200,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(AppColor.orange3),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                            )),
-                        onPressed: _submitForm,
-                        child: Text(
-                          'Login',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.black1,
-                              fontSize: sH(20)),
-                        ),
-                      ),
-                    ),
+                    SubmitButton(label: 'Login', onPressed: _loginOrg),
                     InkWell(
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const ResetOrgID())),
@@ -113,7 +84,7 @@ class _LoginState extends State<Login> {
               ),
             ],
           ),
-        )),
+        ),
       ),
     );
   }

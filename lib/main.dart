@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/org/auth.dart';
+import 'package:frontend/theme/dark_theme.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -15,9 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'EPR Frontend',
       home: const OrgAuth(),
-      theme: ThemeData.dark(
-        useMaterial3: true,
-      ),
+      theme: darkTheme,
     );
   }
 }
