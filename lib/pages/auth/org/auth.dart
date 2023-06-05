@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/org/login.dart';
-import 'package:frontend/pages/auth/org/signup.dart';
+import 'package:frontend/pages/auth/org/register.dart';
 
 class OrgAuth extends StatefulWidget {
   const OrgAuth({super.key});
@@ -19,6 +19,8 @@ class _OrgAuthState extends State<OrgAuth> {
 
   @override
   Widget build(BuildContext context) {
-    return isLogged ? Login(signUp: toggleLogin) : SignUp(login: toggleLogin);
+    return isLogged
+        ? LoginOrg(signUp: toggleLogin)
+        : RegisterOrg(login: toggleLogin);
   }
 }

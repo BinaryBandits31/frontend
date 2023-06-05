@@ -8,15 +8,15 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/text_field.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key, required this.signUp});
+class LoginOrg extends StatefulWidget {
+  const LoginOrg({super.key, required this.signUp});
 
   final Function signUp;
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginOrg> createState() => _LoginOrgState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginOrgState extends State<LoginOrg> {
   final _formKey = GlobalKey<FormState>();
   String _organizationID = '';
 

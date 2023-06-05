@@ -6,18 +6,18 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/text_field.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({
+class RegisterOrg extends StatefulWidget {
+  const RegisterOrg({
     super.key,
     required this.login,
   });
 
   final Function login;
   @override
-  State<SignUp> createState() => _SignUpState();
+  State<RegisterOrg> createState() => _RegisterOrgState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _RegisterOrgState extends State<RegisterOrg> {
   final _formKey = GlobalKey<FormState>();
 
   void _signUpOrg() {
@@ -44,6 +44,7 @@ class _SignUpState extends State<SignUp> {
               addVerticalSpace(20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: EdgeInsets.all(sH(10)),
@@ -59,17 +60,12 @@ class _SignUpState extends State<SignUp> {
                             onSaved: (value) {},
                           ),
                           LabeledTextField(
+                            label: 'Organization ID',
+                            isRequired: true,
+                            onSaved: (value) {},
+                          ),
+                          LabeledTextField(
                             label: 'Email',
-                            isRequired: true,
-                            onSaved: (value) {},
-                          ),
-                          LabeledTextField(
-                            label: 'Country',
-                            isRequired: true,
-                            onSaved: (value) {},
-                          ),
-                          LabeledTextField(
-                            label: 'Branch Location',
                             isRequired: true,
                             onSaved: (value) {},
                           ),
@@ -91,7 +87,7 @@ class _SignUpState extends State<SignUp> {
                             onSaved: (value) {},
                           ),
                           LabeledTextField(
-                            label: 'Username',
+                            label: 'Email',
                             isRequired: true,
                             onSaved: (value) {},
                           ),

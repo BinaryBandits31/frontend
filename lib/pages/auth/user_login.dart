@@ -5,7 +5,6 @@ import 'package:frontend/widgets/big_text.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/text_field.dart';
-import 'package:get/get.dart';
 
 import 'org/auth.dart';
 
