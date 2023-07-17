@@ -36,7 +36,7 @@ class LabeledTextField extends StatelessWidget {
               }
               return null;
             },
-            onSaved: onSaved,
+            onChanged: onSaved,
           ),
         ],
       ),

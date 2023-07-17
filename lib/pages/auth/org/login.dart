@@ -1,12 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/org/reset.dart';
 import 'package:frontend/pages/auth/user_login.dart';
+import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
+import 'package:frontend/widgets/notify.dart';
 import 'package:frontend/widgets/text_field.dart';
+import 'package:provider/provider.dart';
 
 class LoginOrg extends StatefulWidget {
   const LoginOrg({super.key, required this.signUp});
@@ -20,12 +25,18 @@ class _LoginOrgState extends State<LoginOrg> {
   final _formKey = GlobalKey<FormState>();
   String _organizationID = '';
 
-  void _loginOrg() {
+  void _loginOrg(OrgProvider provider) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      debugPrint('Organization ID: $_organizationID');
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const UserLogin()));
+
+      await provider.fetchOrganization(_organizationID);
+
+      if (provider.organization != null) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const UserLogin()));
+      } else if (provider.error != null) {
+        dangerMessage('${provider.error}');
+      }
     }
   }
 
@@ -53,7 +64,15 @@ class _LoginOrgState extends State<LoginOrg> {
                       onSaved: (value) => _organizationID = value!,
                     ),
                     addVerticalSpace(20),
-                    SubmitButton(label: 'Login', onPressed: _loginOrg),
+                    Consumer<OrgProvider>(
+                      builder: (context, provider, _) => SubmitButton(
+                        label: 'Login',
+                        isLoading: provider.isLoading,
+                        onPressed: provider.isLoading
+                            ? null
+                            : () => _loginOrg(provider),
+                      ),
+                    ),
                     InkWell(
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const ResetOrgID())),

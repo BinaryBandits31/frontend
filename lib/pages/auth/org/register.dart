@@ -1,10 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/dashboard.dart';
+import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
+import 'package:frontend/widgets/notify.dart';
 import 'package:frontend/widgets/text_field.dart';
+import 'package:provider/provider.dart';
+
+import '../../../providers/org_provider.dart';
+import '../user_login.dart';
 
 class RegisterOrg extends StatefulWidget {
   const RegisterOrg({
@@ -19,12 +26,28 @@ class RegisterOrg extends StatefulWidget {
 
 class _RegisterOrgState extends State<RegisterOrg> {
   final _formKey = GlobalKey<FormState>();
+  final _registrationData = {};
 
-  void _signUpOrg() {
+  void _signUpOrg() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const Dashboard()));
+
+      try {
+        final bool isRegistered = await AuthServices.signUp(_registrationData);
+        if (isRegistered) {
+          successMessage('Account successfully created!');
+
+          final orgProvider = Provider.of<OrgProvider>(context, listen: false);
+          await orgProvider.fetchOrganization(_registrationData['orgID']);
+
+          if (orgProvider.organization != null) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const UserLogin()));
+          }
+        }
+      } catch (e) {
+        dangerMessage(e.toString());
+      }
     }
   }
 
@@ -57,17 +80,30 @@ class _RegisterOrgState extends State<RegisterOrg> {
                           LabeledTextField(
                             label: 'Name',
                             isRequired: true,
-                            onSaved: (value) {},
+                            onSaved: (value) {
+                              _registrationData['orgName'] = value;
+                            },
                           ),
                           LabeledTextField(
                             label: 'Organization ID',
                             isRequired: true,
-                            onSaved: (value) {},
+                            onSaved: (value) {
+                              _registrationData['orgID'] = value;
+                            },
                           ),
                           LabeledTextField(
                             label: 'Email',
                             isRequired: true,
-                            onSaved: (value) {},
+                            onSaved: (value) {
+                              _registrationData['orgEmail'] = value;
+                            },
+                          ),
+                          LabeledTextField(
+                            label: 'Phone',
+                            isRequired: true,
+                            onSaved: (value) {
+                              _registrationData['orgPhone'] = value;
+                            },
                           ),
                         ],
                       ),
@@ -84,23 +120,17 @@ class _RegisterOrgState extends State<RegisterOrg> {
                           LabeledTextField(
                             label: 'Full Name',
                             isRequired: true,
-                            onSaved: (value) {},
-                          ),
-                          LabeledTextField(
-                            label: 'Email',
-                            isRequired: true,
-                            onSaved: (value) {},
+                            onSaved: (value) {
+                              _registrationData['fullName'] = value;
+                            },
                           ),
                           LabeledTextField(
                             label: 'Password',
                             isRequired: true,
-                            onSaved: (value) {},
-                          ),
-                          LabeledTextField(
-                            label: 'Phone Number',
-                            isRequired: true,
-                            onSaved: (value) {},
-                          ),
+                            onSaved: (value) {
+                              _registrationData['password'] = value;
+                            },
+                          )
                         ],
                       ),
                     ),
@@ -109,7 +139,10 @@ class _RegisterOrgState extends State<RegisterOrg> {
               ),
               addVerticalSpace(sH(20)),
               SubmitButton(
-                  onPressed: () => _signUpOrg(), label: 'Create Account'),
+                label: 'Create Account',
+                isLoading: false,
+                onPressed: () => _signUpOrg(),
+              ),
               addVerticalSpace(sH(10)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

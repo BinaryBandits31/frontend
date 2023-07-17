@@ -1,15 +1,22 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/dashboard.dart';
+import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/text_field.dart';
+import 'package:provider/provider.dart';
 
+import '../../providers/user_provider.dart';
+import '../../widgets/notify.dart';
 import 'org/auth.dart';
 
 class UserLogin extends StatefulWidget {
-  const UserLogin({super.key});
+  const UserLogin({
+    super.key,
+  });
 
   @override
   State<UserLogin> createState() => _UserLoginState();
@@ -17,19 +24,28 @@ class UserLogin extends StatefulWidget {
 
 class _UserLoginState extends State<UserLogin> {
   final _formKey = GlobalKey<FormState>();
+  final _userLoginData = {};
 
-  void _loginUser() {
+  void _loginUser(UserProvider provider) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      debugPrint('Hello thereo');
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const Dashboard(),
-      ));
+
+      await provider.fetchUserData(_userLoginData);
+
+      if (provider.user != null) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const Dashboard(),
+        ));
+      } else if (provider.error != null) {
+        dangerMessage('${provider.error}');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final orgProvider = Provider.of<OrgProvider>(context, listen: false);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Form(
@@ -39,7 +55,7 @@ class _UserLoginState extends State<UserLogin> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 addVerticalSpace(sH(100)),
-                const BigText('{Organization Name}'),
+                BigText(orgProvider.organization!.name),
                 addVerticalSpace(sH(50)),
                 Container(
                   height: screenHeight * 0.4,
@@ -59,17 +75,26 @@ class _UserLoginState extends State<UserLogin> {
                           LabeledTextField(
                             label: 'Username',
                             isRequired: true,
-                            onSaved: (value) {},
+                            onSaved: (value) {
+                              _userLoginData['username'] = value;
+                            },
                           ),
                           LabeledTextField(
                             label: 'Password',
                             isRequired: true,
-                            onSaved: (value) {},
+                            onSaved: (value) {
+                              _userLoginData['password'] = value;
+                            },
                           ),
                           addVerticalSpace(sH(20)),
-                          SubmitButton(
-                            label: 'Login',
-                            onPressed: () => _loginUser(),
+                          Consumer<UserProvider>(
+                            builder: (context, provider, _) => SubmitButton(
+                              label: 'Login',
+                              isLoading: provider.isLoading,
+                              onPressed: provider.isLoading
+                                  ? null
+                                  : () => _loginUser(provider),
+                            ),
                           ),
                         ],
                       ),
@@ -78,10 +103,12 @@ class _UserLoginState extends State<UserLogin> {
                 ),
                 addVerticalSpace(sH(30)),
                 InkWell(
-                  onTap: () =>
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const OrgAuth(),
-                  )),
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const OrgAuth(),
+                    ));
+                    orgProvider.orgLogOut();
+                  },
                   child: const Text(
                     'Log Out Organization',
                     style: TextStyle(color: Colors.redAccent),
@@ -96,15 +123,13 @@ class _UserLoginState extends State<UserLogin> {
   }
 }
 
-
 // Container(
 //             margin: const EdgeInsets.symmetric(vertical: 20),
 //             child: TextButton(
 //                 onPressed: () =>
-                    
+
 //                 child: const Text(
 //                   'LOGIN',
 //                   style: TextStyle(color: Colors.green),
 //                 )),
 //           ),
-          
