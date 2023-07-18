@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_provider.dart';
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppColor.black1,
         title: Text(
           appProvider.title!,
-          style: const TextStyle(fontWeight: FontWeight.w300),
+          style: TextStyle(fontSize: sH(20), fontWeight: FontWeight.w300),
         ),
         actions: [
           // Profile Icon

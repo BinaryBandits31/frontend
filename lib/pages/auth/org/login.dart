@@ -52,26 +52,22 @@ class _LoginOrgState extends State<LoginOrg> {
   }
 
   Future getValidationData() async {
-    try {
-      final SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      // DashboardPage if user loggedIn
-      String? userToken = sharedPreferences.getString('userToken');
-      if (userToken != null) {}
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    // DashboardPage if user loggedIn
+    String? userToken = sharedPreferences.getString('userToken');
+    if (userToken != null) {}
 
-      // UserLoginPage if Org LoggedIn
-      String? orgID = sharedPreferences.getString('orgID');
-      if (orgID != null) {
-        OrgProvider orgProvider =
-            Provider.of<OrgProvider>(context, listen: false);
-        await orgProvider.fetchOrganization(orgID);
-        if (orgProvider.organization != null) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const UserLogin()));
-        }
+    // UserLoginPage if Org LoggedIn
+    String? orgID = sharedPreferences.getString('orgID');
+    if (orgID != null) {
+      OrgProvider orgProvider =
+          Provider.of<OrgProvider>(context, listen: false);
+      await orgProvider.fetchOrganization(orgID);
+      if (orgProvider.organization != null) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const UserLogin()));
       }
-    } catch (e) {
-      SharedPreferences.setMockInitialValues({});
     }
   }
 
