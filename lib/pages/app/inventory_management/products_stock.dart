@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/auth/user_login.dart';
-import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+import '../../../providers/app_provider.dart';
+import '../../../providers/user_provider.dart';
+import '../../auth/user_login.dart';
 
-  @override
-  State<Dashboard> createState() => _DashboardState();
-}
+class ProductStocksPage extends StatelessWidget {
+  const ProductStocksPage({super.key});
 
-class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: Column(
+    return Center(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('Welcome!'),
-          const Text('Dashboard Page'),
+          const Text('Products Stock Page'),
           InkWell(
             onTap: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => const UserLogin(),
               ));
+              final appProvider =
+                  Provider.of<AppProvider>(context, listen: false);
+              appProvider.logOut();
+
               final userProvider =
                   Provider.of<UserProvider>(context, listen: false);
               userProvider.logOut();
@@ -35,7 +35,7 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
         ],
-      )),
+      ),
     );
   }
 }

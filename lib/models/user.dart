@@ -35,4 +35,19 @@ class User {
         orgId: json['org_ID'],
         token: json['token'],
       );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Id': id,
+      'first_Name': firstName,
+      'last_Name': lastName,
+      'username': username,
+      'dob': dob,
+      'emp_Level': empLevel,
+      'emp_Type': empType,
+      'branch_Id': branchId,
+      'org_ID': orgId,
+      'token': token,
+    };
+  }
 }

@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/dashboard.dart';
+import 'package:frontend/pages/app/home.dart';
 import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
@@ -8,6 +8,7 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/user_provider.dart';
 import '../../widgets/notify.dart';
@@ -33,8 +34,11 @@ class _UserLoginState extends State<UserLogin> {
       await provider.fetchUserData(_userLoginData);
 
       if (provider.user != null) {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('userToken', provider.user!.token);
+
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Dashboard(),
+          builder: (context) => const HomePage(),
         ));
       } else if (provider.error != null) {
         dangerMessage('${provider.error}');
@@ -103,11 +107,14 @@ class _UserLoginState extends State<UserLogin> {
                 ),
                 addVerticalSpace(sH(30)),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    orgProvider.orgLogOut();
+                    final sharedPreferences =
+                        await SharedPreferences.getInstance();
+                    sharedPreferences.remove('orgID');
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const OrgAuth(),
                     ));
-                    orgProvider.orgLogOut();
                   },
                   child: const Text(
                     'Log Out Organization',
@@ -122,14 +129,3 @@ class _UserLoginState extends State<UserLogin> {
     );
   }
 }
-
-// Container(
-//             margin: const EdgeInsets.symmetric(vertical: 20),
-//             child: TextButton(
-//                 onPressed: () =>
-
-//                 child: const Text(
-//                   'LOGIN',
-//                   style: TextStyle(color: Colors.green),
-//                 )),
-//           ),

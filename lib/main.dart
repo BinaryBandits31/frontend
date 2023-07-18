@@ -4,6 +4,7 @@ import 'package:frontend/theme/dark_theme.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import 'providers/app_provider.dart';
 import 'providers/org_provider.dart';
 import 'providers/user_provider.dart';
 
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<OrgProvider>(create: (_) => OrgProvider()),
+        ChangeNotifierProvider<AppProvider>(create: (_) => AppProvider()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

@@ -23,6 +23,20 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  int? getLevel() {
+    if (user != null) {
+      final userLevel = user!.empLevel;
+      int level;
+      if (userLevel == 'OWNER') {
+        level = 4;
+      } else {
+        level = userLevel[1] as int;
+      }
+      return level;
+    }
+    return null;
+  }
+
   void logOut() {
     user = null;
     notifyListeners();

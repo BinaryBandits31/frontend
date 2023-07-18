@@ -12,6 +12,7 @@ import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
 import 'package:frontend/widgets/text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginOrg extends StatefulWidget {
   const LoginOrg({super.key, required this.signUp});
@@ -32,11 +33,45 @@ class _LoginOrgState extends State<LoginOrg> {
       await provider.fetchOrganization(_organizationID);
 
       if (provider.organization != null) {
+        final SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        sharedPreferences.setString('orgID', provider.organization!.id);
+
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const UserLogin()));
       } else if (provider.error != null) {
         dangerMessage('${provider.error}');
       }
+    }
+  }
+
+  @override
+  void initState() {
+    getValidationData();
+    super.initState();
+  }
+
+  Future getValidationData() async {
+    try {
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      // DashboardPage if user loggedIn
+      String? userToken = sharedPreferences.getString('userToken');
+      if (userToken != null) {}
+
+      // UserLoginPage if Org LoggedIn
+      String? orgID = sharedPreferences.getString('orgID');
+      if (orgID != null) {
+        OrgProvider orgProvider =
+            Provider.of<OrgProvider>(context, listen: false);
+        await orgProvider.fetchOrganization(orgID);
+        if (orgProvider.organization != null) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const UserLogin()));
+        }
+      }
+    } catch (e) {
+      SharedPreferences.setMockInitialValues({});
     }
   }
 
