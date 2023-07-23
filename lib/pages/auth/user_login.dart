@@ -7,6 +7,7 @@ import 'package:frontend/widgets/big_text.dart';
 import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/text_field.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,9 +38,7 @@ class _UserLoginState extends State<UserLogin> {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('userToken', provider.user!.token);
 
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ));
+        Get.to(() => const HomePage());
       } else if (provider.error != null) {
         dangerMessage('${provider.error}');
       }

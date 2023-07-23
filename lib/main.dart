@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/org/auth.dart';
 import 'package:frontend/providers/branch_provider.dart';
+import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/theme/dark_theme.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<OrgProvider>(create: (_) => OrgProvider()),
         ChangeNotifierProvider<AppProvider>(create: (_) => AppProvider()),
         ChangeNotifierProvider<BranchProvider>(create: (_) => BranchProvider()),
+        ChangeNotifierProvider<SupplierProvider>(
+            create: (_) => SupplierProvider()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

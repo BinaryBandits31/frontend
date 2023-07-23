@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/admin/branches/branches.dart';
-import 'package:frontend/pages/app/admin/suppliers.dart';
+import 'package:frontend/pages/app/admin/suppliers/suppliers.dart';
 import 'package:frontend/pages/app/admin/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
@@ -205,7 +205,7 @@ class DrawerMenuItem extends StatelessWidget {
         onTap: () {
           final appProvider = Provider.of<AppProvider>(context, listen: false);
 
-          if (appProvider.title != title) {
+          if (appProvider.pathTitle != title) {
             appProvider.updatedSelectedTitle(
                 '${parentName ?? ''}${parentName != null ? '  >  ' : ''}$title');
             appProvider.updateSelectedTab(page);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/branch_provider.dart';
+import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/utils/constants.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_provider.dart';
@@ -25,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: AppColor.black1,
         title: Text(
-          appProvider.title!,
+          appProvider.pathTitle!,
           style: TextStyle(fontSize: sH(20), fontWeight: FontWeight.w300),
         ),
         actions: [
@@ -40,7 +42,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const PopupMenuItem(
                   value: 'logout',
-                  child: Text('Logout'),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
               ],
               onSelected: (String value) {
@@ -48,9 +53,7 @@ class _HomePageState extends State<HomePage> {
                   // Handle change password action
                 } else if (value == 'logout') {
                   // Handle logout action
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const UserLogin(),
-                  ));
+                  Get.to(() => const UserLogin());
 
                   Provider.of<AppProvider>(context, listen: false).logOut();
 
@@ -59,6 +62,9 @@ class _HomePageState extends State<HomePage> {
 
                   Provider.of<BranchProvider>(context, listen: false)
                       .branchDispose();
+
+                  Provider.of<SupplierProvider>(context, listen: false)
+                      .supplierDispose();
                 }
               },
               child: const CircleAvatar(

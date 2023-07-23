@@ -3,7 +3,7 @@ import 'package:frontend/pages/app/dashboard.dart';
 
 class AppProvider extends ChangeNotifier {
   Widget? selectedTab = const Dashboard();
-  String? title = 'Dashboard';
+  String? pathTitle = 'Dashboard';
 
   void updateSelectedTab(Widget tab) {
     selectedTab = tab;
@@ -11,13 +11,13 @@ class AppProvider extends ChangeNotifier {
   }
 
   void updatedSelectedTitle(String newTitle) {
-    title = newTitle;
+    pathTitle = newTitle;
     notifyListeners();
   }
 
   void logOut() {
     selectedTab = const Dashboard();
-    title = 'Dashboard';
+    pathTitle = 'Dashboard';
     notifyListeners();
   }
 }
