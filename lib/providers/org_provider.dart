@@ -22,7 +22,7 @@ class OrgProvider extends ChangeNotifier {
     }
   }
 
-  void orgLogOut() {
+  void orgDispose() {
     organization = null;
     notifyListeners();
   }

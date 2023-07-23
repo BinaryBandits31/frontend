@@ -37,7 +37,7 @@ class UserProvider extends ChangeNotifier {
     return null;
   }
 
-  void logOut() {
+  void userDispose() {
     user = null;
     notifyListeners();
   }

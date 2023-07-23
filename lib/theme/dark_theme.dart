@@ -7,6 +7,9 @@ Color _primaryColor = AppColor.orange3;
 ThemeData darkTheme = ThemeData.dark(
   useMaterial3: true,
 ).copyWith(
+  cardTheme: CardTheme(
+    color: AppColor.black1,
+  ),
   textSelectionTheme: TextSelectionThemeData(
     cursorColor: Colors.white,
     selectionColor: _primaryColor.withOpacity(0.7),

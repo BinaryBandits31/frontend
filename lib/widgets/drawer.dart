@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/app/admin/branches.dart';
+import 'package:frontend/pages/app/admin/branches/branches.dart';
 import 'package:frontend/pages/app/admin/suppliers.dart';
 import 'package:frontend/pages/app/admin/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';

@@ -3,21 +3,24 @@ import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 
 class LabeledTextField extends StatelessWidget {
-  const LabeledTextField({
-    super.key,
-    required this.label,
-    required this.onSaved,
-    this.isRequired = false,
-  });
+  const LabeledTextField(
+      {super.key,
+      required this.label,
+      required this.onSaved,
+      this.isRequired = false,
+      this.margin = true,
+      this.initialValue = ''});
 
   final String label;
   final bool? isRequired;
   final void Function(String?) onSaved;
+  final bool margin;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(sH(10)),
+      margin: margin ? EdgeInsets.all(sH(10)) : const EdgeInsets.all(0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -30,6 +33,7 @@ class LabeledTextField extends StatelessWidget {
             ),
           ),
           TextFormField(
+            initialValue: initialValue,
             validator: (value) {
               if (value!.isEmpty && isRequired!) {
                 return '$label is required';

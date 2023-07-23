@@ -108,7 +108,7 @@ class _UserLoginState extends State<UserLogin> {
                 addVerticalSpace(sH(30)),
                 InkWell(
                   onTap: () async {
-                    orgProvider.orgLogOut();
+                    orgProvider.orgDispose();
                     final sharedPreferences =
                         await SharedPreferences.getInstance();
                     sharedPreferences.remove('orgID');

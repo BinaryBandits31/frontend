@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -50,13 +51,14 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => const UserLogin(),
                   ));
-                  final appProvider =
-                      Provider.of<AppProvider>(context, listen: false);
-                  appProvider.logOut();
 
-                  final userProvider =
-                      Provider.of<UserProvider>(context, listen: false);
-                  userProvider.logOut();
+                  Provider.of<AppProvider>(context, listen: false).logOut();
+
+                  Provider.of<UserProvider>(context, listen: false)
+                      .userDispose();
+
+                  Provider.of<BranchProvider>(context, listen: false)
+                      .branchDispose();
                 }
               },
               child: const CircleAvatar(

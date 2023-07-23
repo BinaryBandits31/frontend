@@ -50,3 +50,28 @@ class SubmitButton extends StatelessWidget {
         ));
   }
 }
+
+class TriggerButton extends StatelessWidget {
+  final String title;
+  final void Function() onPressed;
+
+  const TriggerButton({
+    super.key,
+    required this.title,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+          backgroundColor: const MaterialStatePropertyAll<Color>(Colors.blue),
+          minimumSize: MaterialStatePropertyAll(Size(sW(130), sH(40)))),
+      onPressed: onPressed,
+      child: Text(
+        title,
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+}

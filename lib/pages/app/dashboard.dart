@@ -22,7 +22,7 @@ class Dashboard extends StatelessWidget {
             ));
             final userProvider =
                 Provider.of<UserProvider>(context, listen: false);
-            userProvider.logOut();
+            userProvider.userDispose();
           },
           child: const Text(
             'Log Out',
