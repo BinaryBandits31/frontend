@@ -7,19 +7,22 @@ class OrgProvider extends ChangeNotifier {
   bool isLoading = false;
   String? error;
 
-  Future<void> fetchOrganization(String orgID) async {
+  Future<bool> validateOrg(String orgID) async {
+    bool res = false;
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
       organization = await AuthServices.validateOrgID(orgID);
+      res = true;
     } catch (e) {
       error = e.toString();
     } finally {
       isLoading = false;
       notifyListeners();
     }
+    return res;
   }
 
   void orgDispose() {

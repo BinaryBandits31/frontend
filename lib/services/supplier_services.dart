@@ -1,17 +1,15 @@
 import 'dart:convert';
 import 'package:frontend/models/supplier.dart';
-import 'package:frontend/providers/user_provider.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SupplierServices {
   static String port = 'http://10.0.2.2:9000';
   static String endpoint = '/org/supplier/';
 
   static Future<List<Supplier>> fetchSuppliers() async {
-    final String token =
-        Provider.of<UserProvider>(Get.context!, listen: false).user!.token;
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('userToken')!;
 
     try {
       final response = await http
@@ -30,10 +28,11 @@ class SupplierServices {
   }
 
   static Future<bool> createSupplier(data) async {
-    final String token =
-        Provider.of<UserProvider>(Get.context!, listen: false).user!.token;
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('userToken')!;
+    String newEndpoint = endpoint.substring(0, endpoint.length - 1);
 
-    final response = await http.post(Uri.parse('$port/org/supplier'),
+    final response = await http.post(Uri.parse('$port$newEndpoint'),
         headers: {'token': token},
         body: jsonEncode(Supplier(
           name: data['name'],

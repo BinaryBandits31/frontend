@@ -1,23 +1,23 @@
 import 'dart:convert';
 
 import 'package:frontend/providers/org_provider.dart';
-import 'package:frontend/providers/user_provider.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/branch.dart';
 
 class BranchServices {
-  static String port = 'http://10.0.2.2:9000';
-  static String endpoint = '/user/org/branch/';
+  static String port = "http://10.0.2.2:9000";
+  static String endpoint = "/org/branch/";
 
   static Future<List<Branch>> fetchBranches() async {
     final String orgID =
         Provider.of<OrgProvider>(Get.context!, listen: false).organization!.id;
 
-    final String token =
-        Provider.of<UserProvider>(Get.context!, listen: false).user!.token;
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('userToken')!;
 
     try {
       final response = await http
@@ -39,10 +39,11 @@ class BranchServices {
     final String orgID =
         Provider.of<OrgProvider>(Get.context!, listen: false).organization!.id;
 
-    final String token =
-        Provider.of<UserProvider>(Get.context!, listen: false).user!.token;
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('userToken')!;
+    String newEndpoint = endpoint.substring(0, endpoint.length - 1);
 
-    final response = await http.post(Uri.parse('$port/user/org/branch'),
+    final response = await http.post(Uri.parse('$port$newEndpoint'),
         headers: {'token': token},
         body: jsonEncode({
           'name': data['name'],
@@ -58,8 +59,8 @@ class BranchServices {
   }
 
   static Future<bool> editBranch(data) async {
-    final String token =
-        Provider.of<UserProvider>(Get.context!, listen: false).user!.token;
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('userToken')!;
 
     final response =
         await http.put(Uri.parse('$port$endpoint${data["branchID"]}'),

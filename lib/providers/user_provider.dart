@@ -23,6 +23,16 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> validateToken(String token) async {
+    bool res = false;
+    user = await AuthServices.validateUserToken(token);
+    if (user != null) {
+      res = true;
+      notifyListeners();
+    }
+    return res;
+  }
+
   int? getLevel() {
     if (user != null) {
       final userLevel = user!.empLevel;

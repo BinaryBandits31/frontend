@@ -31,17 +31,6 @@ class AuthServices {
     }
   }
 
-  static Future<Organization> validateOrgID(String orgID) async {
-    final response =
-        await http.get(Uri.parse('$port/user/validate/org/$orgID'));
-
-    if (response.statusCode == 200) {
-      return Organization.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception(jsonDecode(response.body)['error']);
-    }
-  }
-
   static Future<User> userLogin(dynamic data) async {
     final orgID =
         Provider.of<OrgProvider>(Get.context!, listen: false).organization!.id;
@@ -59,6 +48,29 @@ class AuthServices {
       return User.fromJson(jsonDecode(response.body));
     } else {
       throw Exception(jsonDecode(response.body)['error']);
+    }
+  }
+
+  static Future<Organization> validateOrgID(String orgID) async {
+    final response =
+        await http.get(Uri.parse('$port/user/validate/org/$orgID'));
+
+    if (response.statusCode == 200) {
+      return Organization.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(jsonDecode(response.body)['error']);
+    }
+  }
+
+  static Future<User> validateUserToken(String token) async {
+    String endpoint = '/user/validate/token/';
+    final response =
+        await http.get(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(jsonDecode(response.body)["error"]);
     }
   }
 }

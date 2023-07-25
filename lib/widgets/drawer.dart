@@ -61,19 +61,14 @@ class MyDrawer extends StatelessWidget {
               text: 'Inventory Management',
               items: [
                 DrawerMenuItem(
-                  title: 'Products',
-                  itemIcon: Icons.interests,
-                  page: ProductsPage(),
+                  title: 'Products Price',
+                  itemIcon: Icons.attach_money_outlined,
+                  page: ProductsPricePage(),
                 ),
                 DrawerMenuItem(
                   title: 'Products Stock',
                   itemIcon: Icons.library_books_outlined,
                   page: ProductStocksPage(),
-                ),
-                DrawerMenuItem(
-                  title: 'Products Price',
-                  itemIcon: Icons.attach_money_outlined,
-                  page: ProductsPricePage(),
                 ),
               ],
             ),

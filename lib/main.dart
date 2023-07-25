@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/auth/org/auth.dart';
+import 'package:frontend/pages/auth/splash.dart';
 import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/theme/dark_theme.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'EPR Frontend',
-        home: const OrgAuth(),
+        home: const SplashPage(),
         theme: darkTheme,
       ),
     );

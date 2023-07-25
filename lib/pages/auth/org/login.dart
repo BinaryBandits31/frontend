@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/app/dashboard.dart';
+import 'package:frontend/pages/auth/org/auth.dart';
 import 'package:frontend/pages/auth/org/reset.dart';
 import 'package:frontend/pages/auth/user_login.dart';
 import 'package:frontend/providers/org_provider.dart';
+import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
@@ -11,6 +14,7 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
 import 'package:frontend/widgets/text_field.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,7 +34,7 @@ class _LoginOrgState extends State<LoginOrg> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      await provider.fetchOrganization(_organizationID);
+      await provider.validateOrg(_organizationID);
 
       if (provider.organization != null) {
         final SharedPreferences sharedPreferences =
@@ -45,31 +49,38 @@ class _LoginOrgState extends State<LoginOrg> {
     }
   }
 
-  @override
-  void initState() {
-    getValidationData();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   getValidationData();
+  //   super.initState();
+  // }
 
-  Future getValidationData() async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
-    // DashboardPage if user loggedIn
-    String? userToken = sharedPreferences.getString('userToken');
-    if (userToken != null) {}
+  // Future getValidationData() async {
+  //   final SharedPreferences sharedPreferences =
+  //       await SharedPreferences.getInstance();
+  //   // DashboardPage if user loggedIn
+  //   String? userToken = sharedPreferences.getString('userToken');
+  //   if (userToken != null) {
+  //     // if token valid => DashboardPage
+  //     final res = await AuthServices.validateToken(userToken);
+  //     if (res) {
+  //       Get.to(() => const Dashboard());
+  //     }
+  //   }
 
-    // UserLoginPage if Org LoggedIn
-    String? orgID = sharedPreferences.getString('orgID');
-    if (orgID != null) {
-      OrgProvider orgProvider =
-          Provider.of<OrgProvider>(context, listen: false);
-      await orgProvider.fetchOrganization(orgID);
-      if (orgProvider.organization != null) {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const UserLogin()));
-      }
-    }
-  }
+  //   // UserLoginPage if Org LoggedIn
+  //   String? orgID = sharedPreferences.getString('orgID');
+  //   if (orgID != null) {
+  //     OrgProvider orgProvider =
+  //         Provider.of<OrgProvider>(context, listen: false);
+  //     await orgProvider.fetchOrganization(orgID);
+  //     if (orgProvider.organization != null) {
+  //       Get.off(() => const UserLogin());
+  //     }
+  //   }
+  //   // Else
+  //   Get.off(() => const OrgAuth());
+  // }
 
   @override
   Widget build(BuildContext context) {

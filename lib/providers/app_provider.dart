@@ -15,7 +15,7 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logOut() {
+  void appDispose() {
     selectedTab = const Dashboard();
     pathTitle = 'Dashboard';
     notifyListeners();

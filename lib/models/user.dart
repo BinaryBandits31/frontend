@@ -1,30 +1,30 @@
 class User {
   final String id;
-  final String firstName;
-  final String lastName;
+  final String? firstName;
+  final String? lastName;
   final String username;
-  final String dob;
+  final String? dob;
   final String empLevel;
   final String empType;
   final String branchId;
   final String orgId;
-  final String token;
+  final String? token;
 
   User({
     required this.id,
-    required this.firstName,
-    required this.lastName,
+    this.firstName,
+    this.lastName,
     required this.username,
-    required this.dob,
+    this.dob,
     required this.empLevel,
     required this.empType,
     required this.branchId,
     required this.orgId,
-    required this.token,
+    this.token,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json['Id'],
+        id: json['employee_Id'],
         firstName: json['first_Name'],
         lastName: json['last_Name'],
         username: json['username'],
@@ -32,7 +32,7 @@ class User {
         empLevel: json['emp_Level'],
         empType: json['emp_Type'],
         branchId: json['branch_Id'],
-        orgId: json['org_ID'],
+        orgId: json['org_Id'],
         token: json['token'],
       );
 
@@ -46,7 +46,7 @@ class User {
       'emp_Level': empLevel,
       'emp_Type': empType,
       'branch_Id': branchId,
-      'org_ID': orgId,
+      'org_Id': orgId,
       'token': token,
     };
   }

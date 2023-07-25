@@ -36,9 +36,9 @@ class _UserLoginState extends State<UserLogin> {
 
       if (provider.user != null) {
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('userToken', provider.user!.token);
+        prefs.setString('userToken', provider.user!.token!);
 
-        Get.to(() => const HomePage());
+        Get.off(() => const HomePage());
       } else if (provider.error != null) {
         dangerMessage('${provider.error}');
       }
@@ -58,7 +58,10 @@ class _UserLoginState extends State<UserLogin> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 addVerticalSpace(sH(100)),
-                BigText(orgProvider.organization!.name),
+                BigText(
+                  orgProvider.organization!.name.capitalizeFirst,
+                  color: Colors.blue,
+                ),
                 addVerticalSpace(sH(50)),
                 Container(
                   height: screenHeight * 0.4,
@@ -111,9 +114,8 @@ class _UserLoginState extends State<UserLogin> {
                     final sharedPreferences =
                         await SharedPreferences.getInstance();
                     sharedPreferences.remove('orgID');
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const OrgAuth(),
-                    ));
+
+                    Get.off(() => const OrgAuth());
                   },
                   child: const Text(
                     'Log Out Organization',

@@ -23,7 +23,7 @@ class ProductsPricePage extends StatelessWidget {
               ));
               final appProvider =
                   Provider.of<AppProvider>(context, listen: false);
-              appProvider.logOut();
+              appProvider.appDispose();
 
               final userProvider =
                   Provider.of<UserProvider>(context, listen: false);

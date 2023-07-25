@@ -4,6 +4,7 @@ import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/app_provider.dart';
 import '../../providers/user_provider.dart';
@@ -48,14 +49,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ],
-              onSelected: (String value) {
+              onSelected: (String value) async {
                 if (value == 'change_password') {
                   // Handle change password action
                 } else if (value == 'logout') {
                   // Handle logout action
-                  Get.to(() => const UserLogin());
+                  Get.off(() => const UserLogin());
 
-                  Provider.of<AppProvider>(context, listen: false).logOut();
+                  Provider.of<AppProvider>(context, listen: false).appDispose();
 
                   Provider.of<UserProvider>(context, listen: false)
                       .userDispose();
@@ -65,6 +66,10 @@ class _HomePageState extends State<HomePage> {
 
                   Provider.of<SupplierProvider>(context, listen: false)
                       .supplierDispose();
+
+                  final sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  sharedPreferences.remove('userToken');
                 }
               },
               child: const CircleAvatar(

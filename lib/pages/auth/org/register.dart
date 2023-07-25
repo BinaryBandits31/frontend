@@ -38,7 +38,7 @@ class _RegisterOrgState extends State<RegisterOrg> {
           successMessage('Account successfully created!');
 
           final orgProvider = Provider.of<OrgProvider>(context, listen: false);
-          await orgProvider.fetchOrganization(_registrationData['orgID']);
+          await orgProvider.validateOrg(_registrationData['orgID']);
 
           if (orgProvider.organization != null) {
             Navigator.of(context).pushReplacement(
