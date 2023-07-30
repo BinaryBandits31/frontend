@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 double screenHeight = Get.context!.height;
 double screenWidth = Get.context!.width;
+// String port = 'http://10.0.2.2:9000';
+String port = 'https://chain-stock-backend.onrender.com';
 
 // sH and sW methods converts pixelHeight to Dynamic equivalent
 double sH(double pixelHeight) {

@@ -140,7 +140,7 @@ class _RegisterOrgState extends State<RegisterOrg> {
               addVerticalSpace(sH(20)),
               SubmitButton(
                 label: 'Create Account',
-                isLoading: false,
+                // isLoading: false,
                 onPressed: () => _signUpOrg(),
               ),
               addVerticalSpace(sH(10)),

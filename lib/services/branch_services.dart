@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:frontend/providers/org_provider.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -9,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/branch.dart';
 
 class BranchServices {
-  static String port = "http://10.0.2.2:9000";
   static String endpoint = "/org/branch/";
 
   static Future<List<Branch>> fetchBranches() async {
@@ -35,7 +35,7 @@ class BranchServices {
     }
   }
 
-  static Future<bool> createBrach(data) async {
+  static Future<bool> createBrach(dynamic data) async {
     final String orgID =
         Provider.of<OrgProvider>(Get.context!, listen: false).organization!.id;
 
@@ -58,17 +58,14 @@ class BranchServices {
     }
   }
 
-  static Future<bool> editBranch(data) async {
+  static Future<bool> editBranch(Branch branch) async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('userToken')!;
 
-    final response =
-        await http.put(Uri.parse('$port$endpoint${data["branchID"]}'),
-            headers: {'token': token},
-            body: jsonEncode({
-              'name': data['name'],
-              'branch_Type': data['type'],
-            }));
+    final response = await http.put(
+        Uri.parse('$port$endpoint${branch.branchID}'),
+        headers: {'token': token},
+        body: jsonEncode(branch.toJson()));
 
     if (response.statusCode == 200) {
       return true;

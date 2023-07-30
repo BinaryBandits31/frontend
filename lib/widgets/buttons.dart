@@ -2,16 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 
-class SubmitButton extends StatelessWidget {
-  const SubmitButton(
-      {super.key,
-      required this.label,
-      required this.onPressed,
-      required this.isLoading});
+class SubmitButton extends StatefulWidget {
+  const SubmitButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
 
   final String label;
-  final bool isLoading;
-  final void Function()? onPressed;
+  final Function() onPressed;
+
+  @override
+  State<SubmitButton> createState() => _SubmitButtonState();
+}
+
+class _SubmitButtonState extends State<SubmitButton> {
+  bool isLoading = false;
+
+  void toggleLoad() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +35,17 @@ class SubmitButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5.0),
               ),
             )),
-        onPressed: onPressed,
+        onPressed: () async {
+          if (!isLoading) {
+            toggleLoad();
+            await widget.onPressed();
+            toggleLoad();
+          }
+        },
         child: Stack(
           children: [
             Text(
-              label,
+              widget.label,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: !isLoading ? AppColor.black1 : Colors.transparent,
@@ -54,20 +72,23 @@ class SubmitButton extends StatelessWidget {
 class TriggerButton extends StatelessWidget {
   final String title;
   final void Function() onPressed;
+  final bool isActive;
 
   const TriggerButton({
     super.key,
     required this.title,
     required this.onPressed,
+    this.isActive = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-          backgroundColor: const MaterialStatePropertyAll<Color>(Colors.blue),
+          backgroundColor: MaterialStatePropertyAll<Color>(
+              isActive ? Colors.blue : Colors.blue.shade200),
           minimumSize: MaterialStatePropertyAll(Size(sW(130), sH(40)))),
-      onPressed: onPressed,
+      onPressed: isActive ? onPressed : null,
       child: Text(
         title,
         style: const TextStyle(color: Colors.white),

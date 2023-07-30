@@ -30,12 +30,13 @@ class _SuppliersPageState extends State<SuppliersPage> {
         .pathTitle!
         .split(' > ')[1];
     final supplierProvider = Provider.of<SupplierProvider>(context);
-    final suppliers = supplierProvider.suppliers;
+    final suppliers = supplierProvider.filteredSuppliers;
 
     return DataPage(
       isLoading: supplierProvider.isLoading,
       dataList: suppliers,
       pageTitle: pageTitle,
+      searchFunction: supplierProvider.searchSupplier,
       columnNames: const [
         'DATE CREATED',
         'SUPPLIER',
@@ -50,8 +51,8 @@ class _SuppliersPageState extends State<SuppliersPage> {
 }
 
 class SupplierDataTableSource extends DataTableSource {
-  final supplierProvider =
-      Provider.of<SupplierProvider>(Get.context!, listen: false);
+  // final supplierProvider =
+  //     Provider.of<SupplierProvider>(Get.context!, listen: true);
   final List<Supplier> suppliers;
 
   SupplierDataTableSource(this.suppliers);

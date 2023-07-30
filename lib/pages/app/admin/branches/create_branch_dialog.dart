@@ -19,65 +19,66 @@ class _CreateBranchDialogState extends State<CreateBranchDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final branchProvider = Provider.of<BranchProvider>(context, listen: false);
+    final branchProvider = Provider.of<BranchProvider>(context, listen: true);
     _createBranchData['type'] = dropdownValue;
 
-    return AlertDialog(
-      title: const Text('New Branch'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LabeledTextField(
-            margin: false,
-            label: 'Name',
-            isRequired: true,
-            onSaved: (value) {
-              _createBranchData['name'] = value;
+    return SingleChildScrollView(
+      child: AlertDialog(
+        title: const Text('New Branch'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LabeledTextField(
+              margin: false,
+              label: 'Name',
+              isRequired: true,
+              onSaved: (value) {
+                _createBranchData['name'] = value;
+              },
+            ),
+            addVerticalSpace(20),
+            DropdownButton<String>(
+              alignment: AlignmentDirectional.topStart,
+              value: dropdownValue,
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+                _createBranchData['type'] = newValue;
+              },
+              items: <String>['RETAIL', 'WHOLESALE']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        actions: [
+          SubmitButton(
+            label: 'Create',
+            onPressed: () async {
+              final res = await branchProvider.createBranch(_createBranchData);
+              if (res) {
+                successMessage('Branch created successfully!');
+                await branchProvider.fetchBranches();
+                Navigator.of(Get.context!).pop();
+              } else {
+                dangerMessage(branchProvider.error!);
+              }
             },
           ),
-          addVerticalSpace(20),
-          DropdownButton<String>(
-            alignment: AlignmentDirectional.topStart,
-            value: dropdownValue,
-            onChanged: (String? newValue) {
-              setState(() {
-                dropdownValue = newValue!;
-              });
-              _createBranchData['type'] = newValue;
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
             },
-            items: <String>['RETAIL', 'WHOLESALE']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+            child: const Text('Cancel'),
           ),
         ],
       ),
-      actions: [
-        SubmitButton(
-          isLoading: branchProvider.isLoading,
-          label: 'Create',
-          onPressed: () async {
-            final res = await branchProvider.createBranch(_createBranchData);
-            if (res) {
-              successMessage('Branch created successfully!');
-              await branchProvider.fetchBranches();
-              Navigator.of(Get.context!).pop();
-            } else {
-              dangerMessage(branchProvider.error!);
-            }
-          },
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Cancel'),
-        ),
-      ],
     );
   }
 }

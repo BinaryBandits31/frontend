@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/app_provider.dart';
 import 'providers/org_provider.dart';
+import 'providers/product_provider.dart';
 import 'providers/user_provider.dart';
 
 void main() {
@@ -25,6 +26,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<OrgProvider>(create: (_) => OrgProvider()),
         ChangeNotifierProvider<AppProvider>(create: (_) => AppProvider()),
         ChangeNotifierProvider<BranchProvider>(create: (_) => BranchProvider()),
+        ChangeNotifierProvider<ProductProvider>(
+            create: (_) => ProductProvider()),
         ChangeNotifierProvider<SupplierProvider>(
             create: (_) => SupplierProvider()),
       ],

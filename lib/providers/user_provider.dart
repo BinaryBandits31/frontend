@@ -25,11 +25,16 @@ class UserProvider extends ChangeNotifier {
 
   Future<bool> validateToken(String token) async {
     bool res = false;
-    user = await AuthServices.validateUserToken(token);
-    if (user != null) {
-      res = true;
-      notifyListeners();
+    try {
+      user = await AuthServices.validateUserToken(token);
+      if (user != null) {
+        res = true;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint(e.toString());
     }
+
     return res;
   }
 

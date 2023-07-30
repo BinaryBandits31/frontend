@@ -29,8 +29,8 @@ class _CompanyLocationsPageState extends State<CompanyLocationsPage> {
     final pageTitle = Provider.of<AppProvider>(context, listen: false)
         .pathTitle!
         .split(' > ')[1];
-    final branchProvider = Provider.of<BranchProvider>(context);
-    final branches = branchProvider.branches;
+    final branchProvider = Provider.of<BranchProvider>(context, listen: true);
+    final branches = branchProvider.filteredBranches;
 
     return DataPage(
       isLoading: branchProvider.isLoading,
@@ -39,13 +39,14 @@ class _CompanyLocationsPageState extends State<CompanyLocationsPage> {
       columnNames: const ['NAME', 'TYPE', ''],
       createNewDialog: CreateBranchDialog(),
       source: BranchDataTableSource(branches),
+      searchFunction: branchProvider.searchBranch,
     );
   }
 }
 
 class BranchDataTableSource extends DataTableSource {
-  final branchProvider =
-      Provider.of<BranchProvider>(Get.context!, listen: false);
+  // final branchProvider =
+  //     Provider.of<BranchProvider>(Get.context!, listen: true);
   final List<Branch> branches;
 
   BranchDataTableSource(this.branches);
@@ -60,7 +61,7 @@ class BranchDataTableSource extends DataTableSource {
       DataCell(const SizedBox(),
           showEditIcon: true,
           onTap: () => showDialog(
-                barrierDismissible: !branchProvider.isLoading,
+                barrierDismissible: false,
                 context: Get.context!,
                 builder: (context) => EditBranchDialog(branch),
               )),

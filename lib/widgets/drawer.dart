@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/admin/branches/branches.dart';
+import 'package:frontend/pages/app/admin/products/products.dart';
 import 'package:frontend/pages/app/admin/suppliers/suppliers.dart';
 import 'package:frontend/pages/app/admin/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
-import 'package:frontend/pages/app/admin/products.dart';
 import 'package:frontend/pages/app/orders/sale.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
@@ -47,7 +47,7 @@ class MyDrawer extends StatelessWidget {
                 DrawerMenuItem(
                   title: 'Products',
                   itemIcon: Icons.interests,
-                  page: ProductStocksPage(),
+                  page: ProductsPage(),
                 ),
                 DrawerMenuItem(
                   title: 'Users',

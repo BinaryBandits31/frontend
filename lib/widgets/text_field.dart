@@ -9,13 +9,15 @@ class LabeledTextField extends StatelessWidget {
       required this.onSaved,
       this.isRequired = false,
       this.margin = true,
-      this.initialValue = ''});
+      this.initialValue = '',
+      this.inputType});
 
   final String label;
   final bool? isRequired;
   final void Function(String?) onSaved;
   final bool margin;
   final String initialValue;
+  final TextInputType? inputType;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class LabeledTextField extends StatelessWidget {
               return null;
             },
             onChanged: onSaved,
+            keyboardType: inputType,
           ),
         ],
       ),

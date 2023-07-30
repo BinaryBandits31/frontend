@@ -1,12 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/app/dashboard.dart';
-import 'package:frontend/pages/auth/org/auth.dart';
 import 'package:frontend/pages/auth/org/reset.dart';
 import 'package:frontend/pages/auth/user_login.dart';
 import 'package:frontend/providers/org_provider.dart';
-import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
@@ -14,7 +11,6 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
 import 'package:frontend/widgets/text_field.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -109,10 +105,8 @@ class _LoginOrgState extends State<LoginOrg> {
                     Consumer<OrgProvider>(
                       builder: (context, provider, _) => SubmitButton(
                         label: 'Login',
-                        isLoading: provider.isLoading,
-                        onPressed: provider.isLoading
-                            ? null
-                            : () => _loginOrg(provider),
+                        // isLoading: provider.isLoading,
+                        onPressed: () => _loginOrg(provider),
                       ),
                     ),
                     InkWell(

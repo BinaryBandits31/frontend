@@ -14,6 +14,7 @@ class DataPage extends StatelessWidget {
     required this.columnNames,
     required this.createNewDialog,
     required this.source,
+    required this.searchFunction,
   });
 
   final bool isLoading;
@@ -22,6 +23,7 @@ class DataPage extends StatelessWidget {
   final String pageTitle;
   final Widget createNewDialog;
   final DataTableSource source;
+  final Function searchFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,6 @@ class DataPage extends StatelessWidget {
                               title: 'CREATE NEW',
                               onPressed: () {
                                 showDialog(
-                                  barrierDismissible: !isLoading,
                                   context: context,
                                   builder: (context) => createNewDialog,
                                 );
@@ -58,33 +59,40 @@ class DataPage extends StatelessWidget {
                       ),
                       addVerticalSpace(20),
                       // Search Section
-                      Card(
-                        color: AppColor.black1,
-                        child: Padding(
-                          padding: EdgeInsets.all(sH(20)),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              //Search Field
-                              SizedBox(
-                                width: screenWidth * 0.3,
-                                child: const Column(
+                      SizedBox(
+                        width: screenWidth * 0.25,
+                        child: Card(
+                          color: AppColor.black1,
+                          child: Padding(
+                            padding: EdgeInsets.all(sH(20)),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                //Search Field
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('What are you looking for?',
+                                    const Text('What are you looking for?',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
-                                    TextField()
+                                    SizedBox(
+                                        width: screenWidth * 0.2,
+                                        child: TextField(
+                                          decoration: const InputDecoration(
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: Colors.white)),
+                                              labelText: 'Search',
+                                              labelStyle: TextStyle(
+                                                  color: Colors.grey)),
+                                          onChanged: (value) =>
+                                              searchFunction(value),
+                                        ))
                                   ],
                                 ),
-                              ),
-                              // Search Button
-                              TriggerButton(
-                                title: 'SEARCH',
-                                onPressed: () {},
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),

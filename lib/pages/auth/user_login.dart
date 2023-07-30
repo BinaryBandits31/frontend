@@ -96,10 +96,8 @@ class _UserLoginState extends State<UserLogin> {
                           Consumer<UserProvider>(
                             builder: (context, provider, _) => SubmitButton(
                               label: 'Login',
-                              isLoading: provider.isLoading,
-                              onPressed: provider.isLoading
-                                  ? null
-                                  : () => _loginUser(provider),
+                              // isLoading: provider.isLoading,
+                              onPressed: () => _loginUser(provider),
                             ),
                           ),
                         ],

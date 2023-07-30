@@ -18,7 +18,7 @@ class _CreateSupplierDialogState extends State<CreateSupplierDialog> {
   @override
   Widget build(BuildContext context) {
     final supplierProvider =
-        Provider.of<SupplierProvider>(context, listen: false);
+        Provider.of<SupplierProvider>(context, listen: true);
 
     return AlertDialog(
       title: const Text('New Supplier'),
@@ -68,15 +68,15 @@ class _CreateSupplierDialogState extends State<CreateSupplierDialog> {
       ),
       actions: [
         SubmitButton(
-          isLoading: supplierProvider.isLoading,
+          // isLoading: supplierProvider.isLoading,
           label: 'Create',
           onPressed: () async {
             final res =
                 await supplierProvider.createSupplier(_createSupplierData);
             if (res) {
               successMessage('Branch created successfully!');
-              await supplierProvider.fetchSuppliers();
               Navigator.of(Get.context!).pop();
+              await supplierProvider.fetchSuppliers();
             } else {
               dangerMessage(supplierProvider.error!);
             }

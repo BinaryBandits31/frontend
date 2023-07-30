@@ -4,10 +4,12 @@ import 'package:frontend/services/supplier_services.dart';
 
 class SupplierProvider extends ChangeNotifier {
   List<Supplier> _suppliers = [];
+  List<Supplier> _filteredSuppliers = [];
   bool isLoading = false;
   String? error;
 
   List<Supplier> get suppliers => _suppliers;
+  List<Supplier> get filteredSuppliers => _filteredSuppliers;
 
   DataTableSource? supplierSource;
 
@@ -16,6 +18,7 @@ class SupplierProvider extends ChangeNotifier {
     notifyListeners();
     try {
       _suppliers = await SupplierServices.fetchSuppliers();
+      _filteredSuppliers = _suppliers;
     } catch (e) {
       print(e.toString());
     } finally {
@@ -37,6 +40,26 @@ class SupplierProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  void searchSupplier(String query) {
+    isLoading = true;
+    if (query.isNotEmpty) {
+      final String lowerCaseQuery = query.toLowerCase();
+      List<Supplier> filteredSuppliers = [];
+      for (Supplier supplier in _suppliers) {
+        final String lowerCaseSupplierName = supplier.name.toLowerCase();
+
+        if (lowerCaseSupplierName.contains(lowerCaseQuery)) {
+          filteredSuppliers.add(supplier);
+        }
+      }
+      _filteredSuppliers = filteredSuppliers;
+    } else {
+      _filteredSuppliers = _suppliers;
+    }
+    isLoading = false;
+    notifyListeners();
   }
 
   // Future<bool> editBranch(dynamic data) async {

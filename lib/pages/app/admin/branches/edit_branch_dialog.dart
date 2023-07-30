@@ -19,7 +19,8 @@ class EditBranchDialog extends StatefulWidget {
 }
 
 class _EditBranchDialogState extends State<EditBranchDialog> {
-  final _editBranchData = {};
+  bool isLoading = false;
+  var _editBranchData = {};
   String dropdownValue = '';
 
   @override
@@ -30,11 +31,17 @@ class _EditBranchDialogState extends State<EditBranchDialog> {
     });
   }
 
+  void toggleLoad() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final branchProvider = Provider.of<BranchProvider>(context, listen: false);
 
-    _editBranchData['branchID'] = widget.branch.branchID;
+    _editBranchData = widget.branch.toJson();
 
     return AlertDialog(
       title: const Text('Edit Branch'),
@@ -59,7 +66,7 @@ class _EditBranchDialogState extends State<EditBranchDialog> {
               setState(() {
                 dropdownValue = newValue!;
               });
-              _editBranchData['type'] = newValue;
+              _editBranchData['branch_Type'] = newValue;
             },
             items: <String>['RETAIL', 'WHOLESALE']
                 .map<DropdownMenuItem<String>>((String value) {
@@ -73,22 +80,26 @@ class _EditBranchDialogState extends State<EditBranchDialog> {
       ),
       actions: [
         SubmitButton(
-          isLoading: branchProvider.isLoading,
-          label: 'Create',
+          label: 'Edit',
           onPressed: () async {
-            final res = await branchProvider.editBranch(_editBranchData);
+            toggleLoad();
+            final res = await branchProvider
+                .editBranch(Branch.fromJson(_editBranchData));
             if (res) {
               successMessage('Branch edited successfully!');
               await branchProvider.fetchBranches();
-              Navigator.of(context).pop();
+              Navigator.of(Get.context!).pop();
             } else {
               dangerMessage(branchProvider.error!);
             }
+            toggleLoad();
           },
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(Get.context!).pop();
+            if (isLoading == false) {
+              Navigator.of(Get.context!).pop();
+            }
           },
           child: const Text('Cancel'),
         ),

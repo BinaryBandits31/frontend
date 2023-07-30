@@ -1,11 +1,11 @@
 class Branch {
   final String name;
-  final String branchID;
+  final String? branchID;
   final String type;
 
   Branch({
     required this.name,
-    required this.branchID,
+    this.branchID,
     required this.type,
   });
 

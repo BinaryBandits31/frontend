@@ -1,4 +1,5 @@
 import 'package:frontend/models/organization.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -8,8 +9,6 @@ import '../models/user.dart';
 import '../providers/org_provider.dart';
 
 class AuthServices {
-  static String port = 'http://10.0.2.2:9000';
-
   static Future<bool> signUp(dynamic data) async {
     final response = await http.post(
       Uri.parse('$port/user/signup'),

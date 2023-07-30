@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:frontend/models/supplier.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SupplierServices {
-  static String port = 'http://10.0.2.2:9000';
   static String endpoint = '/org/supplier/';
 
   static Future<List<Supplier>> fetchSuppliers() async {
