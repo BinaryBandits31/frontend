@@ -54,7 +54,8 @@ class _ProductsPageState extends State<ProductsPage> {
       searchFunction: productProvider.searchProduct,
       createNewDialog: CreateProductDialog(), // Use the create product dialog
       source:
-          ProductDataTableSource(products), // Use the ProductDataTableSource
+          ProductDataTableSource(products), // Use
+      adminPage: true,// the ProductDataTableSource
     );
   }
 }

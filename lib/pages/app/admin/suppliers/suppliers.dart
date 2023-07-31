@@ -49,6 +49,7 @@ class _SuppliersPageState extends State<SuppliersPage> {
       ],
       createNewDialog: CreateSupplierDialog(),
       source: SupplierDataTableSource(suppliers),
+      adminPage: true,
     );
   }
 }

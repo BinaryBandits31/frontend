@@ -68,12 +68,12 @@ class MyDrawer extends StatelessWidget {
                 DrawerMenuItem(
                   title: 'Products Price',
                   itemIcon: Icons.attach_money_outlined,
-                  page: ProductsPricePage(),
+                  page: ProductPricePage(),
                 ),
                 DrawerMenuItem(
                   title: 'Products Stock',
                   itemIcon: Icons.library_books_outlined,
-                  page: ProductStocksPage(),
+                  page: StockItemsPage(),
                 ),
               ],
             ),

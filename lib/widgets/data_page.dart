@@ -16,6 +16,7 @@ class DataPage extends StatelessWidget {
     required this.source,
     required this.searchFunction,
     required this.refreshPageFunction,
+    required this.adminPage,
   });
 
   final bool isLoading;
@@ -26,6 +27,7 @@ class DataPage extends StatelessWidget {
   final Widget createNewDialog;
   final DataTableSource source;
   final Function searchFunction;
+  final bool adminPage;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,8 @@ class DataPage extends StatelessWidget {
                           ),
                           Padding(
                             padding: EdgeInsets.only(right: sH(10)),
-                            child: TriggerButton(
+                            child: adminPage ?
+                            TriggerButton(
                               title: 'CREATE NEW',
                               onPressed: () {
                                 showDialog(
@@ -55,7 +58,7 @@ class DataPage extends StatelessWidget {
                                   builder: (context) => createNewDialog,
                                 );
                               },
-                            ),
+                            ): Container(),
                           ),
                         ],
                       ),

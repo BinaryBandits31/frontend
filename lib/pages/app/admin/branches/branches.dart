@@ -45,6 +45,7 @@ class _CompanyLocationsPageState extends State<CompanyLocationsPage> {
       createNewDialog: CreateBranchDialog(),
       source: BranchDataTableSource(branches),
       searchFunction: branchProvider.searchBranch,
+      adminPage: true,
     );
   }
 }
