@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
+import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/constants.dart';
+import 'package:frontend/widgets/notify.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,11 +23,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<AppProvider>(context, listen: false).checkExpiryAlert();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     AppProvider appProvider = Provider.of<AppProvider>(context, listen: true);
     return Scaffold(
       drawer: const MyDrawer(),
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) => IconButton(
+            icon: NotificationBadge(
+                iconData: Icons.table_rows_rounded,
+                notificationCount: appProvider.alerts),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         backgroundColor: AppColor.black1,
         title: Text(
           appProvider.pathTitle!,
@@ -53,23 +71,7 @@ class _HomePageState extends State<HomePage> {
                 if (value == 'change_password') {
                   // Handle change password action
                 } else if (value == 'logout') {
-                  // Handle logout action
-                  Get.off(() => const UserLogin());
-
-                  Provider.of<AppProvider>(context, listen: false).appDispose();
-
-                  Provider.of<UserProvider>(context, listen: false)
-                      .userDispose();
-
-                  Provider.of<BranchProvider>(context, listen: false)
-                      .branchDispose();
-
-                  Provider.of<SupplierProvider>(context, listen: false)
-                      .supplierDispose();
-
-                  final sharedPreferences =
-                      await SharedPreferences.getInstance();
-                  sharedPreferences.remove('userToken');
+                  await AuthServices.appLogout();
                 }
               },
               child: const CircleAvatar(

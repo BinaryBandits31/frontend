@@ -79,8 +79,8 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
                   .createProduct(Product.fromJson(_createProductData));
               if (res) {
                 successMessage('Product created successfully!');
-                Navigator.of(Get.context!).pop();
                 await productProvider.fetchProducts();
+                Navigator.of(Get.context!).pop();
               } else {
                 dangerMessage(productProvider.error!);
               }

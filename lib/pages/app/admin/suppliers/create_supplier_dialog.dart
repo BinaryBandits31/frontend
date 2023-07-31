@@ -75,8 +75,8 @@ class _CreateSupplierDialogState extends State<CreateSupplierDialog> {
                 await supplierProvider.createSupplier(_createSupplierData);
             if (res) {
               successMessage('Branch created successfully!');
-              Navigator.of(Get.context!).pop();
               await supplierProvider.fetchSuppliers();
+              Navigator.of(Get.context!).pop();
             } else {
               dangerMessage(supplierProvider.error!);
             }

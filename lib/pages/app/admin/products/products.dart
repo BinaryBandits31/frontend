@@ -4,6 +4,7 @@ import 'package:frontend/pages/app/admin/products/create_product_dialog.dart';
 import 'package:frontend/pages/app/admin/products/edit_product_dialog.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/product_provider.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/widgets/data_page.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,11 @@ class _ProductsPageState extends State<ProductsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<ProductProvider>(context, listen: false)
-          .fetchProducts(); // Use the ProductProvider to fetch products
+      final productProvider =
+          Provider.of<ProductProvider>(context, listen: false);
+      if (productProvider.products.isEmpty) {
+        await productProvider.fetchProducts();
+      }
     });
   }
 
@@ -35,6 +39,7 @@ class _ProductsPageState extends State<ProductsPage> {
         .filteredProducts; // Use the products list from the ProductProvider
 
     return DataPage(
+      refreshPageFunction: productProvider.fetchProducts,
       isLoading:
           productProvider.isLoading, // Use isLoading from the ProductProvider
       dataList: products, // Use the products list
@@ -57,6 +62,8 @@ class _ProductsPageState extends State<ProductsPage> {
 class ProductDataTableSource extends DataTableSource {
   // final productProvider =
   //     Provider.of<ProductProvider>(Get.context!, listen: true);
+
+  final userProvider = Provider.of<UserProvider>(Get.context!, listen: false);
   final List<Product> products;
 
   ProductDataTableSource(this.products);
@@ -70,13 +77,15 @@ class ProductDataTableSource extends DataTableSource {
       DataCell(Text(product.description)),
       DataCell(Text(product.price.toString())),
       DataCell(Text(product.quantity.toString())),
-      DataCell(const SizedBox(),
-          showEditIcon: true,
-          onTap: () => showDialog(
-                barrierDismissible: false,
-                context: Get.context!,
-                builder: (context) => EditProductDialog(product),
-              )),
+      userProvider.getLevel()! >= 2
+          ? DataCell(const SizedBox(),
+              showEditIcon: true,
+              onTap: () => showDialog(
+                    barrierDismissible: false,
+                    context: Get.context!,
+                    builder: (context) => EditProductDialog(product),
+                  ))
+          : const DataCell(Text('')),
     ]);
   }
 

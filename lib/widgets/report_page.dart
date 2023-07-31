@@ -5,27 +5,25 @@ import 'buttons.dart';
 
 import 'helper_widgets.dart';
 
-class DataPage extends StatelessWidget {
-  const DataPage({
+class ReportPage extends StatelessWidget {
+  const ReportPage({
     super.key,
-    required this.isLoading,
+    this.isLoading = false,
     required this.dataList,
     required this.pageTitle,
     required this.columnNames,
-    required this.createNewDialog,
     required this.source,
-    required this.searchFunction,
-    required this.refreshPageFunction,
+    this.searchFunction,
+    this.refreshPageFunction,
   });
 
   final bool isLoading;
   final List dataList;
-  final Function refreshPageFunction;
+  final Function? refreshPageFunction;
   final List<String> columnNames;
   final String pageTitle;
-  final Widget createNewDialog;
   final DataTableSource source;
-  final Function searchFunction;
+  final Function? searchFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +42,6 @@ class DataPage extends StatelessWidget {
                             pageTitle,
                             style: TextStyle(
                                 fontSize: sH(25), fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: sH(10)),
-                            child: TriggerButton(
-                              title: 'CREATE NEW',
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => createNewDialog,
-                                );
-                              },
-                            ),
                           ),
                         ],
                       ),
@@ -88,8 +74,9 @@ class DataPage extends StatelessWidget {
                                               labelText: 'Search',
                                               labelStyle: TextStyle(
                                                   color: Colors.grey)),
-                                          onChanged: (value) =>
-                                              searchFunction(value),
+                                          onChanged: (value)
+                                              // searchFunction(value),
+                                              {},
                                         ))
                                   ],
                                 ),
@@ -114,7 +101,7 @@ class DataPage extends StatelessWidget {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '$pageTitle Summary',
+                                            '$pageTitle Report',
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -123,7 +110,7 @@ class DataPage extends StatelessWidget {
                                                 Icons.refresh_rounded),
                                             color: Colors.blue,
                                             onPressed: () async {
-                                              await refreshPageFunction();
+                                              // await refreshPageFunction();
                                             },
                                           )
                                         ],

@@ -8,6 +8,8 @@ import 'package:frontend/pages/app/inventory_management/products_stock.dart';
 import 'package:frontend/pages/app/orders/sale.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
+import 'package:frontend/pages/app/reports/product_expiry.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../pages/app/dashboard.dart';
 import '../providers/app_provider.dart';
@@ -21,16 +23,19 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final appProvider = Provider.of<AppProvider>(context, listen: true);
+
     return Drawer(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: sH(50)),
         child: ListView(
-          children: const [
-            DrawerMenuItem(
+          children: [
+            const DrawerMenuItem(
                 title: 'Dashboard',
                 page: Dashboard(),
                 itemIcon: Icons.home_rounded),
-            DrawerMenu(
+            const DrawerMenu(
               icon: Icons.key_outlined,
               text: 'Admin',
               items: [
@@ -56,7 +61,7 @@ class MyDrawer extends StatelessWidget {
                 ),
               ],
             ),
-            DrawerMenu(
+            const DrawerMenu(
               icon: Icons.shopping_cart,
               text: 'Inventory Management',
               items: [
@@ -72,7 +77,7 @@ class MyDrawer extends StatelessWidget {
                 ),
               ],
             ),
-            DrawerMenu(
+            const DrawerMenu(
               text: 'Orders',
               icon: Icons.receipt_long_outlined,
               items: [
@@ -93,7 +98,18 @@ class MyDrawer extends StatelessWidget {
                 ),
               ],
             ),
-            DrawerMenu(text: 'Reports', icon: Icons.print_outlined, items: [])
+            DrawerMenu(
+              text: 'Reports',
+              icon: Icons.print_outlined,
+              items: const [
+                DrawerMenuItem(
+                  title: 'Product Expiry',
+                  itemIcon: Icons.hourglass_bottom_rounded,
+                  page: ProductExpiryReportPage(),
+                ),
+              ],
+              hasAlert: appProvider.alerts > 0,
+            )
           ],
         ),
       ),
@@ -107,6 +123,7 @@ class DrawerMenu extends StatefulWidget {
   final List<DrawerMenuItem> items;
   final int? accessLevel;
   final int? userLevel;
+  final bool hasAlert;
 
   const DrawerMenu({
     super.key,
@@ -115,6 +132,7 @@ class DrawerMenu extends StatefulWidget {
     required this.items,
     this.accessLevel,
     this.userLevel,
+    this.hasAlert = false,
   });
 
   @override
@@ -139,7 +157,11 @@ class _DrawerMenuState extends State<DrawerMenu> {
             ),
             leading: Icon(
               widget.icon,
-              color: expanded ? AppColor.orange3 : null,
+              color: expanded
+                  ? AppColor.orange3
+                  : widget.hasAlert
+                      ? Colors.blue
+                      : null,
             ),
             trailing: expanded
                 ? const Icon(Icons.keyboard_arrow_up_outlined)

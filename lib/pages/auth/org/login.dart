@@ -45,39 +45,6 @@ class _LoginOrgState extends State<LoginOrg> {
     }
   }
 
-  // @override
-  // void initState() {
-  //   getValidationData();
-  //   super.initState();
-  // }
-
-  // Future getValidationData() async {
-  //   final SharedPreferences sharedPreferences =
-  //       await SharedPreferences.getInstance();
-  //   // DashboardPage if user loggedIn
-  //   String? userToken = sharedPreferences.getString('userToken');
-  //   if (userToken != null) {
-  //     // if token valid => DashboardPage
-  //     final res = await AuthServices.validateToken(userToken);
-  //     if (res) {
-  //       Get.to(() => const Dashboard());
-  //     }
-  //   }
-
-  //   // UserLoginPage if Org LoggedIn
-  //   String? orgID = sharedPreferences.getString('orgID');
-  //   if (orgID != null) {
-  //     OrgProvider orgProvider =
-  //         Provider.of<OrgProvider>(context, listen: false);
-  //     await orgProvider.fetchOrganization(orgID);
-  //     if (orgProvider.organization != null) {
-  //       Get.off(() => const UserLogin());
-  //     }
-  //   }
-  //   // Else
-  //   Get.off(() => const OrgAuth());
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

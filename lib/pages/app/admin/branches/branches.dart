@@ -20,7 +20,11 @@ class _CompanyLocationsPageState extends State<CompanyLocationsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<BranchProvider>(context, listen: false).fetchBranches();
+      final branchProvider =
+          Provider.of<BranchProvider>(context, listen: false);
+      if (branchProvider.branches.isEmpty) {
+        await branchProvider.fetchBranches();
+      }
     });
   }
 
@@ -33,6 +37,7 @@ class _CompanyLocationsPageState extends State<CompanyLocationsPage> {
     final branches = branchProvider.filteredBranches;
 
     return DataPage(
+      refreshPageFunction: branchProvider.fetchBranches,
       isLoading: branchProvider.isLoading,
       dataList: branches,
       pageTitle: pageTitle,

@@ -43,67 +43,69 @@ class _EditBranchDialogState extends State<EditBranchDialog> {
 
     _editBranchData = widget.branch.toJson();
 
-    return AlertDialog(
-      title: const Text('Edit Branch'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LabeledTextField(
-            initialValue: widget.branch.name,
-            margin: false,
-            label: 'Name',
-            isRequired: true,
-            onSaved: (value) {
-              _editBranchData['name'] = value;
+    return SingleChildScrollView(
+      child: AlertDialog(
+        title: const Text('Edit Branch'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LabeledTextField(
+              initialValue: widget.branch.name,
+              margin: false,
+              label: 'Name',
+              isRequired: true,
+              onSaved: (value) {
+                _editBranchData['name'] = value;
+              },
+            ),
+            addVerticalSpace(20),
+            DropdownButton<String>(
+              alignment: AlignmentDirectional.topStart,
+              value: dropdownValue,
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+                _editBranchData['branch_Type'] = newValue;
+              },
+              items: <String>['RETAIL', 'WHOLESALE']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        actions: [
+          SubmitButton(
+            label: 'Edit',
+            onPressed: () async {
+              toggleLoad();
+              final res = await branchProvider
+                  .editBranch(Branch.fromJson(_editBranchData));
+              if (res) {
+                successMessage('Branch edited successfully!');
+                await branchProvider.fetchBranches();
+                Navigator.of(Get.context!).pop();
+              } else {
+                dangerMessage(branchProvider.error!);
+              }
+              toggleLoad();
             },
           ),
-          addVerticalSpace(20),
-          DropdownButton<String>(
-            alignment: AlignmentDirectional.topStart,
-            value: dropdownValue,
-            onChanged: (String? newValue) {
-              setState(() {
-                dropdownValue = newValue!;
-              });
-              _editBranchData['branch_Type'] = newValue;
+          TextButton(
+            onPressed: () {
+              if (isLoading == false) {
+                Navigator.of(Get.context!).pop();
+              }
             },
-            items: <String>['RETAIL', 'WHOLESALE']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+            child: const Text('Cancel'),
           ),
         ],
       ),
-      actions: [
-        SubmitButton(
-          label: 'Edit',
-          onPressed: () async {
-            toggleLoad();
-            final res = await branchProvider
-                .editBranch(Branch.fromJson(_editBranchData));
-            if (res) {
-              successMessage('Branch edited successfully!');
-              await branchProvider.fetchBranches();
-              Navigator.of(Get.context!).pop();
-            } else {
-              dangerMessage(branchProvider.error!);
-            }
-            toggleLoad();
-          },
-        ),
-        TextButton(
-          onPressed: () {
-            if (isLoading == false) {
-              Navigator.of(Get.context!).pop();
-            }
-          },
-          child: const Text('Cancel'),
-        ),
-      ],
     );
   }
 }

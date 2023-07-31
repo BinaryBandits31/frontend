@@ -4,7 +4,6 @@ import 'package:frontend/pages/app/admin/suppliers/create_supplier_dialog.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/widgets/data_page.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class SuppliersPage extends StatefulWidget {
@@ -19,8 +18,11 @@ class _SuppliersPageState extends State<SuppliersPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<SupplierProvider>(context, listen: false)
-          .fetchSuppliers();
+      final supplierProvider =
+          Provider.of<SupplierProvider>(context, listen: false);
+      if (supplierProvider.suppliers.isEmpty) {
+        await supplierProvider.fetchSuppliers();
+      }
     });
   }
 
@@ -33,6 +35,7 @@ class _SuppliersPageState extends State<SuppliersPage> {
     final suppliers = supplierProvider.filteredSuppliers;
 
     return DataPage(
+      refreshPageFunction: supplierProvider.fetchSuppliers,
       isLoading: supplierProvider.isLoading,
       dataList: suppliers,
       pageTitle: pageTitle,
