@@ -4,6 +4,7 @@ import '../../../models/stock_item.dart';
 import '../../../providers/stock_provider.dart';
 import '../../../providers/app_provider.dart';
 import 'package:intl/intl.dart';
+import '../../../services/stock_items_services.dart';
 import '../../../widgets/data_page.dart';
 
 class ProductStockPage extends StatefulWidget {
@@ -15,43 +16,36 @@ class ProductStockPage extends StatefulWidget {
 
 class _ProductStockPageState extends State<ProductStockPage> {
 
+  bool isLoading = true;
+  List<StockItem> stockItems = [];
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final stockProvider =
-      Provider.of<StockProvider>(context, listen: false);
-      if (stockProvider.stockItems.isEmpty) {
-        await stockProvider.fetchStockItems();
-      }
-    });
+    StockServices.getStockItems().then((value) => setState(() {
+      stockItems = value;
+      isLoading = false;
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
-    final pageTitle = Provider.of<AppProvider>(context, listen: false)
-        .pathTitle!
-        .split(' > ')[1];
-    final stockProvider = Provider.of<StockProvider>(context);
-    final stockItems = stockProvider
-        .filteredStockItems; // Use the stockItems list from the StockProvider
 
     return DataPage(
-      refreshPageFunction: stockProvider.fetchStockItems,
-      isLoading:
-      stockProvider.isLoading, // Use isLoading from the StockProvider
+      refreshPageFunction: (){},
+      isLoading: isLoading, // Use isLoading from the StockProvider
       dataList: stockItems, // Use the stockItems list
-      pageTitle: pageTitle,
+      pageTitle: "STOCK ITEMS",
       columnNames: const [
         'NAME',
         'QUANTITY',
         'EXPIRY DATE',
       ],
-      searchFunction: stockProvider.searchStockItem,
+      searchFunction: (){},
       createNewDialog: Container(), // Use the create stockItem dialog
       source:
       StockItemDataTableSource(stockItems), // Use
-      adminPage: true,// the StockItemDataTableSource
+      adminPage: false,// the StockItemDataTableSource
     );
   }
 }

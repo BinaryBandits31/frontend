@@ -4,8 +4,6 @@ import 'package:frontend/models/activity_record.dart';
 import 'package:intl/intl.dart';
 
 
-
-
 class ActivityLogsPage extends StatefulWidget {
   const ActivityLogsPage({super.key});
 

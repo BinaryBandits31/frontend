@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="06487d9a-f183-4ad4-86cf-da378650b8ea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/app/activity_logs_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/app/activity_logs_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/app/inventory_management/products_stock.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/app/inventory_management/products_stock.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/widgets/drawer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/drawer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/providers/stock_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/providers/stock_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/providers/stock_purchase_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/providers/stock_purchase_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/providers/stock_transfer_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/providers/stock_transfer_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/stock_services.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/stock_items_services.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
