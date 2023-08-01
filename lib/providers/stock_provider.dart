@@ -3,7 +3,7 @@ import '../models/stock_item.dart';
 
 import 'package:flutter/material.dart';
 
-class StockProvider extends ChangeNotifier{
+class StockProvider extends ChangeNotifier {
   List<StockItem> _stockItems = [];
   List<StockItem> _filteredStockItems = [];
   bool isLoading = false;
@@ -16,7 +16,7 @@ class StockProvider extends ChangeNotifier{
     isLoading = true;
     notifyListeners();
     try {
-      _stockItems = await StockServices.getStockItems();
+      _stockItems = await StockServices.getStockBatches();
       _filteredStockItems = _stockItems;
     } catch (e) {
       debugPrint(e.toString());
@@ -28,6 +28,6 @@ class StockProvider extends ChangeNotifier{
   }
 
   void searchStockItem(String query) {
-   //todo
+    //todo
   }
 }
