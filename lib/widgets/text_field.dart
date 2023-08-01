@@ -35,6 +35,7 @@ class LabeledTextField extends StatelessWidget {
             ),
           ),
           TextFormField(
+            obscureText: label == 'Password' ? true : false,
             initialValue: initialValue,
             validator: (value) {
               if (value!.isEmpty && isRequired!) {
