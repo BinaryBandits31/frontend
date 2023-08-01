@@ -70,6 +70,7 @@ class _HomePageState extends State<HomePage> {
               onSelected: (String value) async {
                 if (value == 'change_password') {
                   // Handle change password action
+
                 } else if (value == 'logout') {
                   await AuthServices.appLogout();
                 }

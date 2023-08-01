@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/product_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend/models/product.dart';
 import '../../../providers/app_provider.dart';
 import '../../../widgets/data_page.dart';
-import '../admin/products/products.dart';
 
 class ProductPricePage extends StatefulWidget {
   const ProductPricePage({super.key});
@@ -46,15 +46,41 @@ class _ProductPricePageState extends State<ProductPricePage> {
         'NAME',
         'DESCRIPTION',
         'PRICE',
-        'QUANTITY',
-        ""
       ],
       searchFunction: productProvider.searchProduct,
       createNewDialog: Container(), // Use the create product dialog
       source:
-      ProductDataTableSource(products), //
+      ProductPriceDataTableSource(products), //
       adminPage: false,// Use the ProductDataTableSource
     );
   }
+}
+
+class ProductPriceDataTableSource extends DataTableSource{
+  final List<Product> products;
+  ProductPriceDataTableSource(this.products);
+
+  @override
+  DataRow getRow(int index) {
+    final product = products[index];
+    return DataRow.byIndex(
+      index: index,
+      cells: [
+        DataCell(Text(product.name)),
+        DataCell(Text(product.description)),
+        DataCell(Text(product.price.toString())),
+
+            ],
+          );
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => products.length;
+
+  @override
+  int get selectedRowCount => 0;
 }
 
