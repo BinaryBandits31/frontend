@@ -51,4 +51,9 @@ class StockPurchaseProvider extends ChangeNotifier {
     }
     return res;
   }
+
+  void cancelPurchase() {
+    _stockItems = [];
+    notifyListeners();
+  }
 }

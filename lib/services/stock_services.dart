@@ -30,7 +30,6 @@ class StockServices {
 
   static Future<bool> purchaseStock(dynamic data) async {
     try {
-      print(data);
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
 
@@ -38,6 +37,7 @@ class StockServices {
           headers: {'token': token}, body: jsonEncode(data));
 
       print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 201) {
         return true;
       }

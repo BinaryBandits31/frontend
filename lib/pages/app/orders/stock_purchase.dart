@@ -5,7 +5,6 @@ import 'package:frontend/models/supplier.dart';
 import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/providers/product_provider.dart';
 import 'package:frontend/providers/stock_purchase_provider.dart';
-import 'package:frontend/providers/stock_purchase_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/utils/colors.dart';
@@ -26,7 +25,6 @@ class StockPurchasePage extends StatefulWidget {
 
 class _StockPurchasePageState extends State<StockPurchasePage> {
   DateTime? _selectedExpiryDate;
-  final _stockPurchaseData = {};
   List<Branch> branchList = [];
   Branch? _selectedBranch;
   Supplier? _selectedSupplier;
@@ -48,7 +46,6 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
       setState(() {
         _selectedSearchProduct = product;
         _selectedExpiryDate = null;
-        // quantityController.clear();
       });
       _newProductItem['product_Id'] = product.id;
       _newProductItem['productName'] = product.name;
