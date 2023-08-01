@@ -23,7 +23,6 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final userProvider = Provider.of<UserProvider>(context, listen: false);
     final appProvider = Provider.of<AppProvider>(context, listen: true);
 
     return Drawer(
@@ -36,25 +35,30 @@ class MyDrawer extends StatelessWidget {
                 page: Dashboard(),
                 itemIcon: Icons.home_rounded),
             const DrawerMenu(
+              accessLevel: 2,
               icon: Icons.key_outlined,
               text: 'Admin',
               items: [
                 DrawerMenuItem(
+                  accessLevel: 3,
                   title: 'Company Locations',
                   itemIcon: Icons.maps_home_work_outlined,
                   page: CompanyLocationsPage(),
                 ),
                 DrawerMenuItem(
+                  accessLevel: 2,
                   title: 'Suppliers',
                   itemIcon: Icons.support_agent_outlined,
                   page: SuppliersPage(),
                 ),
                 DrawerMenuItem(
+                  accessLevel: 2,
                   title: 'Products',
                   itemIcon: Icons.interests,
                   page: ProductsPage(),
                 ),
                 DrawerMenuItem(
+                  accessLevel: 2,
                   title: 'Users',
                   itemIcon: Icons.people,
                   page: UsersPage(),
@@ -122,7 +126,6 @@ class DrawerMenu extends StatefulWidget {
   final IconData icon;
   final List<DrawerMenuItem> items;
   final int? accessLevel;
-  final int? userLevel;
   final bool hasAlert;
 
   const DrawerMenu({
@@ -130,9 +133,8 @@ class DrawerMenu extends StatefulWidget {
     required this.text,
     required this.icon,
     required this.items,
-    this.accessLevel,
-    this.userLevel,
     this.hasAlert = false,
+    this.accessLevel,
   });
 
   @override
@@ -144,10 +146,13 @@ class _DrawerMenuState extends State<DrawerMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userLevel = userProvider.getLevel();
+
     return Visibility(
       visible: widget.accessLevel == null
           ? true
-          : (widget.userLevel! >= widget.accessLevel!),
+          : (userLevel! >= widget.accessLevel!),
       child: Column(
         children: [
           ListTile(
@@ -183,7 +188,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
                       page: item.page,
                       title: item.title,
                       accessLevel: item.accessLevel,
-                      userLevel: item.userLevel,
                       parentName: widget.text,
                     )
                 ]),
@@ -199,7 +203,6 @@ class DrawerMenuItem extends StatelessWidget {
   final Widget page;
   final IconData itemIcon;
   final int? accessLevel;
-  final int? userLevel;
   final String? parentName;
 
   const DrawerMenuItem({
@@ -208,12 +211,14 @@ class DrawerMenuItem extends StatelessWidget {
     required this.page,
     required this.itemIcon,
     this.accessLevel,
-    this.userLevel,
     this.parentName,
   });
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userLevel = userProvider.getLevel();
+
     return Visibility(
       visible: accessLevel == null ? true : (userLevel! >= accessLevel!),
       child: ListTile(

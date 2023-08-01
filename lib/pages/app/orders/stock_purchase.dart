@@ -29,7 +29,7 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
   Branch? _selectedBranch;
   Supplier? _selectedSupplier;
   Product? _selectedSearchProduct;
-  final dynamic _newProductItem = {};
+  dynamic _newProductItem = {};
   final quantityController = TextEditingController();
   final quantityFocusNode = FocusNode();
 
@@ -261,10 +261,9 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                               widget: TextFormField(
                                 controller: quantityController,
                                 focusNode: quantityFocusNode,
-                                // initialValue: _selectedQuantity.toString(),
+                                onTapOutside: (event) =>
+                                    quantityFocusNode.unfocus(),
                                 onChanged: (newValue) {
-                                  // stockPurchaseProvider.updateSelectedQuantity(
-                                  //     int.parse(newValue!));
                                   _newProductItem['quantity'] = newValue;
                                 },
                                 keyboardType: TextInputType.number,
@@ -284,6 +283,9 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                                 onPressed: () {
                                   stockPurchaseProvider
                                       .addSelectedProduct(_newProductItem);
+                                  setState(() {
+                                    _newProductItem = {};
+                                  });
                                 },
                                 title: 'Add to List')
                           ],
@@ -298,7 +300,8 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                             label: 'Confirm Purchase',
                             onPressed: () => confirmPurchase()),
                         ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () =>
+                                stockPurchaseProvider.cancelPurchase(),
                             child: const Text(
                               'Cancel',
                               style: TextStyle(color: Colors.red),
@@ -312,72 +315,6 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class PaneContainer extends StatelessWidget {
-  final Widget child;
-  final double? height;
-  final double? width;
-  const PaneContainer(
-      {super.key, required this.child, this.height, this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: Padding(padding: EdgeInsets.all(sH(10)), child: child),
-      ),
-    );
-  }
-}
-
-class CardField extends StatelessWidget {
-  final String title;
-  final String? value;
-  final bool isValueWidget;
-  final Widget? widget;
-
-  const CardField(
-      {super.key,
-      required this.title,
-      this.value,
-      this.isValueWidget = false,
-      this.widget});
-
-  @override
-  Widget build(BuildContext context) {
-    double customFontSize = sH(18);
-
-    return Row(
-      children: [
-        Expanded(
-            child: Text(
-          title,
-          style: TextStyle(fontSize: customFontSize),
-        )),
-        Expanded(
-          child: !isValueWidget
-              ? Card(
-                  margin: EdgeInsets.zero,
-                  color: AppColor.grey1,
-                  child: Center(
-                    child: Text(
-                      ' ${value ?? ''}',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: customFontSize,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                )
-              : widget!,
-        )
-      ],
     );
   }
 }

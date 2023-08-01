@@ -1,38 +1,298 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/branch.dart';
+import 'package:frontend/models/product.dart';
+import 'package:frontend/models/stock_item.dart';
+import 'package:frontend/providers/branch_provider.dart';
+import 'package:frontend/providers/product_provider.dart';
+import 'package:frontend/providers/stock_transfer_provider.dart';
+import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
+import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/custom_widgets.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
+import 'package:frontend/widgets/notify.dart';
 import 'package:provider/provider.dart';
-
-import '../../../providers/app_provider.dart';
 import '../../../providers/user_provider.dart';
-import '../../auth/user_login.dart';
 
-class StockTransferPage extends StatelessWidget {
+class StockTransferPage extends StatefulWidget {
   const StockTransferPage({super.key});
 
   @override
+  State<StockTransferPage> createState() => _StockTransferPageState();
+}
+
+class _StockTransferPageState extends State<StockTransferPage> {
+  List<Branch> _fromBranchList = [];
+  List<Branch> _toBranchList = [];
+  Branch? _selectedFromBranch;
+  Branch? _selectedToBranch;
+  StockItem? _displayedSearchItem;
+  dynamic _newProductItem = {};
+  int? stockLevel;
+  final quantityController = TextEditingController();
+  final quantityFocusNode = FocusNode();
+
+  void _selectProduct(StockItem item) {
+    if (item != _displayedSearchItem) {
+      quantityFocusNode.requestFocus();
+      setState(() {
+        _displayedSearchItem = item;
+        stockLevel = item.quantity;
+      });
+      _newProductItem['product_Id'] = item.id;
+      _newProductItem['productName'] = item.productName;
+    }
+  }
+
+  void confirmTransfer() async {
+    final stockPurchaseProvider =
+        Provider.of<StockTransferProvider>(context, listen: false);
+    bool res = await stockPurchaseProvider.initiateTransfer();
+    if (res) {
+      successMessage('Stock Purchased Successfully');
+    } else {
+      dangerMessage('Stock Purchase Failed');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final branchProvider =
+          Provider.of<BranchProvider>(context, listen: false);
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final stockTransferProvider =
+          Provider.of<StockTransferProvider>(context, listen: false);
+
+      if (branchProvider.branches.isEmpty) {
+        await branchProvider.fetchBranches();
+      }
+      if (stockTransferProvider.stockItems.isEmpty) {
+        await stockTransferProvider.fetchStockItems();
+      }
+      for (Branch branch in branchProvider.branches) {
+        if (branch.branchID == userProvider.user!.branchId) {
+          setState(() {
+            _selectedFromBranch = branch;
+          });
+        }
+      }
+      bool isNotOwner = userProvider.getLevel()! < 4;
+      if (isNotOwner) {
+        _fromBranchList.add(_selectedFromBranch!);
+      } else {
+        setState(() {
+          _fromBranchList = branchProvider.branches;
+        });
+      }
+      setState(() {
+        _toBranchList = branchProvider.branches;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(sH(20)),
-      child: Row(
-        children: [
-          //left Pane
-          Expanded(
-            flex: 3,
-            child: Container(
-              height: double.maxFinite,
-              color: Colors.green,
-            ),
+    final stockTransferProvider =
+        Provider.of<StockTransferProvider>(context, listen: true);
+    final stockItems = stockTransferProvider.stockItems;
+    List<StockItem> productList = stockTransferProvider.products;
+
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: Container(
+          height: screenHeight * 0.91,
+          padding: EdgeInsets.symmetric(horizontal: sH(20), vertical: sH(20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              //left Pane
+              Expanded(
+                child: Column(
+                  children: [
+                    //Header
+                    Row(
+                      children: [
+                        PaneContainer(
+                          child: CustomDropDown<Branch>(
+                            labelText: 'From',
+                            value: stockTransferProvider.currentBranch ??
+                                _selectedFromBranch,
+                            itemList: _fromBranchList,
+                            displayItem: (Branch branch) => branch.name,
+                            onChanged: (Branch? newValue) {
+                              setState(() {
+                                _selectedFromBranch = newValue;
+                              });
+                              stockTransferProvider.setCurrentBranch(newValue!);
+                            },
+                          ),
+                        ),
+                        addHorizontalSpace(screenWidth * 0.05),
+                        PaneContainer(
+                          child: CustomDropDown<Branch>(
+                            labelText: 'To',
+                            value: stockTransferProvider.toBranch ??
+                                _selectedToBranch,
+                            itemList: _toBranchList,
+                            displayItem: (Branch branch) => branch.name,
+                            onChanged: (Branch? newValue) {
+                              setState(() {
+                                _selectedToBranch = newValue;
+                              });
+                              stockTransferProvider.setToBranch(newValue!);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    addVerticalSpace(sH(20)),
+                    //Search Product
+                    PaneContainer(
+                      child: CustomSearchField<StockItem>(
+                        itemList: productList,
+                        getItemName: (product) => product.productName,
+                        onItemSelected: (product) {
+                          _selectProduct(product);
+                        },
+                      ),
+                    ),
+                    addVerticalSpace(sH(20)),
+                    //Entered Product List
+                    Expanded(
+                      child: PaneContainer(
+                        child: Column(
+                          children: [
+                            const ListTile(
+                              title: Row(
+                                children: [
+                                  Expanded(child: Text('Product Name')),
+                                  Expanded(child: Text('Quantity')),
+                                ],
+                              ),
+                              trailing: Icon(
+                                Icons.delete,
+                                color: Colors.transparent,
+                                size: 50,
+                              ),
+                            ),
+                            const Divider(),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: stockItems.length,
+                                itemBuilder: (context, index) {
+                                  dynamic product = stockItems[index];
+                                  return ListTile(
+                                    tileColor:
+                                        index.isEven ? AppColor.grey1 : null,
+                                    title: Row(
+                                      children: [
+                                        Expanded(
+                                            child: Text(
+                                                '${product['productName']}')),
+                                        Expanded(
+                                            child:
+                                                Text('${product['quantity']}'))
+                                      ],
+                                    ),
+                                    trailing: IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () => stockTransferProvider
+                                          .removeIndexedProduct(index),
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              addHorizontalSpace(sW(20)),
+              // right Pane
+              SizedBox(
+                width: screenWidth * 0.3,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    //Selected Product Detail
+                    PaneContainer(
+                        height: screenHeight * 0.35,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            CardField(
+                              title: 'Product Name',
+                              value: _displayedSearchItem != null
+                                  ? _displayedSearchItem!.productName
+                                  : '',
+                            ),
+                            Divider(color: AppColor.grey1),
+                            CardField(
+                              title: 'Stock Level',
+                              value: stockLevel != null
+                                  ? stockLevel.toString()
+                                  : '',
+                            ),
+                            Divider(color: AppColor.grey1),
+                            CardField(
+                              title: 'Quantity',
+                              isValueWidget: true,
+                              widget: TextFormField(
+                                controller: quantityController,
+                                focusNode: quantityFocusNode,
+                                onTapOutside: (event) =>
+                                    quantityFocusNode.unfocus(),
+                                onChanged: (newValue) {
+                                  _newProductItem['quantity'] = newValue;
+                                },
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                            Divider(color: AppColor.grey1),
+                            TriggerButton(
+                                onPressed: () {
+                                  stockTransferProvider
+                                      .addSelectedProduct(_newProductItem);
+                                  setState(() {
+                                    _newProductItem = {};
+                                  });
+                                },
+                                title: 'Add to List')
+                          ],
+                        )),
+
+                    //Submit Transaction
+                    PaneContainer(
+                        child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SubmitButton(
+                            label: 'Confirm Purchase',
+                            onPressed: () => confirmTransfer()),
+                        ElevatedButton(
+                            onPressed: () =>
+                                stockTransferProvider.cancelPurchase(),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.red),
+                            ))
+                      ],
+                    ))
+                  ],
+                ),
+              ),
+            ],
           ),
-          addHorizontalSpace(sW(20)),
-          // right Pane
-          Expanded(
-            child: Container(
-              height: double.maxFinite,
-              color: Colors.blue,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:intl/intl.dart';
@@ -165,6 +166,72 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             color: Colors.blue,
           ),
         ),
+      ],
+    );
+  }
+}
+
+class PaneContainer extends StatelessWidget {
+  final Widget child;
+  final double? height;
+  final double? width;
+  const PaneContainer(
+      {super.key, required this.child, this.height, this.width});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: Card(
+        margin: EdgeInsets.zero,
+        child: Padding(padding: EdgeInsets.all(sH(10)), child: child),
+      ),
+    );
+  }
+}
+
+class CardField extends StatelessWidget {
+  final String title;
+  final String? value;
+  final bool isValueWidget;
+  final Widget? widget;
+
+  const CardField(
+      {super.key,
+      required this.title,
+      this.value,
+      this.isValueWidget = false,
+      this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    double customFontSize = sH(18);
+
+    return Row(
+      children: [
+        Expanded(
+            child: Text(
+          title,
+          style: TextStyle(fontSize: customFontSize),
+        )),
+        Expanded(
+          child: !isValueWidget
+              ? Card(
+                  margin: EdgeInsets.zero,
+                  color: AppColor.grey1,
+                  child: Center(
+                    child: Text(
+                      ' ${value ?? ''}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: customFontSize,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                )
+              : widget!,
+        )
       ],
     );
   }
