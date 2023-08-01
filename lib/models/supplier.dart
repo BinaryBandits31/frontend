@@ -1,4 +1,5 @@
 class Supplier {
+  final String? id;
   final String name;
   final String email;
   final String phone;
@@ -6,6 +7,7 @@ class Supplier {
   final String? dateCreated;
 
   Supplier({
+    this.id,
     required this.address,
     required this.name,
     required this.email,
@@ -14,6 +16,7 @@ class Supplier {
   });
 
   factory Supplier.fromJson(dynamic json) => Supplier(
+        id: json['Id'],
         name: json['name'],
         email: json['email'],
         phone: json['phone'],
@@ -22,6 +25,7 @@ class Supplier {
       );
 
   Map<String, dynamic> toJson() => {
+        'Id': id,
         'name': name,
         'email': email,
         'phone': phone,

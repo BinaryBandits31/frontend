@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/splash.dart';
 import 'package:frontend/providers/branch_provider.dart';
+import 'package:frontend/providers/stock_purchase_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/theme/dark_theme.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,8 @@ class MyApp extends StatelessWidget {
             create: (_) => ProductProvider()),
         ChangeNotifierProvider<SupplierProvider>(
             create: (_) => SupplierProvider()),
+        ChangeNotifierProvider<StockPurchaseProvider>(
+            create: (_) => StockPurchaseProvider()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

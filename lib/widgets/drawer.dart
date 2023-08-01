@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/admin/branches/branches.dart';
 import 'package:frontend/pages/app/admin/products/products.dart';
 import 'package:frontend/pages/app/admin/suppliers/suppliers.dart';
-import 'package:frontend/pages/app/admin/users.dart';
+import 'package:frontend/pages/app/admin/users/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
 import 'package:frontend/pages/app/orders/sale.dart';

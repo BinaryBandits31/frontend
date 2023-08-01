@@ -45,7 +45,7 @@ class UserProvider extends ChangeNotifier {
       if (userLevel == 'OWNER') {
         level = 4;
       } else {
-        level = userLevel[1] as int;
+        level = int.parse(userLevel[1]);
       }
       return level;
     }

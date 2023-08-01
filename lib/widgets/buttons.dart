@@ -91,7 +91,8 @@ class TriggerButton extends StatelessWidget {
       onPressed: isActive ? onPressed : null,
       child: Text(
         title,
-        style: const TextStyle(color: Colors.white),
+        style:
+            const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
   }

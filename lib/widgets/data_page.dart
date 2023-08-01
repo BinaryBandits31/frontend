@@ -49,16 +49,17 @@ class DataPage extends StatelessWidget {
                           ),
                           Padding(
                             padding: EdgeInsets.only(right: sH(10)),
-                            child: adminPage ?
-                            TriggerButton(
-                              title: 'CREATE NEW',
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => createNewDialog,
-                                );
-                              },
-                            ): Container(),
+                            child: adminPage
+                                ? TriggerButton(
+                                    title: 'CREATE NEW',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => createNewDialog,
+                                      );
+                                    },
+                                  )
+                                : Container(),
                           ),
                         ],
                       ),

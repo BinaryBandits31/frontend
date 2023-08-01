@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/constants.dart';
+import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/app_provider.dart';
@@ -10,28 +12,24 @@ class StockTransferPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: EdgeInsets.all(sH(20)),
+      child: Row(
         children: [
-          const Text('Welcome!'),
-          const Text('Stock Transfer Page'),
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => const UserLogin(),
-              ));
-              final appProvider =
-                  Provider.of<AppProvider>(context, listen: false);
-              appProvider.appDispose();
-
-              final userProvider =
-                  Provider.of<UserProvider>(context, listen: false);
-              userProvider.userDispose();
-            },
-            child: const Text(
-              'Log Out',
-              style: TextStyle(color: Colors.redAccent),
+          //left Pane
+          Expanded(
+            flex: 3,
+            child: Container(
+              height: double.maxFinite,
+              color: Colors.green,
+            ),
+          ),
+          addHorizontalSpace(sW(20)),
+          // right Pane
+          Expanded(
+            child: Container(
+              height: double.maxFinite,
+              color: Colors.blue,
             ),
           ),
         ],
