@@ -9,6 +9,7 @@ import 'package:frontend/pages/app/orders/sale.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
 import 'package:frontend/pages/app/reports/product_expiry.dart';
+import 'package:frontend/pages/app/activity_logs_page.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../pages/app/dashboard.dart';
@@ -101,6 +102,11 @@ class MyDrawer extends StatelessWidget {
                   page: StockPurchasePage(),
                 ),
               ],
+            ),
+            const DrawerMenuItem(
+              title: 'Activity Logs',
+              page: ActivityLogsPage(),
+              itemIcon: Icons.history_edu_outlined,
             ),
             DrawerMenu(
               text: 'Reports',
