@@ -74,7 +74,7 @@ class MyDrawer extends StatelessWidget {
                 DrawerMenuItem(
                   title: 'Products Stock',
                   itemIcon: Icons.library_books_outlined,
-                  page: StockItemsPage(),
+                  page: ProductStockPage(),
                 ),
               ],
             ),
