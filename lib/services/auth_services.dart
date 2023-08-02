@@ -1,6 +1,8 @@
 import 'package:frontend/models/organization.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/branch_provider.dart';
+import 'package:frontend/providers/stock_purchase_provider.dart';
+import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/utils/constants.dart';
@@ -91,6 +93,10 @@ class AuthServices {
 
     Provider.of<SupplierProvider>(Get.context!, listen: false)
         .supplierDispose();
+
+    Provider.of<StockTransferProvider>(Get.context!, listen: false).disposeST();
+
+    Provider.of<StockPurchaseProvider>(Get.context!, listen: false).disposeSP();
 
     final sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.remove('userToken');

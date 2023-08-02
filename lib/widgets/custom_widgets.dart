@@ -23,6 +23,7 @@ class CustomSearchField<T> extends StatefulWidget {
 class _CustomSearchFieldState<T> extends State<CustomSearchField<T>> {
   List<T> _filteredItems = [];
   TextEditingController? textEditingController;
+  final focusNode = FocusNode();
 
   void _filterItems(String query) {
     setState(() {
@@ -41,35 +42,39 @@ class _CustomSearchFieldState<T> extends State<CustomSearchField<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          onTap: () {
-            _filterItems('');
-          },
-          onChanged: _filterItems,
-          decoration: InputDecoration(
-            labelText: 'Search $T',
-          ),
-        ),
-        if (_filteredItems.isNotEmpty)
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              itemCount: _filteredItems.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(widget.getItemName(_filteredItems[index])),
-                  onTap: () {
-                    _onItemTap(_filteredItems[index]);
-                    _filterItems('*');
-                  },
-                );
-              },
+    return TapRegion(
+      onTapOutside: (event) => focusNode.unfocus(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            focusNode: focusNode,
+            onTap: () {
+              _filterItems('');
+            },
+            onChanged: _filterItems,
+            decoration: InputDecoration(
+              labelText: 'Search $T',
             ),
           ),
-      ],
+          if (_filteredItems.isNotEmpty && focusNode.hasFocus)
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                itemCount: _filteredItems.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(widget.getItemName(_filteredItems[index])),
+                    onTap: () {
+                      _onItemTap(_filteredItems[index]);
+                      _filterItems('*');
+                    },
+                  );
+                },
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

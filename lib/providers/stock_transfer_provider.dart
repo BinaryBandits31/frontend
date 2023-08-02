@@ -17,7 +17,6 @@ class StockTransferProvider extends ChangeNotifier {
 
   void addSelectedProduct(dynamic product) {
     _stockItems.add(product);
-    debugPrint('added to stockItems');
     notifyListeners();
   }
 
@@ -28,10 +27,12 @@ class StockTransferProvider extends ChangeNotifier {
 
   void setCurrentBranch(Branch branch) {
     _currentBranch = branch;
+    notifyListeners();
   }
 
   void setToBranch(Branch branch) {
-    _currentBranch = branch;
+    _toBranch = branch;
+    notifyListeners();
   }
 
   Future<void> fetchStockItems() async {
@@ -53,17 +54,17 @@ class StockTransferProvider extends ChangeNotifier {
       'stockItems': convertListToMap(_stockItems),
       'receivingBranch': _toBranch!.branchID,
     };
-    print(stockData);
-    // try {
-    //   bool response = await StockServices.transferStock(stockData);
-    //   if (response) {
-    //     res = true;
-    //   }
-    // } catch (e) {
-    //   debugPrint(e.toString());
-    // } finally {
-    //   notifyListeners();
-    // }
+    debugPrint(stockData.toString());
+    try {
+      bool response = await StockServices.transferStock(stockData);
+      if (response) {
+        res = true;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
     return res;
   }
 
@@ -76,11 +77,19 @@ class StockTransferProvider extends ChangeNotifier {
     Map<dynamic, dynamic> resultMap = {};
     for (var item in inputList) {
       if (item is Map &&
-          item.containsKey("Id") &&
+          item.containsKey("product_Id") &&
           item.containsKey("quantity")) {
         resultMap[item["product_Id"]] = item["quantity"];
       }
     }
     return resultMap;
+  }
+
+  void disposeST() {
+    _currentBranch = null;
+    _toBranch = null;
+    _stockItems = [];
+    _products = [];
+    notifyListeners();
   }
 }

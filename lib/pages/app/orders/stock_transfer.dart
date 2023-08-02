@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/branch.dart';
-import 'package:frontend/models/product.dart';
 import 'package:frontend/models/stock_item.dart';
 import 'package:frontend/providers/branch_provider.dart';
-import 'package:frontend/providers/product_provider.dart';
 import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
@@ -23,9 +21,7 @@ class StockTransferPage extends StatefulWidget {
 
 class _StockTransferPageState extends State<StockTransferPage> {
   List<Branch> _fromBranchList = [];
-  List<Branch> _toBranchList = [];
   Branch? _selectedFromBranch;
-  Branch? _selectedToBranch;
   StockItem? _displayedSearchItem;
   dynamic _newProductItem = {};
   int? stockLevel;
@@ -81,19 +77,20 @@ class _StockTransferPageState extends State<StockTransferPage> {
       bool isNotOwner = userProvider.getLevel()! < 4;
       if (isNotOwner) {
         _fromBranchList.add(_selectedFromBranch!);
+        stockTransferProvider.setCurrentBranch(_selectedFromBranch!);
       } else {
         setState(() {
           _fromBranchList = branchProvider.branches;
         });
       }
-      setState(() {
-        _toBranchList = branchProvider.branches;
-      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final branchProvider = Provider.of<BranchProvider>(context, listen: true);
+    final branchList = branchProvider.branches;
+
     final stockTransferProvider =
         Provider.of<StockTransferProvider>(context, listen: true);
     final stockItems = stockTransferProvider.stockItems;
@@ -122,9 +119,6 @@ class _StockTransferPageState extends State<StockTransferPage> {
                             itemList: _fromBranchList,
                             displayItem: (Branch branch) => branch.name,
                             onChanged: (Branch? newValue) {
-                              setState(() {
-                                _selectedFromBranch = newValue;
-                              });
                               stockTransferProvider.setCurrentBranch(newValue!);
                             },
                           ),
@@ -133,14 +127,13 @@ class _StockTransferPageState extends State<StockTransferPage> {
                         PaneContainer(
                           child: CustomDropDown<Branch>(
                             labelText: 'To',
-                            value: stockTransferProvider.toBranch ??
-                                _selectedToBranch,
-                            itemList: _toBranchList,
+                            value: stockTransferProvider.toBranch,
+                            itemList: branchList,
                             displayItem: (Branch branch) => branch.name,
                             onChanged: (Branch? newValue) {
-                              setState(() {
-                                _selectedToBranch = newValue;
-                              });
+                              // setState(() {
+                              //   _selectedToBranch = newValue;
+                              // });
                               stockTransferProvider.setToBranch(newValue!);
                             },
                           ),
@@ -185,7 +178,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
                                   dynamic product = stockItems[index];
                                   return ListTile(
                                     tileColor:
-                                        index.isEven ? AppColor.grey1 : null,
+                                        index.isOdd ? AppColor.grey1 : null,
                                     title: Row(
                                       children: [
                                         Expanded(

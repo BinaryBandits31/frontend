@@ -27,7 +27,6 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
   DateTime? _selectedExpiryDate;
   List<Branch> branchList = [];
   Branch? _selectedBranch;
-  Supplier? _selectedSupplier;
   Product? _selectedSearchProduct;
   dynamic _newProductItem = {};
   final quantityController = TextEditingController();
@@ -41,15 +40,13 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
   }
 
   void _selectProduct(Product product) {
-    if (product != _selectedSearchProduct) {
-      quantityFocusNode.requestFocus();
-      setState(() {
-        _selectedSearchProduct = product;
-        _selectedExpiryDate = null;
-      });
-      _newProductItem['product_Id'] = product.id;
-      _newProductItem['productName'] = product.name;
-    }
+    quantityFocusNode.requestFocus();
+    setState(() {
+      _selectedSearchProduct = product;
+      _selectedExpiryDate = null;
+    });
+    _newProductItem['product_Id'] = product.id;
+    _newProductItem['productName'] = product.name;
   }
 
   void confirmPurchase() async {
@@ -74,6 +71,8 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           Provider.of<SupplierProvider>(context, listen: false);
       final productProvider =
           Provider.of<ProductProvider>(context, listen: false);
+      final stockPurchaseProvider =
+          Provider.of<StockPurchaseProvider>(context, listen: false);
 
       if (branchProvider.branches.isEmpty) {
         await branchProvider.fetchBranches();
@@ -91,9 +90,10 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           });
         }
       }
-      bool isNotAdmin = userProvider.getLevel()! < 4;
-      if (isNotAdmin) {
+      bool isNotOwner = userProvider.getLevel()! < 4;
+      if (isNotOwner) {
         branchList.add(_selectedBranch!);
+        stockPurchaseProvider.setBranch(_selectedBranch!);
       } else {
         setState(() {
           branchList = branchProvider.branches;
@@ -138,9 +138,6 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                             itemList: branchList,
                             displayItem: (Branch branch) => branch.name,
                             onChanged: (Branch? newValue) {
-                              setState(() {
-                                _selectedBranch = newValue;
-                              });
                               stockPurchaseProvider.setBranch(newValue!);
                             },
                           ),
@@ -151,13 +148,9 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                               labelText: 'Supplier',
                               displayItem: (Supplier supplier) => supplier.name,
                               onChanged: (Supplier? newValue) {
-                                setState(() {
-                                  _selectedSupplier = newValue!;
-                                });
                                 stockPurchaseProvider.setSupplier(newValue!);
                               },
-                              value: stockPurchaseProvider.supplier ??
-                                  _selectedSupplier,
+                              value: stockPurchaseProvider.supplier,
                               itemList: supplierList),
                         )
                       ],
@@ -201,7 +194,7 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                                   dynamic product = stockItems[index];
                                   return ListTile(
                                     tileColor:
-                                        index.isEven ? AppColor.grey1 : null,
+                                        index.isOdd ? AppColor.grey1 : null,
                                     title: Row(
                                       children: [
                                         Expanded(
@@ -281,9 +274,15 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                             Divider(color: AppColor.grey1),
                             TriggerButton(
                                 onPressed: () {
+                                  if (_selectedSearchProduct == null ||
+                                      _selectedExpiryDate == null) return;
                                   stockPurchaseProvider
                                       .addSelectedProduct(_newProductItem);
+                                  //Reset Product Details
+                                  quantityController.clear();
                                   setState(() {
+                                    _selectedSearchProduct = null;
+                                    _selectedExpiryDate = null;
                                     _newProductItem = {};
                                   });
                                 },
