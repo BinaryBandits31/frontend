@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/constants.dart';
+import 'package:frontend/widgets/big_text.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/user_provider.dart';
@@ -9,27 +11,16 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Welcome'),
-        const Text('Dashboard Page'),
-        InkWell(
-          onTap: () {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => const UserLogin(),
-            ));
-            final userProvider =
-                Provider.of<UserProvider>(context, listen: false);
-            userProvider.userDispose();
-          },
-          child: const Text(
-            'Log Out',
-            style: TextStyle(color: Colors.redAccent),
-          ),
-        ),
-      ],
-    ));
+    final userProvider = Provider.of<UserProvider>(context);
+    final userName = userProvider.user!.username;
+
+    return Padding(
+      padding: EdgeInsets.all(sH(20)),
+      child: Column(
+        children: [
+          BigText('Welcome $userName'),
+        ],
+      ),
+    );
   }
 }

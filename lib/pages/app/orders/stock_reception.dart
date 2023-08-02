@@ -97,6 +97,7 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
                               batch['Id'].substring(batch['Id'].length - 4),
                           onChanged: (dynamic batch) {
                             setState(() {
+                              print(batch['sendingBranch']);
                               _displayedFromBranch = branches
                                   .firstWhere((e) =>
                                       e.branchID == batch['sendingBranch'])
