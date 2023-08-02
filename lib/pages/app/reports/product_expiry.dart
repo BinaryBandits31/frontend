@@ -13,6 +13,7 @@ class ProductExpiryReportPage extends StatefulWidget {
 }
 
 class _ProductExpiryReportPageState extends State<ProductExpiryReportPage> {
+  // bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context, listen: false);
@@ -33,8 +34,6 @@ class _ProductExpiryReportPageState extends State<ProductExpiryReportPage> {
 }
 
 class ExpiringStockDataTableSource extends DataTableSource {
-  // final supplierProvider =
-  //     Provider.of<SupplierProvider>(Get.context!, listen: true);
   final List<StockItem?> expiringStock;
 
   ExpiringStockDataTableSource(this.expiringStock);

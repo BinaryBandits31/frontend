@@ -16,6 +16,15 @@ class StockTransferProvider extends ChangeNotifier {
   List<StockItem> _products = [];
   List<StockItem> get products => _products;
 
+  List<dynamic> _transferBatches = [];
+  List<dynamic> get transferBatches => _transferBatches;
+  dynamic _currentBatch;
+  dynamic get currentBatch => _currentBatch;
+  List<dynamic> _incomingStockItems = [];
+  List<dynamic> get incomingStockItems => _incomingStockItems;
+  bool isLoadingTransferDetails = false;
+  bool isLoadingTransferBatches = false;
+
   void addSelectedProduct(dynamic product) {
     _stockItems.add(product);
     notifyListeners();
@@ -23,6 +32,11 @@ class StockTransferProvider extends ChangeNotifier {
 
   void removeIndexedProduct(int index) {
     _stockItems.removeAt(index);
+    notifyListeners();
+  }
+
+  void popTransfer(int index) {
+    _transferBatches.removeAt(index);
     notifyListeners();
   }
 
@@ -41,14 +55,38 @@ class StockTransferProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchStockItems() async {
+  Future<void> fetchStockItems(List<String> itemIDs) async {
     try {
-      final List<StockItem> items = await StockServices.getStockItems();
+      final List<StockItem> items = await StockServices.getStockItems(itemIDs);
       if (items.isNotEmpty) {
         _allStockItems = items;
+        _incomingStockItems = items
+            .map((e) => {
+                  'name': e.productName,
+                  'quantity': e.quantity,
+                })
+            .toList();
       }
     } catch (e) {
       debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchStockTransferBatches() async {
+    isLoadingTransferBatches = true;
+    notifyListeners();
+    try {
+      List<dynamic> batches = await StockServices.getStockTransferBatches();
+      if (batches.isNotEmpty) {
+        _transferBatches = batches;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      isLoadingTransferBatches = false;
+      notifyListeners();
     }
   }
 
@@ -65,6 +103,23 @@ class StockTransferProvider extends ChangeNotifier {
       if (response) {
         res = true;
         _stockItems = [];
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
+    return res;
+  }
+
+  Future<bool> confirmTransfer() async {
+    bool res = false;
+    try {
+      bool response = await StockServices.confirmTransfer(_currentBatch['Id']);
+      if (response) {
+        res = true;
+        _transferBatches.remove(_currentBatch);
+        _currentBatch = null;
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -91,12 +146,52 @@ class StockTransferProvider extends ChangeNotifier {
     return resultMap;
   }
 
+  void getBatchDetails(dynamic batch) async {
+    isLoadingTransferDetails = true;
+    notifyListeners();
+    try {
+      _currentBatch = batch;
+      List<String> stockItemKeys =
+          batch['stockItems'].keys.cast<String>().toList();
+      final items = await StockServices.getStockItems(stockItemKeys);
+      if (items.isNotEmpty) {
+        _incomingStockItems = items;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      isLoadingTransferDetails = false;
+      notifyListeners();
+    }
+  }
+
   void disposeST() {
     _currentBranch = null;
     _toBranch = null;
     _stockItems = [];
     _products = [];
     _allStockItems = [];
+    _transferBatches = [];
+    _currentBatch = null;
+    _incomingStockItems = [];
     notifyListeners();
+  }
+
+  Future<bool> terminateTransfer() async {
+    bool res = false;
+    try {
+      bool response =
+          await StockServices.terminateTransfer(_currentBatch['Id']);
+      if (response) {
+        res = true;
+        _transferBatches.remove(_currentBatch);
+        _currentBatch = null;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
+    return res;
   }
 }

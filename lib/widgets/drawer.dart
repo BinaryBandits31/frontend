@@ -5,11 +5,11 @@ import 'package:frontend/pages/app/admin/suppliers/suppliers.dart';
 import 'package:frontend/pages/app/admin/users/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
-import 'package:frontend/pages/app/orders/sale.dart';
+import 'package:frontend/pages/app/orders/stock_reception.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
 import 'package:frontend/pages/app/reports/product_expiry.dart';
-import 'package:frontend/pages/app/activity_logs_page.dart';
+import 'package:frontend/pages/app/reports/activity_logs_page.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../pages/app/dashboard.dart';
@@ -87,9 +87,10 @@ class MyDrawer extends StatelessWidget {
               icon: Icons.receipt_long_outlined,
               items: [
                 DrawerMenuItem(
-                  title: 'Sales',
-                  itemIcon: Icons.attach_money_outlined,
-                  page: SalesPage(),
+                  accessLevel: 2,
+                  title: 'Stock Purchase',
+                  itemIcon: Icons.monetization_on_outlined,
+                  page: StockPurchasePage(),
                 ),
                 DrawerMenuItem(
                   title: 'Stock Transfer',
@@ -97,26 +98,27 @@ class MyDrawer extends StatelessWidget {
                   page: StockTransferPage(),
                 ),
                 DrawerMenuItem(
-                  title: 'Stock Purchase',
+                  title: 'Stock Reception',
                   itemIcon: Icons.handshake,
-                  page: StockPurchasePage(),
+                  page: StockReceptionPage(),
                 ),
               ],
-            ),
-            const DrawerMenuItem(
-              title: 'Activity Logs',
-              page: ActivityLogsPage(),
-              itemIcon: Icons.history_edu_outlined,
             ),
             DrawerMenu(
               text: 'Reports',
               icon: Icons.print_outlined,
               items: const [
                 DrawerMenuItem(
+                  accessLevel: 3,
+                  title: 'Activity Logs',
+                  itemIcon: Icons.history_edu_outlined,
+                  page: ActivityLogsPage(),
+                ),
+                DrawerMenuItem(
                   title: 'Product Expiry',
                   itemIcon: Icons.hourglass_bottom_rounded,
                   page: ProductExpiryReportPage(),
-                ),
+                )
               ],
               hasAlert: appProvider.alerts > 0,
             )

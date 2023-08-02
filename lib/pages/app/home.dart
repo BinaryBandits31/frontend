@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/providers/branch_provider.dart';
-import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/constants.dart';
+import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
+import 'package:frontend/widgets/text_field.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/app_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/colors.dart';
 import '../../widgets/drawer.dart';
-import '../auth/user_login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -70,7 +69,10 @@ class _HomePageState extends State<HomePage> {
               onSelected: (String value) async {
                 if (value == 'change_password') {
                   // Handle change password action
-
+                  showDialog(
+                    context: context,
+                    builder: (context) => ChangePasswordDialog(),
+                  );
                 } else if (value == 'logout') {
                   await AuthServices.appLogout();
                 }
@@ -88,6 +90,72 @@ class _HomePageState extends State<HomePage> {
       body: Consumer<AppProvider>(builder: (context, provider, child) {
         return provider.selectedTab!;
       }),
+    );
+  }
+}
+
+class ChangePasswordDialog extends StatefulWidget {
+  @override
+  _ChangePasswordDialogState createState() => _ChangePasswordDialogState();
+}
+
+class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
+  final _updatePasswordData = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    String userID = userProvider.user!.id;
+    _updatePasswordData['employee_Id'] = userID;
+
+    return SingleChildScrollView(
+      child: AlertDialog(
+        title: const Text('Update Password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LabeledTextField(
+              margin: false,
+              label: 'Old Password',
+              isRequired: true,
+              onSaved: (value) {
+                _updatePasswordData['old_Password'] = value;
+              },
+            ),
+            addVerticalSpace(20),
+            LabeledTextField(
+              margin: false,
+              label: 'New Password',
+              isRequired: true,
+              onSaved: (value) {
+                _updatePasswordData['new_Password'] = value;
+              },
+            ),
+          ],
+        ),
+        actions: [
+          SubmitButton(
+            label: 'Create',
+            onPressed: () async {
+              final res =
+                  await AuthServices.updateUserPassword(_updatePasswordData);
+              if (res) {
+                successMessage('Password updated successfully!');
+                Navigator.of(Get.context!).pop();
+              } else {
+                dangerMessage('Something went wrong.');
+              }
+            },
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
     );
   }
 }

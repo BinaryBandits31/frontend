@@ -21,7 +21,7 @@ class _ProductStockPageState extends State<ProductStockPage> {
   @override
   void initState() {
     super.initState();
-    StockServices.getStockItems().then((value) => setState(() {
+    StockServices.getStockItems([]).then((value) => setState(() {
           stockItems = value;
           isLoading = false;
         }));

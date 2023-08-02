@@ -4,10 +4,11 @@ class User {
   final String? lastName;
   final String username;
   final String? dob;
-  final String empLevel;
+  final String? empLevel;
   final String empType;
   final String branchId;
   final String orgId;
+  final bool? isActive;
   final String? token;
 
   User({
@@ -21,6 +22,7 @@ class User {
     required this.branchId,
     required this.orgId,
     this.token,
+    this.isActive,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -33,6 +35,7 @@ class User {
         empType: json['emp_Type'],
         branchId: json['branch_Id'],
         orgId: json['org_Id'],
+        isActive: json['is_Active'],
         token: json['token'],
       );
 
@@ -47,6 +50,7 @@ class User {
       'emp_Type': empType,
       'branch_Id': branchId,
       'org_Id': orgId,
+      'is_Active': isActive,
       'token': token,
     };
   }

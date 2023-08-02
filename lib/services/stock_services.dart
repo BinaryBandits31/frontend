@@ -31,8 +31,7 @@ class StockServices {
     }
   }
 
-  static Future<List<StockItem>> getStockItems(
-      {List stockItemIDs = const []}) async {
+  static Future<List<StockItem>> getStockItems(List stockItemIDs) async {
     String endpoint = '/org/stock/item';
     try {
       final userProvider =
@@ -65,21 +64,7 @@ class StockServices {
     }
   }
 
-//TODO: Not working
   static Future<bool> purchaseStock(dynamic data) async {
-    // dynamic testData = {
-    //   "supplier_Id": "64c6d688a5981bdf0ca67f51",
-    //   "stockItems": [
-    //     {
-    //       "product_Id": "64c6fccd581645e3f4b8a048",
-    //       "productName": "iPhone 16",
-    //       "quantity": 4,
-    //       "expiry": "2023-08-19"
-    //     }
-    //   ],
-    //   "branch_Id": "JHNW1_3"
-    // };
-
     try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
@@ -87,8 +72,6 @@ class StockServices {
       final response = await http.post(Uri.parse('$port/org/stock'),
           headers: {'token': token}, body: jsonEncode(data));
 
-      print(response.statusCode);
-      print(response.body);
       if (response.statusCode == 201) {
         return true;
       }
@@ -98,17 +81,13 @@ class StockServices {
     return false;
   }
 
-  static transferStock(dynamic data) async {
-    print(data);
+  static Future<bool> transferStock(dynamic data) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
 
       final response = await http.post(Uri.parse('$port/org/stock/transfer'),
           headers: {'token': token}, body: jsonEncode(data));
-
-      print(response.statusCode);
-      print(response.body);
       if (response.statusCode == 201) {
         return true;
       }
@@ -116,5 +95,76 @@ class StockServices {
       debugPrint(e.toString());
     }
     return false;
+  }
+
+  static Future<List<dynamic>> getStockTransferBatches() async {
+    String endpoint = '/org/stock/transfer';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final userProvider =
+          Provider.of<UserProvider>(Get.context!, listen: false);
+      final userLevel = userProvider.getLevel();
+
+      final response = await http
+          .get(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+      if (response.statusCode == 200) {
+        dynamic res = [];
+        if (userLevel! >= 3) {
+          res = (jsonDecode(response.body) as List<dynamic>);
+          return res;
+        } else {
+          if (jsonDecode(response.body)['incoming'] == null) return res;
+          res = (jsonDecode(response.body)['incoming'] as List<dynamic>);
+          return res
+              .where((e) => e['receivingBranch'] == userProvider.user!.branchId)
+              .toList();
+        }
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  static Future<bool> confirmTransfer(String currentBatchID) async {
+    String endpoint = '/org/stock/transfer/$currentBatchID/received';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http
+          .put(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  static Future<bool> terminateTransfer(String currentBatchID) async {
+    String endpoint = '/org/stock/transfer/$currentBatchID/terminate';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http
+          .put(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

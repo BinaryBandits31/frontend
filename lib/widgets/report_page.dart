@@ -110,7 +110,9 @@ class ReportPage extends StatelessWidget {
                                                 Icons.refresh_rounded),
                                             color: Colors.blue,
                                             onPressed: () async {
-                                              // await refreshPageFunction();
+                                              if (refreshPageFunction != null) {
+                                                // await refreshPageFunction!();
+                                              }
                                             },
                                           )
                                         ],

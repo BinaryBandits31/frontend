@@ -85,6 +85,7 @@ class CustomDropDown<T> extends StatelessWidget {
   final List<T> itemList;
   final String Function(T)? displayItem;
   final void Function(T?)? onChanged;
+  final bool? isLoading;
 
   const CustomDropDown({
     super.key,
@@ -93,6 +94,7 @@ class CustomDropDown<T> extends StatelessWidget {
     required this.itemList,
     this.displayItem,
     this.onChanged,
+    this.isLoading,
   });
 
   @override
@@ -103,22 +105,28 @@ class CustomDropDown<T> extends StatelessWidget {
         Text(labelText),
         SizedBox(
           width: screenWidth * 0.15,
-          child: DropdownButton<T>(
-            isExpanded: true,
-            alignment: AlignmentDirectional.centerStart,
-            value: value,
-            onChanged: onChanged,
-            items: itemList.map<DropdownMenuItem<T>>(
-              (T item) {
-                return DropdownMenuItem<T>(
-                  value: item,
-                  child: Text(
-                    displayItem != null ? displayItem!(item) : item.toString(),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              },
-            ).toList(),
+          child: Visibility(
+            visible: isLoading != null ? !isLoading! : true,
+            replacement: const Center(child: CircularProgressIndicator()),
+            child: DropdownButton<T>(
+              isExpanded: true,
+              alignment: AlignmentDirectional.centerStart,
+              value: value,
+              onChanged: onChanged,
+              items: itemList.map<DropdownMenuItem<T>>(
+                (T item) {
+                  return DropdownMenuItem<T>(
+                    value: item,
+                    child: Text(
+                      displayItem != null
+                          ? displayItem!(item)
+                          : item.toString(),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                },
+              ).toList(),
+            ),
           ),
         ),
       ],
@@ -142,6 +150,58 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
+      lastDate: DateTime.now()
+          .add(const Duration(days: 365 * 10)), // Limit to 10 years from today
+    );
+
+    if (picked != null && picked != widget.selectedDate) {
+      widget.onDateSelected?.call(picked);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          widget.selectedDate == null
+              ? 'Select Date'
+              : DateFormat('dd MMM yyyy').format(widget.selectedDate!),
+          style: TextStyle(
+              fontSize: sH(18),
+              fontWeight: widget.selectedDate != null ? FontWeight.bold : null),
+        ),
+        addHorizontalSpace(sW(10)),
+        InkWell(
+          onTap: () => _selectDate(context),
+          child: const Icon(
+            Icons.date_range_rounded,
+            color: Colors.blue,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CustomRegularDatePicker extends StatefulWidget {
+  final DateTime? selectedDate;
+  final Function(DateTime)? onDateSelected;
+
+  const CustomRegularDatePicker(
+      {super.key, this.selectedDate, this.onDateSelected});
+
+  @override
+  State<CustomRegularDatePicker> createState() =>
+      _CustomRegularDatePickerState();
+}
+
+class _CustomRegularDatePickerState extends State<CustomRegularDatePicker> {
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 23)),
+      firstDate: DateTime.now().subtract(const Duration(days: 365 * 23)),
       lastDate: DateTime.now()
           .add(const Duration(days: 365 * 10)), // Limit to 10 years from today
     );

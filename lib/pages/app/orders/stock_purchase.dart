@@ -115,203 +115,200 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
         Provider.of<StockPurchaseProvider>(context, listen: true);
     final stockItems = stockPurchaseProvider.stockItems;
 
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: Container(
-          height: screenHeight * 0.91,
-          padding: EdgeInsets.symmetric(horizontal: sH(20), vertical: sH(20)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              //left Pane
-              Expanded(
-                child: Column(
-                  children: [
-                    //Header
-                    Row(
-                      children: [
-                        PaneContainer(
-                          child: CustomDropDown<Branch>(
-                            labelText: 'Branch',
-                            value: stockPurchaseProvider.currentBranch ??
-                                _selectedBranch,
-                            itemList: branchList,
-                            displayItem: (Branch branch) => branch.name,
-                            onChanged: (Branch? newValue) {
-                              stockPurchaseProvider.setBranch(newValue!);
+    return SingleChildScrollView(
+      child: Container(
+        height: screenHeight * 0.91,
+        padding: EdgeInsets.symmetric(horizontal: sH(20), vertical: sH(20)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            //left Pane
+            Expanded(
+              child: Column(
+                children: [
+                  //Header
+                  Row(
+                    children: [
+                      PaneContainer(
+                        child: CustomDropDown<Branch>(
+                          labelText: 'Branch',
+                          value: stockPurchaseProvider.currentBranch ??
+                              _selectedBranch,
+                          itemList: branchList,
+                          displayItem: (Branch branch) => branch.name,
+                          onChanged: (Branch? newValue) {
+                            stockPurchaseProvider.setBranch(newValue!);
+                          },
+                        ),
+                      ),
+                      addHorizontalSpace(screenWidth * 0.05),
+                      PaneContainer(
+                        child: CustomDropDown<Supplier>(
+                            labelText: 'Supplier',
+                            displayItem: (Supplier supplier) => supplier.name,
+                            onChanged: (Supplier? newValue) {
+                              stockPurchaseProvider.setSupplier(newValue!);
                             },
+                            value: stockPurchaseProvider.supplier,
+                            itemList: supplierList),
+                      )
+                    ],
+                  ),
+                  addVerticalSpace(sH(20)),
+                  //Search Product
+                  PaneContainer(
+                    child: CustomSearchField<Product>(
+                      itemList: productList,
+                      getItemName: (product) => product.name,
+                      onItemSelected: (product) {
+                        _selectProduct(product);
+                      },
+                    ),
+                  ),
+                  addVerticalSpace(sH(20)),
+                  //Entered Product List
+                  Expanded(
+                    child: PaneContainer(
+                      child: Column(
+                        children: [
+                          const ListTile(
+                            title: Row(
+                              children: [
+                                Expanded(child: Text('Product Name')),
+                                Expanded(child: Text('Quantity')),
+                                Expanded(child: Text('Expiry')),
+                              ],
+                            ),
+                            trailing: Icon(
+                              Icons.delete,
+                              color: Colors.transparent,
+                              size: 50,
+                            ),
                           ),
-                        ),
-                        addHorizontalSpace(screenWidth * 0.05),
-                        PaneContainer(
-                          child: CustomDropDown<Supplier>(
-                              labelText: 'Supplier',
-                              displayItem: (Supplier supplier) => supplier.name,
-                              onChanged: (Supplier? newValue) {
-                                stockPurchaseProvider.setSupplier(newValue!);
+                          const Divider(),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: stockItems.length,
+                              itemBuilder: (context, index) {
+                                dynamic product = stockItems[index];
+                                return ListTile(
+                                  tileColor:
+                                      index.isOdd ? AppColor.grey1 : null,
+                                  title: Row(
+                                    children: [
+                                      Expanded(
+                                          child: Text(
+                                              '${product['productName']}')),
+                                      Expanded(
+                                          child:
+                                              Text('${product['quantity']}')),
+                                      Expanded(
+                                          child: Text('${product['expiry']}')),
+                                    ],
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () => stockPurchaseProvider
+                                        .removeIndexedProduct(index),
+                                  ),
+                                );
                               },
-                              value: stockPurchaseProvider.supplier,
-                              itemList: supplierList),
-                        )
-                      ],
-                    ),
-                    addVerticalSpace(sH(20)),
-                    //Search Product
-                    PaneContainer(
-                      child: CustomSearchField<Product>(
-                        itemList: productList,
-                        getItemName: (product) => product.name,
-                        onItemSelected: (product) {
-                          _selectProduct(product);
-                        },
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    addVerticalSpace(sH(20)),
-                    //Entered Product List
-                    Expanded(
-                      child: PaneContainer(
-                        child: Column(
-                          children: [
-                            const ListTile(
-                              title: Row(
-                                children: [
-                                  Expanded(child: Text('Product Name')),
-                                  Expanded(child: Text('Quantity')),
-                                  Expanded(child: Text('Expiry')),
-                                ],
-                              ),
-                              trailing: Icon(
-                                Icons.delete,
-                                color: Colors.transparent,
-                                size: 50,
-                              ),
-                            ),
-                            const Divider(),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: stockItems.length,
-                                itemBuilder: (context, index) {
-                                  dynamic product = stockItems[index];
-                                  return ListTile(
-                                    tileColor:
-                                        index.isOdd ? AppColor.grey1 : null,
-                                    title: Row(
-                                      children: [
-                                        Expanded(
-                                            child: Text(
-                                                '${product['productName']}')),
-                                        Expanded(
-                                            child:
-                                                Text('${product['quantity']}')),
-                                        Expanded(
-                                            child:
-                                                Text('${product['expiry']}')),
-                                      ],
-                                    ),
-                                    trailing: IconButton(
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () => stockPurchaseProvider
-                                          .removeIndexedProduct(index),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
-              addHorizontalSpace(sW(20)),
-              // right Pane
-              SizedBox(
-                width: screenWidth * 0.3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    //Selected Product Detail
-                    PaneContainer(
-                        height: screenHeight * 0.35,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            CardField(
-                              title: 'Product Name',
-                              value: _selectedSearchProduct != null
-                                  ? _selectedSearchProduct!.name
-                                  : '',
+            ),
+            addHorizontalSpace(sW(20)),
+            // right Pane
+            SizedBox(
+              width: screenWidth * 0.3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //Selected Product Detail
+                  PaneContainer(
+                      height: screenHeight * 0.35,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CardField(
+                            title: 'Product Name',
+                            value: _selectedSearchProduct != null
+                                ? _selectedSearchProduct!.name
+                                : '',
+                          ),
+                          Divider(color: AppColor.grey1),
+                          CardField(
+                            title: 'Quantity',
+                            isValueWidget: true,
+                            widget: TextFormField(
+                              controller: quantityController,
+                              focusNode: quantityFocusNode,
+                              onTapOutside: (event) =>
+                                  quantityFocusNode.unfocus(),
+                              keyboardType: TextInputType.number,
                             ),
-                            Divider(color: AppColor.grey1),
-                            CardField(
-                              title: 'Quantity',
-                              isValueWidget: true,
-                              widget: TextFormField(
-                                controller: quantityController,
-                                focusNode: quantityFocusNode,
-                                onTapOutside: (event) =>
-                                    quantityFocusNode.unfocus(),
-                                keyboardType: TextInputType.number,
-                              ),
+                          ),
+                          Divider(color: AppColor.grey1),
+                          CardField(
+                            title: 'Expiry Date',
+                            isValueWidget: true,
+                            widget: CustomRegularDatePicker(
+                              selectedDate: _selectedExpiryDate,
+                              onDateSelected: _handleExpiryDateSelected,
                             ),
-                            Divider(color: AppColor.grey1),
-                            CardField(
-                              title: 'Expiry Date',
-                              isValueWidget: true,
-                              widget: CustomDatePicker(
-                                selectedDate: _selectedExpiryDate,
-                                onDateSelected: _handleExpiryDateSelected,
-                              ),
-                            ),
-                            Divider(color: AppColor.grey1),
-                            TriggerButton(
-                                onPressed: () {
-                                  if (_selectedSearchProduct == null ||
-                                      _selectedExpiryDate == null) return;
+                          ),
+                          Divider(color: AppColor.grey1),
+                          TriggerButton(
+                              onPressed: () {
+                                if (_selectedSearchProduct == null ||
+                                    _selectedExpiryDate == null) return;
 
-                                  _newProductItem['quantity'] =
-                                      int.parse(quantityController.text);
-                                  stockPurchaseProvider
-                                      .addSelectedProduct(_newProductItem);
-                                  //Reset Product Details
-                                  quantityController.clear();
-                                  setState(() {
-                                    _selectedSearchProduct = null;
-                                    _selectedExpiryDate = null;
-                                    _newProductItem = {};
-                                  });
-                                },
-                                title: 'Add to List')
-                          ],
-                        )),
+                                _newProductItem['quantity'] =
+                                    int.parse(quantityController.text);
+                                stockPurchaseProvider
+                                    .addSelectedProduct(_newProductItem);
+                                //Reset Product Details
+                                quantityController.clear();
+                                setState(() {
+                                  _selectedSearchProduct = null;
+                                  _selectedExpiryDate = null;
+                                  _newProductItem = {};
+                                });
+                              },
+                              title: 'Add to List')
+                        ],
+                      )),
 
-                    //Submit Transaction
-                    PaneContainer(
-                        child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SubmitButton(
-                            label: 'Confirm Purchase',
-                            onPressed: () => confirmPurchase()),
-                        ElevatedButton(
-                            onPressed: () =>
-                                stockPurchaseProvider.cancelPurchase(),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(color: Colors.red),
-                            ))
-                      ],
-                    ))
-                  ],
-                ),
+                  //Submit Transaction
+                  PaneContainer(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SubmitButton(
+                          label: 'Confirm Purchase',
+                          onPressed: () => confirmPurchase()),
+                      ElevatedButton(
+                          onPressed: () =>
+                              stockPurchaseProvider.cancelPurchase(),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.red),
+                          ))
+                    ],
+                  ))
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

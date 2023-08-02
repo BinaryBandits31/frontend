@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:frontend/models/organization.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/branch_provider.dart';
@@ -81,6 +82,42 @@ class AuthServices {
     }
   }
 
+  static Future<bool> updateUserPassword(dynamic data) async {
+    String endpoint = '/org/employee/change_password';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+      final res = await http.put(Uri.parse('$port$endpoint'),
+          headers: {'token': token}, body: jsonEncode(data));
+
+      if (res.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return false;
+  }
+
+  static Future<bool> createNewUser(dynamic data) async {
+    String endpoint = '/org/employee';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+      final res = await http.post(Uri.parse('$port$endpoint'),
+          headers: {'token': token}, body: jsonEncode(data));
+
+      if (res.statusCode == 201) {
+        return true;
+      }
+    } catch (e) {
+      Provider.of<UserProvider>(Get.context!, listen: false)
+          .setCreateUserError(e.toString());
+      debugPrint(e.toString());
+    }
+    return false;
+  }
+
   static Future<void> appLogout() async {
     // Handle logout action
     Provider.of<AppProvider>(Get.context!, listen: false).appDispose();
@@ -99,5 +136,26 @@ class AuthServices {
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove('userToken');
     Get.off(() => const UserLogin());
+  }
+
+  static Future<List<User>?> fetchFellowUsers() async {
+    String endpoint = '/org/branch/employee/_';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+      final res = await http
+          .get(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+      if (res.statusCode == 200) {
+        if (jsonDecode(res.body) != null) {
+          return (jsonDecode(res.body) as List<dynamic>)
+              .map((e) => User.fromJson(e))
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return [];
   }
 }
