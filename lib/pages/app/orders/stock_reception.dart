@@ -33,7 +33,8 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
     if (res) {
       successMessage('Stock Received Successfully');
     } else {
-      dangerMessage('Stock Reception Failed');
+      dangerMessage(stockTransferProvider.stockTransferError ??
+          'Stock Reception Failed.');
     }
   }
 
@@ -44,7 +45,8 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
     if (res) {
       successMessage('Stock Terminated Successfully');
     } else {
-      dangerMessage('Stock Termination Failed');
+      dangerMessage(
+          stockTransferProvider.stockTransferError ?? 'Something went wrong.');
     }
   }
 
@@ -61,6 +63,12 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
       }
       await stockTransferProvider.fetchStockTransferBatches();
     });
+  }
+
+  @override
+  void dispose() {
+    Provider.of<StockTransferProvider>(context, listen: false).disposeST();
+    super.dispose();
   }
 
   @override
@@ -143,21 +151,25 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
                                                 itemBuilder: (context, index) {
                                                   dynamic batch =
                                                       batchItems[index];
-                                                  return ListTile(
-                                                    tileColor: index.isEven
-                                                        ? AppColor.grey1
-                                                        : null,
-                                                    title: Row(
-                                                      children: [
-                                                        Expanded(
-                                                            child: Text(
-                                                                '${batch.productName}')),
-                                                        Expanded(
-                                                            child: Text(
-                                                                '${batch.quantity}'))
-                                                      ],
-                                                    ),
-                                                  );
+                                                  try {
+                                                    return ListTile(
+                                                      tileColor: index.isEven
+                                                          ? AppColor.grey1
+                                                          : null,
+                                                      title: Row(
+                                                        children: [
+                                                          Expanded(
+                                                              child: Text(
+                                                                  '${batch.productName}')),
+                                                          Expanded(
+                                                              child: Text(
+                                                                  '${batch.quantity}'))
+                                                        ],
+                                                      ),
+                                                    );
+                                                  } catch (e) {
+                                                    return const SizedBox();
+                                                  }
                                                 },
                                               )
                                             : const Center(
@@ -211,7 +223,7 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
                       addVerticalSpace(sH(20)),
                       SubmitButton(
                           danger: true,
-                          label: 'Confirm Transfer',
+                          label: 'Terminate Transfer',
                           onPressed: () => terminateTransfer()),
                     ],
                   ))

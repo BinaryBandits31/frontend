@@ -45,7 +45,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
         Provider.of<StockTransferProvider>(context, listen: false);
     bool res = await stockPurchaseProvider.initiateTransfer();
     if (res) {
-      successMessage('Stock Purchased Successfully');
+      successMessage('Stock Transferred Successfully');
     } else {
       dangerMessage('Stock Transfer Failed');
     }

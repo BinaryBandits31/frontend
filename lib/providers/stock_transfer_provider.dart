@@ -24,6 +24,13 @@ class StockTransferProvider extends ChangeNotifier {
   List<dynamic> get incomingStockItems => _incomingStockItems;
   bool isLoadingTransferDetails = false;
   bool isLoadingTransferBatches = false;
+  String? _stockTransferError;
+  String? get stockTransferError => _stockTransferError;
+
+  void setTransferError(String err) {
+    _stockTransferError = err;
+    notifyListeners();
+  }
 
   void addSelectedProduct(dynamic product) {
     _stockItems.add(product);

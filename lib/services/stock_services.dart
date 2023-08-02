@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:get/get.dart';
@@ -145,6 +146,8 @@ class StockServices {
         return false;
       }
     } catch (e) {
+      Provider.of<StockTransferProvider>(Get.context!, listen: false)
+          .setTransferError(e.toString());
       throw Exception(e);
     }
   }
@@ -164,6 +167,8 @@ class StockServices {
         return false;
       }
     } catch (e) {
+      Provider.of<StockTransferProvider>(Get.context!, listen: false)
+          .setTransferError(e.toString());
       throw Exception(e);
     }
   }
