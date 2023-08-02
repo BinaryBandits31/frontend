@@ -4,7 +4,7 @@ import '../../../models/stock_item.dart';
 import '../../../providers/stock_provider.dart';
 import '../../../providers/app_provider.dart';
 import 'package:intl/intl.dart';
-import '../../../services/stock_items_services.dart';
+import '../../../services/stock_services.dart';
 import '../../../widgets/data_page.dart';
 
 class ProductStockPage extends StatefulWidget {
@@ -15,7 +15,6 @@ class ProductStockPage extends StatefulWidget {
 }
 
 class _ProductStockPageState extends State<ProductStockPage> {
-
   bool isLoading = true;
   List<StockItem> stockItems = [];
 
@@ -23,16 +22,15 @@ class _ProductStockPageState extends State<ProductStockPage> {
   void initState() {
     super.initState();
     StockServices.getStockItems().then((value) => setState(() {
-      stockItems = value;
-      isLoading = false;
-    }));
+          stockItems = value;
+          isLoading = false;
+        }));
   }
 
   @override
   Widget build(BuildContext context) {
-
     return DataPage(
-      refreshPageFunction: (){},
+      refreshPageFunction: () {},
       isLoading: isLoading, // Use isLoading from the StockProvider
       dataList: stockItems, // Use the stockItems list
       pageTitle: "STOCK ITEMS",
@@ -41,16 +39,15 @@ class _ProductStockPageState extends State<ProductStockPage> {
         'QUANTITY',
         'EXPIRY DATE',
       ],
-      searchFunction: (){},
+      searchFunction: () {},
       createNewDialog: Container(), // Use the create stockItem dialog
-      source:
-      StockItemDataTableSource(stockItems), // Use
-      adminPage: false,// the StockItemDataTableSource
+      source: StockItemDataTableSource(stockItems), // Use
+      adminPage: false, // the StockItemDataTableSource
     );
   }
 }
 
-class StockItemDataTableSource extends DataTableSource{
+class StockItemDataTableSource extends DataTableSource {
   final List<StockItem> stockItems;
 
   StockItemDataTableSource(this.stockItems);
@@ -63,7 +60,8 @@ class StockItemDataTableSource extends DataTableSource{
       cells: [
         DataCell(Text(stockItem.productName)),
         DataCell(Text(stockItem.quantity.toString())),
-        DataCell(Text(DateFormat('EEEE, MMM d, yyyy HH:mm').format(DateTime.parse(stockItem.expiryDate)))),
+        DataCell(Text(DateFormat('EEEE, MMM d, yyyy HH:mm')
+            .format(DateTime.parse(stockItem.expiryDate)))),
       ],
     );
   }

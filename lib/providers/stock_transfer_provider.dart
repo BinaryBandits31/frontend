@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/branch.dart';
 import 'package:frontend/models/stock_item.dart';
-import 'package:frontend/services/stock_items_services.dart';
+import 'package:frontend/services/stock_services.dart';
 
 class StockTransferProvider extends ChangeNotifier {
   Branch? _currentBranch;
@@ -12,6 +12,7 @@ class StockTransferProvider extends ChangeNotifier {
 
   List<dynamic> _stockItems = [];
   List<dynamic> get stockItems => _stockItems;
+  List<StockItem> _allStockItems = [];
   List<StockItem> _products = [];
   List<StockItem> get products => _products;
 
@@ -26,8 +27,13 @@ class StockTransferProvider extends ChangeNotifier {
   }
 
   void setCurrentBranch(Branch branch) {
-    _currentBranch = branch;
-    notifyListeners();
+    if (_currentBranch != branch) {
+      _stockItems = [];
+      _products =
+          _allStockItems.where((e) => e.branchID == branch.branchID).toList();
+      _currentBranch = branch;
+      notifyListeners();
+    }
   }
 
   void setToBranch(Branch branch) {
@@ -39,7 +45,7 @@ class StockTransferProvider extends ChangeNotifier {
     try {
       final List<StockItem> items = await StockServices.getStockItems();
       if (items.isNotEmpty) {
-        _products = items;
+        _allStockItems = items;
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -54,11 +60,11 @@ class StockTransferProvider extends ChangeNotifier {
       'stockItems': convertListToMap(_stockItems),
       'receivingBranch': _toBranch!.branchID,
     };
-    debugPrint(stockData.toString());
     try {
       bool response = await StockServices.transferStock(stockData);
       if (response) {
         res = true;
+        _stockItems = [];
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -79,7 +85,7 @@ class StockTransferProvider extends ChangeNotifier {
       if (item is Map &&
           item.containsKey("product_Id") &&
           item.containsKey("quantity")) {
-        resultMap[item["product_Id"]] = item["quantity"];
+        resultMap[item["product_Id"]] = int.parse(item["quantity"]);
       }
     }
     return resultMap;
@@ -90,6 +96,7 @@ class StockTransferProvider extends ChangeNotifier {
     _toBranch = null;
     _stockItems = [];
     _products = [];
+    _allStockItems = [];
     notifyListeners();
   }
 }

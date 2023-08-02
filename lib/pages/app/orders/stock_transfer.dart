@@ -47,7 +47,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
     if (res) {
       successMessage('Stock Purchased Successfully');
     } else {
-      dangerMessage('Stock Purchase Failed');
+      dangerMessage('Stock Transfer Failed');
     }
   }
 
@@ -60,13 +60,14 @@ class _StockTransferPageState extends State<StockTransferPage> {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final stockTransferProvider =
           Provider.of<StockTransferProvider>(context, listen: false);
+      await stockTransferProvider.fetchStockItems();
 
       if (branchProvider.branches.isEmpty) {
         await branchProvider.fetchBranches();
       }
-      if (stockTransferProvider.stockItems.isEmpty) {
-        await stockTransferProvider.fetchStockItems();
-      }
+      // if (stockTransferProvider.products.isEmpty) {
+      //   await stockTransferProvider.fetchStockItems();
+      // }
       for (Branch branch in branchProvider.branches) {
         if (branch.branchID == userProvider.user!.branchId) {
           setState(() {
@@ -94,7 +95,8 @@ class _StockTransferPageState extends State<StockTransferPage> {
     final stockTransferProvider =
         Provider.of<StockTransferProvider>(context, listen: true);
     final stockItems = stockTransferProvider.stockItems;
-    List<StockItem> productList = stockTransferProvider.products;
+    final List<StockItem> productList =
+        Provider.of<StockTransferProvider>(context, listen: false).products;
 
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
@@ -145,9 +147,9 @@ class _StockTransferPageState extends State<StockTransferPage> {
                     PaneContainer(
                       child: CustomSearchField<StockItem>(
                         itemList: productList,
-                        getItemName: (product) => product.productName,
-                        onItemSelected: (product) {
-                          _selectProduct(product);
+                        getItemName: (stockItem) => stockItem.productName,
+                        onItemSelected: (stockItem) {
+                          _selectProduct(stockItem);
                         },
                       ),
                     ),
@@ -244,15 +246,14 @@ class _StockTransferPageState extends State<StockTransferPage> {
                                 focusNode: quantityFocusNode,
                                 onTapOutside: (event) =>
                                     quantityFocusNode.unfocus(),
-                                onChanged: (newValue) {
-                                  _newProductItem['quantity'] = newValue;
-                                },
                                 keyboardType: TextInputType.number,
                               ),
                             ),
                             Divider(color: AppColor.grey1),
                             TriggerButton(
                                 onPressed: () {
+                                  _newProductItem['quantity'] =
+                                      quantityController.text;
                                   stockTransferProvider
                                       .addSelectedProduct(_newProductItem);
                                   setState(() {

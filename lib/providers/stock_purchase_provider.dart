@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/branch.dart';
 import 'package:frontend/models/supplier.dart';
-import 'package:frontend/services/stock_items_services.dart';
+import 'package:frontend/services/stock_services.dart';
 
 class StockPurchaseProvider extends ChangeNotifier {
   Branch? _currentBranch;

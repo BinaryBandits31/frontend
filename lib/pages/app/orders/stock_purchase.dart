@@ -256,9 +256,6 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                                 focusNode: quantityFocusNode,
                                 onTapOutside: (event) =>
                                     quantityFocusNode.unfocus(),
-                                onChanged: (newValue) {
-                                  _newProductItem['quantity'] = newValue;
-                                },
                                 keyboardType: TextInputType.number,
                               ),
                             ),
@@ -276,6 +273,9 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                                 onPressed: () {
                                   if (_selectedSearchProduct == null ||
                                       _selectedExpiryDate == null) return;
+
+                                  _newProductItem['quantity'] =
+                                      int.parse(quantityController.text);
                                   stockPurchaseProvider
                                       .addSelectedProduct(_newProductItem);
                                   //Reset Product Details

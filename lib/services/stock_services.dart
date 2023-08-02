@@ -67,17 +67,25 @@ class StockServices {
 
 //TODO: Not working
   static Future<bool> purchaseStock(dynamic data) async {
+    // dynamic testData = {
+    //   "supplier_Id": "64c6d688a5981bdf0ca67f51",
+    //   "stockItems": [
+    //     {
+    //       "product_Id": "64c6fccd581645e3f4b8a048",
+    //       "productName": "iPhone 16",
+    //       "quantity": 4,
+    //       "expiry": "2023-08-19"
+    //     }
+    //   ],
+    //   "branch_Id": "JHNW1_3"
+    // };
+
     try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
 
-      final response = await http.post(Uri.parse('$port/org/stock'), headers: {
-        'token': token
-      }, body: <String, dynamic>{
-        'supplier_Id': data['supplier_Id'],
-        'stockItems': data['stockItems'] as List<dynamic>,
-        'branch_Id': data['branch_Id'],
-      });
+      final response = await http.post(Uri.parse('$port/org/stock'),
+          headers: {'token': token}, body: jsonEncode(data));
 
       print(response.statusCode);
       print(response.body);
@@ -91,11 +99,12 @@ class StockServices {
   }
 
   static transferStock(dynamic data) async {
+    print(data);
     try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
 
-      final response = await http.post(Uri.parse('$port$endpoint'),
+      final response = await http.post(Uri.parse('$port/org/stock/transfer'),
           headers: {'token': token}, body: jsonEncode(data));
 
       print(response.statusCode);
