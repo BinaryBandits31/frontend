@@ -23,7 +23,7 @@ class StockPurchaseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBranch(Branch branch) {
+  void setBranch(Branch? branch) {
     _currentBranch = branch;
     notifyListeners();
   }

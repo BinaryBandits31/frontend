@@ -268,7 +268,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SubmitButton(
-                          label: 'Confirm Purchase',
+                          label: 'Confirm Transfer',
                           onPressed: () => confirmTransfer()),
                       ElevatedButton(
                           onPressed: () =>

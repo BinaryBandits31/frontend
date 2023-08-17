@@ -134,24 +134,25 @@ class CustomDropDown<T> extends StatelessWidget {
   }
 }
 
-class CustomDatePicker extends StatefulWidget {
+class CustomExpiryDatePicker extends StatefulWidget {
   final DateTime? selectedDate;
   final Function(DateTime)? onDateSelected;
 
-  const CustomDatePicker({super.key, this.selectedDate, this.onDateSelected});
+  const CustomExpiryDatePicker(
+      {super.key, this.selectedDate, this.onDateSelected});
 
   @override
-  State<CustomDatePicker> createState() => _CustomDatePickerState();
+  State<CustomExpiryDatePicker> createState() => _CustomExpiryDatePickerState();
 }
 
-class _CustomDatePickerState extends State<CustomDatePicker> {
+class _CustomExpiryDatePickerState extends State<CustomExpiryDatePicker> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now()
-          .add(const Duration(days: 365 * 10)), // Limit to 10 years from today
+          .add(const Duration(days: 365 * 50)), // Limit to 50 years from today
     );
 
     if (picked != null && picked != widget.selectedDate) {
@@ -184,26 +185,25 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   }
 }
 
-class CustomRegularDatePicker extends StatefulWidget {
+class CustomDOBDatePicker extends StatefulWidget {
   final DateTime? selectedDate;
   final Function(DateTime)? onDateSelected;
 
-  const CustomRegularDatePicker(
+  const CustomDOBDatePicker(
       {super.key, this.selectedDate, this.onDateSelected});
 
   @override
-  State<CustomRegularDatePicker> createState() =>
-      _CustomRegularDatePickerState();
+  State<CustomDOBDatePicker> createState() => _CustomDOBDatePickerState();
 }
 
-class _CustomRegularDatePickerState extends State<CustomRegularDatePicker> {
+class _CustomDOBDatePickerState extends State<CustomDOBDatePicker> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 23)),
-      firstDate: DateTime.now().subtract(const Duration(days: 365 * 23)),
-      lastDate: DateTime.now()
-          .add(const Duration(days: 365 * 10)), // Limit to 10 years from today
+      initialDate: DateTime(1999, 1, 1),
+      firstDate: DateTime.now().subtract(const Duration(days: 365 * 50)),
+      lastDate: DateTime.now().subtract(
+          const Duration(days: 365 * 10)), // Limit to 10 years from today
     );
 
     if (picked != null && picked != widget.selectedDate) {

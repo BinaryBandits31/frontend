@@ -13,6 +13,7 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/custom_widgets.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -99,6 +100,16 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           branchList = branchProvider.branches;
         });
       }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final stockPurchaseProvider =
+          Provider.of<StockPurchaseProvider>(Get.context!, listen: false);
+      stockPurchaseProvider.setBranch(null);
     });
   }
 
@@ -261,7 +272,7 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                           CardField(
                             title: 'Expiry Date',
                             isValueWidget: true,
-                            widget: CustomRegularDatePicker(
+                            widget: CustomExpiryDatePicker(
                               selectedDate: _selectedExpiryDate,
                               onDateSelected: _handleExpiryDateSelected,
                             ),

@@ -4,28 +4,25 @@ import 'package:frontend/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
-
 class ActivityLogsServices {
-
   static String endpoint = '/org/record';
 
-  static Future<List<ActivityRecord>> fetchRecords()  async {
-    try{
+  static Future<List<ActivityRecord>> fetchRecords() async {
+    try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
 
-      final response = await http.get(Uri.parse('$port$endpoint'), headers: {'token': token});
+      final response = await http
+          .get(Uri.parse('$port$endpoint'), headers: {'token': token});
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         return (jsonDecode(response.body) as List<dynamic>)
             .map((json) => ActivityRecord.fromJson(json))
             .toList();
-      }else{
+      } else {
         throw Exception(jsonDecode(response.body)['error']);
       }
-    }catch(e){
+    } catch (e) {
       throw Exception(e);
     }
   }

@@ -85,7 +85,7 @@ class _CreateNewUserDialogState extends State<CreateNewUserDialog> {
             addVerticalSpace(20),
             LabelWidget(
               label: 'DOB:',
-              child: CustomDatePicker(
+              child: CustomDOBDatePicker(
                 selectedDate: _selectedDOB,
                 onDateSelected: _handleDOBDateSelected,
               ),
