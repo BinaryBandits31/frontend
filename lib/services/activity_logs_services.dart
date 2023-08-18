@@ -23,6 +23,7 @@ class ActivityLogsServices {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
+      await isTokenExpired(e);
       throw Exception(e);
     }
   }

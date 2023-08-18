@@ -23,6 +23,7 @@ class SupplierServices {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
+      await isTokenExpired(e);
       throw Exception(e);
     }
   }
@@ -32,19 +33,24 @@ class SupplierServices {
     String token = prefs.getString('userToken')!;
     String newEndpoint = endpoint.substring(0, endpoint.length - 1);
 
-    final response = await http.post(Uri.parse('$port$newEndpoint'),
-        headers: {'token': token},
-        body: jsonEncode(Supplier(
-          name: data['name'],
-          email: data['email'],
-          phone: data['phone'],
-          address: data['address'],
-        ).toJson()));
+    try {
+      final response = await http.post(Uri.parse('$port$newEndpoint'),
+          headers: {'token': token},
+          body: jsonEncode(Supplier(
+            name: data['name'],
+            email: data['email'],
+            phone: data['phone'],
+            address: data['address'],
+          ).toJson()));
 
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception(jsonDecode(response.body)['error']);
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
     }
   }
 

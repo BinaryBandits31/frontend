@@ -31,6 +31,7 @@ class BranchServices {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
+      await isTokenExpired(e);
       throw Exception(e);
     }
   }
@@ -43,18 +44,23 @@ class BranchServices {
     String token = prefs.getString('userToken')!;
     String newEndpoint = endpoint.substring(0, endpoint.length - 1);
 
-    final response = await http.post(Uri.parse('$port$newEndpoint'),
-        headers: {'token': token},
-        body: jsonEncode({
-          'name': data['name'],
-          'branch_Type': data['type'],
-          'org_Id': orgID,
-        }));
+    try {
+      final response = await http.post(Uri.parse('$port$newEndpoint'),
+          headers: {'token': token},
+          body: jsonEncode({
+            'name': data['name'],
+            'branch_Type': data['type'],
+            'org_Id': orgID,
+          }));
 
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception(jsonDecode(response.body)['error']);
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
     }
   }
 
@@ -62,15 +68,20 @@ class BranchServices {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('userToken')!;
 
-    final response = await http.put(
-        Uri.parse('$port$endpoint${branch.branchID}'),
-        headers: {'token': token},
-        body: jsonEncode(branch.toJson()));
+    try {
+      final response = await http.put(
+          Uri.parse('$port$endpoint${branch.branchID}'),
+          headers: {'token': token},
+          body: jsonEncode(branch.toJson()));
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      throw Exception(jsonDecode(response.body)['error']);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
     }
   }
 }

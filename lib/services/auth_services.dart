@@ -94,7 +94,7 @@ class AuthServices {
         return true;
       }
     } catch (e) {
-      debugPrint(e.toString());
+      await isTokenExpired(e);
     }
     return false;
   }
@@ -111,9 +111,10 @@ class AuthServices {
         return true;
       }
     } catch (e) {
+      await isTokenExpired(e);
       Provider.of<UserProvider>(Get.context!, listen: false)
           .setCreateUserError(e.toString());
-      debugPrint(e.toString());
+      throw Exception(e);
     }
     return false;
   }
@@ -155,7 +156,8 @@ class AuthServices {
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      await isTokenExpired(e);
+      throw Exception(e);
     }
     return [];
   }

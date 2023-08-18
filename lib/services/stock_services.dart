@@ -28,6 +28,7 @@ class StockServices {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
+      await isTokenExpired(e);
       throw Exception(e);
     }
   }
@@ -61,6 +62,7 @@ class StockServices {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
+      await isTokenExpired(e);
       throw Exception(e);
     }
   }
@@ -77,7 +79,8 @@ class StockServices {
         return true;
       }
     } catch (e) {
-      debugPrint(e.toString());
+      await isTokenExpired(e);
+      throw Exception(e);
     }
     return false;
   }
@@ -93,7 +96,8 @@ class StockServices {
         return true;
       }
     } catch (e) {
-      debugPrint(e.toString());
+      await isTokenExpired(e);
+      throw Exception(e);
     }
     return false;
   }
@@ -127,6 +131,7 @@ class StockServices {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
+      await isTokenExpired(e);
       throw Exception(e);
     }
   }
@@ -146,6 +151,7 @@ class StockServices {
         return false;
       }
     } catch (e) {
+      await isTokenExpired(e);
       Provider.of<StockTransferProvider>(Get.context!, listen: false)
           .setTransferError(e.toString());
       throw Exception(e);
@@ -167,6 +173,7 @@ class StockServices {
         return false;
       }
     } catch (e) {
+      await isTokenExpired(e);
       Provider.of<StockTransferProvider>(Get.context!, listen: false)
           .setTransferError(e.toString());
       throw Exception(e);

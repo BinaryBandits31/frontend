@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:frontend/models/stock_item.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +24,8 @@ class ExpiryServices {
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      await isTokenExpired(e);
+      throw Exception(e);
     }
     return [];
   }
@@ -47,7 +47,8 @@ class ExpiryServices {
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      await isTokenExpired(e);
+      throw Exception(e);
     }
     return [];
   }

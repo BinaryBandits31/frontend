@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:frontend/services/auth_services.dart';
+import 'package:frontend/widgets/notify.dart';
 import 'package:get/get.dart';
 
 double screenHeight = Get.context!.height;
@@ -12,4 +15,11 @@ double sH(double pixelHeight) {
 
 double sW(double pixelWidth) {
   return screenWidth / (screenWidth / pixelWidth);
+}
+
+Future<void> isTokenExpired(Object e) async {
+  if (e.toString().contains('token is expired')) {
+    AuthServices.appLogout();
+    dangerMessage('Session expired. Please log in again.');
+  }
 }
