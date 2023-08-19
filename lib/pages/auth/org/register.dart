@@ -51,6 +51,9 @@ class _RegisterOrgState extends State<RegisterOrg> {
     }
   }
 
+  bool ch1 = false;
+  bool ch2 = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,6 +108,38 @@ class _RegisterOrgState extends State<RegisterOrg> {
                               _registrationData['orgPhone'] = value;
                             },
                           ),
+                          Row(children: [
+                            Text(
+                              "Organization Type",
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ]),
+                          Row(children: [
+                            Checkbox(
+                              value: ch1,
+                              onChanged: (val) {
+                                setState(() {
+                                  ch1 = val!;
+                                });
+                              },
+                            ),
+                            SizedBox(width: 10.0),
+                            Text("Manufacturer"),
+                          ]),
+                          Row(children: [
+                            Checkbox(
+                                value: ch2,
+                                onChanged: (val) {
+                                  setState(() {
+                                    ch2 = val!;
+                                  });
+                                }),
+                            SizedBox(width: 10.0),
+                            Text("Retailer"),
+                          ])
                         ],
                       ),
                     ),
