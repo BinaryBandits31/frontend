@@ -61,7 +61,6 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
         ),
         actions: [
           SubmitButton(
-            // isLoading: productProvider.isLoading,
             label: 'Create',
             onPressed: () async {
               final res = await productProvider

@@ -33,6 +33,7 @@ class _EditProductDialogState extends State<EditProductDialog> {
         Provider.of<ProductProvider>(context, listen: false);
 
     _editProductData = widget.product.toJson();
+    debugPrint(_editProductData.toString());
 
     return SingleChildScrollView(
       child: AlertDialog(

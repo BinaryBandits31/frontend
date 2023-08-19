@@ -27,6 +27,8 @@ class RegisterOrg extends StatefulWidget {
 class _RegisterOrgState extends State<RegisterOrg> {
   final _formKey = GlobalKey<FormState>();
   final _registrationData = {};
+  bool ch1 = false;
+  bool ch2 = false;
 
   void _signUpOrg() async {
     if (_formKey.currentState!.validate()) {
@@ -50,9 +52,6 @@ class _RegisterOrgState extends State<RegisterOrg> {
       }
     }
   }
-
-  bool ch1 = false;
-  bool ch2 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -108,37 +107,39 @@ class _RegisterOrgState extends State<RegisterOrg> {
                               _registrationData['orgPhone'] = value;
                             },
                           ),
+                          Padding(
+                            padding: EdgeInsets.all(sH(10)),
+                            child: const Row(children: [
+                              Text(
+                                "Organization Type",
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ]),
+                          ),
                           Row(children: [
-                            Text(
-                              "Organization Type",
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ]),
-                          Row(children: [
-                            Checkbox(
+                            CustomCheckbox(
+                              title: "Manufacturer",
                               value: ch1,
                               onChanged: (val) {
                                 setState(() {
                                   ch1 = val!;
                                 });
+                                _registrationData['manufacturer'] = ch1;
                               },
                             ),
-                            SizedBox(width: 10.0),
-                            Text("Manufacturer"),
-                          ]),
-                          Row(children: [
-                            Checkbox(
-                                value: ch2,
-                                onChanged: (val) {
-                                  setState(() {
-                                    ch2 = val!;
-                                  });
-                                }),
-                            SizedBox(width: 10.0),
-                            Text("Retailer"),
+                            addHorizontalSpace(sW(20)),
+                            CustomCheckbox(
+                              title: "Retailer",
+                              value: ch2,
+                              onChanged: (val) {
+                                setState(() {
+                                  ch2 = val!;
+                                });
+                                _registrationData['retailer'] = ch2;
+                              },
+                            )
                           ])
                         ],
                       ),
@@ -175,7 +176,6 @@ class _RegisterOrgState extends State<RegisterOrg> {
               addVerticalSpace(sH(20)),
               SubmitButton(
                 label: 'Create Account',
-                // isLoading: false,
                 onPressed: () => _signUpOrg(),
               ),
               addVerticalSpace(sH(10)),

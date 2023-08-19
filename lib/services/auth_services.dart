@@ -28,6 +28,8 @@ class AuthServices {
         'org_Name': data['orgName'],
         'org_Phone': data['orgPhone'],
         'org_Id': data['orgID'],
+        'manufacturer': data['manufacturer'],
+        'retailer': data['retailer'],
         'org_Email': data['orgEmail'],
         'branch_Type': 'RETAIL',
       }),

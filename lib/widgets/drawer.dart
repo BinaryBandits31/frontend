@@ -87,6 +87,11 @@ class MyDrawer extends StatelessWidget {
               icon: Icons.receipt_long_outlined,
               items: [
                 DrawerMenuItem(
+                  title: 'Cash Sale',
+                  itemIcon: Icons.attach_money_rounded,
+                  page: StockPurchasePage(),
+                ),
+                DrawerMenuItem(
                   accessLevel: 2,
                   title: 'Stock Purchase',
                   itemIcon: Icons.monetization_on_outlined,

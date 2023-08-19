@@ -102,84 +102,102 @@ class TriggerButton extends StatelessWidget {
   }
 }
 
-class HorizontalToggleButton extends StatefulWidget {
-  @override
-  _HorizontalToggleButtonState createState() => _HorizontalToggleButtonState();
-}
+// class HorizontalToggleButton extends StatefulWidget {
+//   @override
+//   _HorizontalToggleButtonState createState() => _HorizontalToggleButtonState();
+// }
 
-class _HorizontalToggleButtonState extends State<HorizontalToggleButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool _isOption1Selected = true; // Initial selection
+// class _HorizontalToggleButtonState extends State<HorizontalToggleButton>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _controller;
+//   bool _isOption1Selected = true; // Initial selection
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 300),
-    );
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       vsync: this,
+//       duration: Duration(milliseconds: 300),
+//     );
+//   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
 
-  void _toggleOption() {
-    setState(() {
-      _isOption1Selected = !_isOption1Selected;
-    });
-    if (_isOption1Selected) {
-      _controller.forward();
-    } else {
-      _controller.reverse();
-    }
-  }
+//   void _toggleOption() {
+//     setState(() {
+//       _isOption1Selected = !_isOption1Selected;
+//     });
+//     if (_isOption1Selected) {
+//       _controller.forward();
+//     } else {
+//       _controller.reverse();
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: _toggleOption,
+//       child: Container(
+//         width: 120, // Adjust the width as per your requirement
+//         height: 40, // Adjust the height as per your requirement
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(20),
+//           color: Colors.grey[400],
+//         ),
+//         child: Stack(
+//           children: [
+//             AnimatedBuilder(
+//               animation: _controller,
+//               builder: (context, child) {
+//                 return Positioned(
+//                   left: _isOption1Selected
+//                       ? 0
+//                       : (120 -
+//                           40), // Adjust the distance to move left based on width of container
+//                   child: Container(
+//                     width:
+//                         60, // Adjust the width of the toggle button as per your requirement
+//                     height: 40, // Adjust the height as per your requirement
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.circular(20),
+//                       color: Colors.blue,
+//                     ),
+//                     child: Center(
+//                       child: Text(
+//                         _isOption1Selected ? 'Option 1' : 'Option 2',
+//                         style: const TextStyle(color: Colors.white),
+//                       ),
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class CustomCheckbox extends StatelessWidget {
+  final String title;
+  final bool value;
+  final void Function(bool?)? onChanged;
+
+  const CustomCheckbox(
+      {super.key, required this.title, required this.value, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggleOption,
-      child: Container(
-        width: 120, // Adjust the width as per your requirement
-        height: 40, // Adjust the height as per your requirement
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.grey[400],
-        ),
-        child: Stack(
-          children: [
-            AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return Positioned(
-                  left: _isOption1Selected
-                      ? 0
-                      : (120 -
-                          40), // Adjust the distance to move left based on width of container
-                  child: Container(
-                    width:
-                        60, // Adjust the width of the toggle button as per your requirement
-                    height: 40, // Adjust the height as per your requirement
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.blue,
-                    ),
-                    child: Center(
-                      child: Text(
-                        _isOption1Selected ? 'Option 1' : 'Option 2',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    return Row(children: [
+      Checkbox(value: value, onChanged: onChanged),
+      SizedBox(width: sW(5)),
+      Text(title),
+    ]);
   }
 }
