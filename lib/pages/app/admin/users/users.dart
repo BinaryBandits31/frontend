@@ -22,8 +22,13 @@ class _UsersPageState extends State<UsersPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.fetchFellowUsers().then((value) =>
-          Provider.of<BranchProvider>(context, listen: false).fetchBranches());
+      final branchProvider =
+          Provider.of<BranchProvider>(context, listen: false);
+
+      if (branchProvider.branches.isEmpty) {
+        await branchProvider.fetchBranches();
+      }
+      await userProvider.fetchFellowUsers();
     });
   }
 
@@ -32,13 +37,14 @@ class _UsersPageState extends State<UsersPage> {
     final pageTitle = Provider.of<AppProvider>(context, listen: false)
         .pathTitle!
         .split(' > ')[1];
-    final userProvider = Provider.of<UserProvider>(context, listen: true);
+    final userProvider = Provider.of<UserProvider>(context);
+    final branchProvider = Provider.of<BranchProvider>(context);
     final fellowUsers = userProvider.fellowUsers;
 
     return DataPage(
       refreshPageFunction: userProvider.fetchFellowUsers,
-      isLoading: userProvider.isLoadingFellowUsers,
-      dataList: fellowUsers!,
+      isLoading: branchProvider.isLoading || userProvider.isLoadingFellowUsers,
+      dataList: fellowUsers,
       pageTitle: pageTitle,
       columnNames: const [
         'USERNAME',

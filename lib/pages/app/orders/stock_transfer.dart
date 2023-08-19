@@ -9,6 +9,7 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/custom_widgets.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/user_provider.dart';
 
@@ -35,7 +36,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
         _displayedSearchItem = item;
         stockLevel = item.quantity;
       });
-      _newProductItem['product_Id'] = item.id;
+      _newProductItem['product_Id'] = item.stockItemID;
       _newProductItem['productName'] = item.productName;
     }
   }
@@ -45,7 +46,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
         Provider.of<StockTransferProvider>(context, listen: false);
     bool res = await stockPurchaseProvider.initiateTransfer();
     if (res) {
-      successMessage('Stock Transferred Successfully');
+      successMessage('Stock transfer initiated.');
     } else {
       dangerMessage('Stock Transfer Failed');
     }
@@ -85,6 +86,15 @@ class _StockTransferPageState extends State<StockTransferPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Provider.of<StockTransferProvider>(Get.context!, listen: false)
+          .disposeST();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final branchProvider = Provider.of<BranchProvider>(context, listen: true);
     final branchList = branchProvider.branches;
@@ -111,25 +121,32 @@ class _StockTransferPageState extends State<StockTransferPage> {
                     children: [
                       PaneContainer(
                         child: CustomDropDown<Branch>(
+                          isLoading: branchProvider.isLoading,
                           labelText: 'From',
                           value: stockTransferProvider.currentBranch ??
                               _selectedFromBranch,
                           itemList: _fromBranchList,
                           displayItem: (Branch branch) => branch.name,
                           onChanged: (Branch? newValue) {
-                            stockTransferProvider.setCurrentBranch(newValue!);
+                            if (newValue != stockTransferProvider.toBranch) {
+                              stockTransferProvider.setCurrentBranch(newValue!);
+                            }
                           },
                         ),
                       ),
                       addHorizontalSpace(screenWidth * 0.05),
                       PaneContainer(
                         child: CustomDropDown<Branch>(
+                          isLoading: branchProvider.isLoading,
                           labelText: 'To',
                           value: stockTransferProvider.toBranch,
                           itemList: branchList,
                           displayItem: (Branch branch) => branch.name,
                           onChanged: (Branch? newValue) {
-                            stockTransferProvider.setToBranch(newValue!);
+                            if (newValue !=
+                                stockTransferProvider.currentBranch) {
+                              stockTransferProvider.setToBranch(newValue!);
+                            }
                           },
                         ),
                       ),

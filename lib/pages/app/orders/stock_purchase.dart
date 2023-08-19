@@ -27,6 +27,7 @@ class StockPurchasePage extends StatefulWidget {
 class _StockPurchasePageState extends State<StockPurchasePage> {
   DateTime? _selectedExpiryDate;
   List<Branch> branchList = [];
+  bool isLoadingBranch = false;
   Branch? _selectedBranch;
   Product? _selectedSearchProduct;
   dynamic _newProductItem = {};
@@ -76,6 +77,9 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           Provider.of<StockPurchaseProvider>(context, listen: false);
 
       if (branchProvider.branches.isEmpty) {
+        setState(() {
+          isLoadingBranch = true;
+        });
         await branchProvider.fetchBranches();
       }
       if (supplierProvider.suppliers.isEmpty) {
@@ -100,6 +104,9 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           branchList = branchProvider.branches;
         });
       }
+      setState(() {
+        isLoadingBranch = false;
+      });
     });
   }
 
@@ -142,6 +149,7 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                     children: [
                       PaneContainer(
                         child: CustomDropDown<Branch>(
+                          isLoading: supplierProvider.isLoading,
                           labelText: 'Branch',
                           value: stockPurchaseProvider.currentBranch ??
                               _selectedBranch,
@@ -155,6 +163,7 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
                       addHorizontalSpace(screenWidth * 0.05),
                       PaneContainer(
                         child: CustomDropDown<Supplier>(
+                            isLoading: supplierProvider.isLoading,
                             labelText: 'Supplier',
                             displayItem: (Supplier supplier) => supplier.name,
                             onChanged: (Supplier? newValue) {

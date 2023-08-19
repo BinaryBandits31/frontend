@@ -1,6 +1,7 @@
 class StockItem {
   final String productName;
-  final String id;
+  final String stockItemID;
+  final String productID;
   final String batchID;
   final String branchID;
   final int quantity;
@@ -8,7 +9,8 @@ class StockItem {
 
   StockItem({
     required this.productName,
-    required this.id,
+    required this.stockItemID,
+    required this.productID,
     required this.batchID,
     required this.quantity,
     required this.expiryDate,
@@ -17,7 +19,8 @@ class StockItem {
 
   factory StockItem.fromJson(dynamic json) => StockItem(
         productName: json['name'],
-        id: json['Id'],
+        stockItemID: json['Id'],
+        productID: json['product_Id'],
         quantity: json['quantity'],
         expiryDate: json['expiry'],
         batchID: json['stockBatch_Id'],
@@ -28,7 +31,8 @@ class StockItem {
         'name': productName,
         'stockBatch_Id': batchID,
         'branch_Id': branchID,
-        'Id': id,
+        'stockItem_Id': stockItemID,
+        'product_Id': productID,
         'quantity': quantity,
         'expiry': expiryDate,
       };

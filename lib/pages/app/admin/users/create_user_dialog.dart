@@ -48,6 +48,7 @@ class _CreateNewUserDialogState extends State<CreateNewUserDialog> {
     final branchProvider = Provider.of<BranchProvider>(context, listen: true);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     _createNewUserData['emp_Type'] = '';
+    _createNewUserData['emp_Level'] = int.parse(dpEmpLevel);
 
     return SingleChildScrollView(
       child: AlertDialog(

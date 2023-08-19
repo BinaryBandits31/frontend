@@ -10,6 +10,7 @@ import 'package:frontend/widgets/buttons.dart';
 import 'package:frontend/widgets/custom_widgets.dart';
 import 'package:frontend/widgets/helper_widgets.dart';
 import 'package:frontend/widgets/notify.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class StockReceptionPage extends StatefulWidget {
@@ -59,7 +60,7 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
       final branchProvider =
           Provider.of<BranchProvider>(context, listen: false);
       if (branchProvider.branches.isEmpty) {
-        branchProvider.fetchBranches();
+        await branchProvider.fetchBranches();
       }
       await stockTransferProvider.fetchStockTransferBatches();
     });
@@ -67,8 +68,11 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
 
   @override
   void dispose() {
-    Provider.of<StockTransferProvider>(context, listen: false).disposeST();
     super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Provider.of<StockTransferProvider>(Get.context!, listen: false)
+          .disposeST();
+    });
   }
 
   @override
@@ -104,22 +108,22 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
                           displayItem: (dynamic batch) =>
                               batch['Id'].substring(batch['Id'].length - 4),
                           onChanged: (dynamic batch) {
-                            setState(() {
-                              print(batch['sendingBranch']);
-                              _displayedFromBranch = branches
-                                  .firstWhere((e) =>
-                                      e.branchID == batch['sendingBranch'])
-                                  .name;
+                            if (_selectedBatch != batch) {
+                              setState(() {
+                                _displayedFromBranch = branches
+                                    .firstWhere((e) =>
+                                        e.branchID == batch['sendingBranch'])
+                                    .name;
 
-                              _displayedToBranch = branches
-                                  .firstWhere((e) =>
-                                      e.branchID == batch['receivingBranch'])
-                                  .name;
+                                _displayedToBranch = branches
+                                    .firstWhere((e) =>
+                                        e.branchID == batch['receivingBranch'])
+                                    .name;
 
-                              _selectedBatch = batch!;
-                            });
-
-                            stockTransferProvider.getBatchDetails(batch);
+                                _selectedBatch = batch!;
+                              });
+                              stockTransferProvider.getBatchDetails(batch);
+                            }
                           },
                         ),
                       ),

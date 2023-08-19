@@ -19,6 +19,7 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context, listen: true);
+    _createProductData['quantity'] = 0;
 
     return SingleChildScrollView(
       child: AlertDialog(
@@ -56,18 +57,6 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
               },
               inputType: const TextInputType.numberWithOptions(decimal: true),
             ),
-            addVerticalSpace(20),
-            LabeledTextField(
-              margin: false,
-              label: 'Quantity',
-              isRequired: true,
-              onSaved: (value) {
-                if (value != null) {
-                  _createProductData['quantity'] = int.parse(value);
-                }
-              },
-              inputType: TextInputType.number,
-            )
           ],
         ),
         actions: [

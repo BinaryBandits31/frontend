@@ -48,23 +48,25 @@ class StockServices {
           body: jsonEncode({'stockItems': stockItemIDs}));
 
       if (response.statusCode == 200) {
+        debugPrint(response.body.toString());
         final res = (jsonDecode(response.body) as List<dynamic>)
             .map((json) => StockItem.fromJson(json))
             .toList();
-        if (userLevel! >= 3) {
-          return res;
-        } else {
-          return res
-              .where((item) => item.branchID == userProvider.user!.branchId)
-              .toList();
-        }
+        return res;
+        // if (userLevel! >= 3) {
+        //   return res;
+        // } else {
+        //   return res
+        //       .where((item) => item.branchID == userProvider.user!.branchId)
+        //       .toList();
+        // }
       } else {
         throw Exception(jsonDecode(response.body)['error']);
       }
     } catch (e) {
       await isTokenExpired(e);
-      throw Exception(e);
     }
+    return [];
   }
 
   static Future<bool> purchaseStock(dynamic data) async {
@@ -124,7 +126,9 @@ class StockServices {
           if (jsonDecode(response.body)['incoming'] == null) return res;
           res = (jsonDecode(response.body)['incoming'] as List<dynamic>);
           return res
-              .where((e) => e['receivingBranch'] == userProvider.user!.branchId)
+              .where((e) =>
+                  e['receivingBranch'] == userProvider.user!.branchId &&
+                  e['state'] == "IN PROGRESS")
               .toList();
         }
       } else {

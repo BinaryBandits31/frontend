@@ -12,7 +12,7 @@ class UserProvider extends ChangeNotifier {
   List<User> _fellowUsers = [];
   List<User> _filteredFellowUsers = [];
   List<User> get filteredFellowUsers => _filteredFellowUsers;
-  List<User>? get fellowUsers => _fellowUsers;
+  List<User> get fellowUsers => _fellowUsers;
   bool isLoadingFellowUsers = false;
 
   Future<void> fetchUserData(dynamic data) async {

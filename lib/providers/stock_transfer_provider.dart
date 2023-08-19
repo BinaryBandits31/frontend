@@ -160,9 +160,12 @@ class StockTransferProvider extends ChangeNotifier {
       _currentBatch = batch;
       List<String> stockItemKeys =
           batch['stockItems'].keys.cast<String>().toList();
+      debugPrint(stockItemKeys.toString());
       final items = await StockServices.getStockItems(stockItemKeys);
       if (items.isNotEmpty) {
         _incomingStockItems = items;
+      } else {
+        debugPrint('empty stock items, ie. not eligible');
       }
     } catch (e) {
       debugPrint(e.toString());

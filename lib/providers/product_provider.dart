@@ -94,6 +94,7 @@ class ProductProvider extends ChangeNotifier {
 
   void productDispose() {
     _products = [];
+    _filteredProducts = [];
     isLoading = false;
     error = null;
     notifyListeners();

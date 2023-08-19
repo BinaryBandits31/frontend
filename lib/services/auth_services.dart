@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/organization.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/branch_provider.dart';
+import 'package:frontend/providers/product_provider.dart';
 import 'package:frontend/providers/stock_purchase_provider.dart';
 import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
@@ -109,6 +110,9 @@ class AuthServices {
 
       if (res.statusCode == 201) {
         return true;
+      } else {
+        Provider.of<UserProvider>(Get.context!, listen: false)
+            .setCreateUserError(jsonDecode(res.body).toString());
       }
     } catch (e) {
       await isTokenExpired(e);
@@ -135,6 +139,8 @@ class AuthServices {
     Provider.of<StockTransferProvider>(Get.context!, listen: false).disposeST();
 
     Provider.of<StockPurchaseProvider>(Get.context!, listen: false).disposeSP();
+
+    Provider.of<ProductProvider>(Get.context!, listen: false).productDispose();
 
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove('userToken');
