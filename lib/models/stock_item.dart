@@ -1,20 +1,20 @@
 class StockItem {
   final String productName;
-  final String stockItemID;
-  final String productID;
-  final String batchID;
-  final String branchID;
   final int quantity;
-  final String expiryDate;
+  final String? stockItemID;
+  final String? productID;
+  final String? batchID;
+  final String? branchID;
+  final String? expiryDate;
 
   StockItem({
+    this.stockItemID,
+    this.productID,
+    this.batchID,
+    this.branchID,
+    this.expiryDate,
     required this.productName,
-    required this.stockItemID,
-    required this.productID,
-    required this.batchID,
     required this.quantity,
-    required this.expiryDate,
-    required this.branchID,
   });
 
   factory StockItem.fromJson(dynamic json) => StockItem(

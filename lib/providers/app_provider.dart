@@ -24,8 +24,8 @@ class AppProvider extends ChangeNotifier {
 
   Future<void> checkExpiryAlert() async {
     try {
-      List<StockItem?> expiryList = await ExpiryServices.checkExpiry();
-      if (expiryList.isNotEmpty) {
+      List<StockItem>? expiryList = await ExpiryServices.checkExpiry();
+      if (expiryList != null) {
         _alerts = expiryList.length;
         _expiringStock = expiryList;
       }

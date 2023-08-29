@@ -107,7 +107,7 @@ class UserProvider extends ChangeNotifier {
         response = true;
       }
     } catch (e) {
-      print(e);
+      print(e.toString());
     } finally {
       notifyListeners();
     }

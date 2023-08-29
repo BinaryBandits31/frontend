@@ -85,3 +85,6 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
     );
   }
 }
+
+
+//CreateManufactureProductDialog

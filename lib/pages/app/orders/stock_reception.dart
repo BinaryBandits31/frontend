@@ -33,6 +33,10 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
     bool res = await stockTransferProvider.confirmTransfer();
     if (res) {
       successMessage('Stock Received Successfully');
+      setState(() {
+        _displayedFromBranch = null;
+        _displayedToBranch = null;
+      });
     } else {
       dangerMessage(stockTransferProvider.stockTransferError ??
           'Stock Reception Failed.');
@@ -45,6 +49,10 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
     bool res = await stockTransferProvider.terminateTransfer();
     if (res) {
       successMessage('Stock Terminated Successfully');
+      setState(() {
+        _displayedFromBranch = null;
+        _displayedToBranch = null;
+      });
     } else {
       dangerMessage(
           stockTransferProvider.stockTransferError ?? 'Something went wrong.');
@@ -153,8 +161,9 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
                                             ? ListView.builder(
                                                 itemCount: batchItems.length,
                                                 itemBuilder: (context, index) {
-                                                  dynamic batch =
-                                                      batchItems[index];
+                                                  StockItem batchStockItem =
+                                                      StockItem.fromJson(
+                                                          batchItems[index]);
                                                   try {
                                                     return ListTile(
                                                       tileColor: index.isEven
@@ -164,10 +173,13 @@ class _StockReceptionPageState extends State<StockReceptionPage> {
                                                         children: [
                                                           Expanded(
                                                               child: Text(
-                                                                  '${batch.productName}')),
+                                                                  batchStockItem
+                                                                      .productName)),
                                                           Expanded(
                                                               child: Text(
-                                                                  '${batch.quantity}'))
+                                                                  batchStockItem
+                                                                      .quantity
+                                                                      .toString()))
                                                         ],
                                                       ),
                                                     );

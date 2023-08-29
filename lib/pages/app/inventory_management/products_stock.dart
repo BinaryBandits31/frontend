@@ -61,7 +61,7 @@ class StockItemDataTableSource extends DataTableSource {
         DataCell(Text(stockItem.productName)),
         DataCell(Text(stockItem.quantity.toString())),
         DataCell(Text(DateFormat('EEEE, MMM d, yyyy HH:mm')
-            .format(DateTime.parse(stockItem.expiryDate)))),
+            .format(DateTime.parse(stockItem.expiryDate!)))),
       ],
     );
   }

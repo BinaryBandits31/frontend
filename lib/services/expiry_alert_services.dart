@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ExpiryServices {
   static String endpoint = '/org/expiry';
 
-  static Future<List<StockItem?>> checkExpiry() async {
+  static Future<List<StockItem>?> checkExpiry() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
@@ -18,7 +18,7 @@ class ExpiryServices {
           .get(Uri.parse('$port$endpoint'), headers: {'token': token});
 
       if (response.statusCode == 200) {
-        List alerts = jsonDecode(response.body);
+        List alerts = jsonDecode(response.body) ?? [];
         if (alerts.isNotEmpty) {
           return await getStockItems(alerts, token);
         }
@@ -30,7 +30,7 @@ class ExpiryServices {
     return [];
   }
 
-  static Future<List<StockItem?>> getStockItems(
+  static Future<List<StockItem>?> getStockItems(
       List stockIDs, String token) async {
     try {
       String endpoint = '/org/stock/item';

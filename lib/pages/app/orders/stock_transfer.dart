@@ -61,7 +61,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final stockTransferProvider =
           Provider.of<StockTransferProvider>(context, listen: false);
-      await stockTransferProvider.fetchStockItems([]);
+      await stockTransferProvider.fetchAllStockItems();
 
       if (branchProvider.branches.isEmpty) {
         await branchProvider.fetchBranches();
@@ -130,6 +130,9 @@ class _StockTransferPageState extends State<StockTransferPage> {
                           onChanged: (Branch? newValue) {
                             if (newValue != stockTransferProvider.toBranch) {
                               stockTransferProvider.setCurrentBranch(newValue!);
+                            } else {
+                              dangerMessage(
+                                  'Please select different "from" and "to" locations.');
                             }
                           },
                         ),
@@ -146,6 +149,9 @@ class _StockTransferPageState extends State<StockTransferPage> {
                             if (newValue !=
                                 stockTransferProvider.currentBranch) {
                               stockTransferProvider.setToBranch(newValue!);
+                            } else {
+                              dangerMessage(
+                                  'Please select different "from" and "to" locations.');
                             }
                           },
                         ),
@@ -285,11 +291,17 @@ class _StockTransferPageState extends State<StockTransferPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SubmitButton(
-                          label: 'Confirm Transfer',
+                          label: 'Initiate Transfer',
                           onPressed: () => confirmTransfer()),
                       ElevatedButton(
-                          onPressed: () =>
-                              stockTransferProvider.cancelPurchase(),
+                          onPressed: () {
+                            stockTransferProvider.cancelPurchase();
+                            setState(() {
+                              _displayedSearchItem = null;
+                              stockLevel = null;
+                              _newProductItem = {};
+                            });
+                          },
                           child: const Text(
                             'Cancel',
                             style: TextStyle(color: Colors.red),

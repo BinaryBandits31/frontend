@@ -38,7 +38,7 @@ class AuthServices {
     if (response.statusCode == 201) {
       return true;
     } else {
-      throw Exception(jsonDecode(response.body)['error']);
+      throw Exception(jsonDecode(response.body)['err']);
     }
   }
 

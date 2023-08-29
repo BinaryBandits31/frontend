@@ -10,6 +10,7 @@ import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
 import 'package:frontend/pages/app/reports/product_expiry.dart';
 import 'package:frontend/pages/app/reports/activity_logs_page.dart';
+import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../pages/app/dashboard.dart';
@@ -25,6 +26,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context, listen: true);
+    final orgProvider = Provider.of<OrgProvider>(context).organization!;
 
     return Drawer(
       child: Padding(
@@ -35,30 +37,38 @@ class MyDrawer extends StatelessWidget {
                 title: 'Dashboard',
                 page: Dashboard(),
                 itemIcon: Icons.home_rounded),
-            const DrawerMenu(
+            DrawerMenu(
               accessLevel: 2,
               icon: Icons.key_outlined,
               text: 'Admin',
               items: [
-                DrawerMenuItem(
+                const DrawerMenuItem(
                   accessLevel: 3,
                   title: 'Company Locations',
                   itemIcon: Icons.maps_home_work_outlined,
                   page: CompanyLocationsPage(),
                 ),
-                DrawerMenuItem(
+                const DrawerMenuItem(
                   accessLevel: 2,
                   title: 'Suppliers',
                   itemIcon: Icons.support_agent_outlined,
                   page: SuppliersPage(),
                 ),
-                DrawerMenuItem(
+                const DrawerMenuItem(
                   accessLevel: 2,
                   title: 'Products',
                   itemIcon: Icons.interests,
                   page: ProductsPage(),
                 ),
                 DrawerMenuItem(
+                  visibility: orgProvider.isManufacturer,
+                  accessLevel: 2,
+                  title: 'Raw Materials',
+                  itemIcon: Icons.forest,
+                  //TODO: Change page
+                  page: const UsersPage(),
+                ),
+                const DrawerMenuItem(
                   accessLevel: 2,
                   title: 'Users',
                   itemIcon: Icons.people,
@@ -76,36 +86,59 @@ class MyDrawer extends StatelessWidget {
                   page: ProductPricePage(),
                 ),
                 DrawerMenuItem(
+                  title: 'Raw Materials Stock',
+                  itemIcon: Icons.library_books_outlined,
+                  //TODO: Change page
+                  page: ProductStockPage(),
+                ),
+                DrawerMenuItem(
                   title: 'Products Stock',
                   itemIcon: Icons.library_books_outlined,
                   page: ProductStockPage(),
                 ),
               ],
             ),
-            const DrawerMenu(
+            DrawerMenu(
               text: 'Orders',
               icon: Icons.receipt_long_outlined,
               items: [
-                DrawerMenuItem(
+                const DrawerMenuItem(
                   title: 'Cash Sale',
                   itemIcon: Icons.attach_money_rounded,
+                  //TODO: Change page
                   page: StockPurchasePage(),
                 ),
                 DrawerMenuItem(
+                  visibility: orgProvider.isManufacturer,
+                  accessLevel: 2,
+                  title: 'Raw Materials Purchase',
+                  itemIcon: Icons.monetization_on_outlined,
+                  //TODO: Change page
+                  page: const StockPurchasePage(),
+                ),
+                DrawerMenuItem(
+                  visibility: !orgProvider.isManufacturer,
                   accessLevel: 2,
                   title: 'Stock Purchase',
                   itemIcon: Icons.monetization_on_outlined,
-                  page: StockPurchasePage(),
+                  page: const StockPurchasePage(),
                 ),
-                DrawerMenuItem(
+                const DrawerMenuItem(
                   title: 'Stock Transfer',
                   itemIcon: Icons.connect_without_contact_outlined,
                   page: StockTransferPage(),
                 ),
-                DrawerMenuItem(
+                const DrawerMenuItem(
                   title: 'Stock Reception',
                   itemIcon: Icons.handshake,
                   page: StockReceptionPage(),
+                ),
+                DrawerMenuItem(
+                  visibility: orgProvider.isManufacturer,
+                  title: 'Product Fabrication',
+                  itemIcon: Icons.factory_sharp,
+                  //TODO: Change page
+                  page: const StockReceptionPage(),
                 ),
               ],
             ),
@@ -200,6 +233,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                       itemIcon: item.itemIcon,
                       page: item.page,
                       title: item.title,
+                      visibility: item.visibility,
                       accessLevel: item.accessLevel,
                       parentName: widget.text,
                     )
@@ -216,6 +250,7 @@ class DrawerMenuItem extends StatelessWidget {
   final Widget page;
   final IconData itemIcon;
   final int? accessLevel;
+  final bool visibility;
   final String? parentName;
 
   const DrawerMenuItem({
@@ -224,6 +259,7 @@ class DrawerMenuItem extends StatelessWidget {
     required this.page,
     required this.itemIcon,
     this.accessLevel,
+    this.visibility = true,
     this.parentName,
   });
 
@@ -231,9 +267,12 @@ class DrawerMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final userLevel = userProvider.getLevel();
+    bool isVisible =
+        (accessLevel == null ? true : (userLevel! >= accessLevel!)) &&
+            visibility;
 
     return Visibility(
-      visible: accessLevel == null ? true : (userLevel! >= accessLevel!),
+      visible: isVisible,
       child: ListTile(
         title: Text(title),
         leading: Icon(itemIcon),

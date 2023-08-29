@@ -46,7 +46,7 @@ class ExpiringStockDataTableSource extends DataTableSource {
       DataCell(Text(stock!.productName)),
       DataCell(Text(stock.quantity.toString())),
       DataCell(Text(
-        stock.expiryDate,
+        stock.expiryDate!,
         style: const TextStyle(color: Colors.red),
       )),
     ]);

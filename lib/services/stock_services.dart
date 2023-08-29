@@ -33,12 +33,12 @@ class StockServices {
     }
   }
 
-  static Future<List<StockItem>> getStockItems(List stockItemIDs) async {
+  static Future<List<StockItem>> getStockItems(
+      List<String> stockItemIDs) async {
     String endpoint = '/org/stock/item';
     try {
       final userProvider =
           Provider.of<UserProvider>(Get.context!, listen: false);
-      final userLevel = userProvider.getLevel();
 
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;
@@ -48,18 +48,34 @@ class StockServices {
           body: jsonEncode({'stockItems': stockItemIDs}));
 
       if (response.statusCode == 200) {
-        debugPrint(response.body.toString());
-        final res = (jsonDecode(response.body) as List<dynamic>)
+        final res = (jsonDecode(response.body)[userProvider.user!.branchId]
+                as List<dynamic>)
             .map((json) => StockItem.fromJson(json))
             .toList();
         return res;
-        // if (userLevel! >= 3) {
-        //   return res;
-        // } else {
-        //   return res
-        //       .where((item) => item.branchID == userProvider.user!.branchId)
-        //       .toList();
-        // }
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+    }
+    return [];
+  }
+
+  static Future<dynamic> getAllStockItems() async {
+    //returns all stocks as dynamic >> must select branch
+    //using branchID as key to get list of StockItems
+    String endpoint = '/org/stock/item';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http.post(Uri.parse('$port$endpoint'),
+          headers: {'token': token}, body: jsonEncode({'stockItems': []}));
+
+      if (response.statusCode == 200) {
+        final res = (jsonDecode(response.body));
+        return res;
       } else {
         throw Exception(jsonDecode(response.body)['error']);
       }
@@ -149,7 +165,7 @@ class StockServices {
       final response = await http
           .put(Uri.parse('$port$endpoint'), headers: {'token': token});
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return true;
       } else {
         return false;

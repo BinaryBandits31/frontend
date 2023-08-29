@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/branch.dart';
 import 'package:frontend/models/stock_item.dart';
 import 'package:frontend/services/stock_services.dart';
+import 'package:frontend/widgets/notify.dart';
 
 class StockTransferProvider extends ChangeNotifier {
   Branch? _currentBranch;
@@ -12,7 +13,7 @@ class StockTransferProvider extends ChangeNotifier {
 
   List<dynamic> _stockItems = [];
   List<dynamic> get stockItems => _stockItems;
-  List<StockItem> _allStockItems = [];
+  dynamic _allStockItems;
   List<StockItem> _products = [];
   List<StockItem> get products => _products;
 
@@ -48,12 +49,17 @@ class StockTransferProvider extends ChangeNotifier {
   }
 
   void setCurrentBranch(Branch branch) {
-    if (_currentBranch != branch) {
-      _stockItems = [];
-      _products =
-          _allStockItems.where((e) => e.branchID == branch.branchID).toList();
-      _currentBranch = branch;
-      notifyListeners();
+    if (_allStockItems.containsKey(branch.branchID)) {
+      if (_currentBranch != branch) {
+        _stockItems = [];
+        _products = (_allStockItems[branch.branchID] as List<dynamic>)
+            .map((e) => StockItem.fromJson(e))
+            .toList();
+        _currentBranch = branch;
+        notifyListeners();
+      }
+    } else {
+      dangerMessage('Branch has no stock.');
     }
   }
 
@@ -62,11 +68,22 @@ class StockTransferProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchStockItems(List<String> itemIDs) async {
+  Future<void> fetchAllStockItems() async {
     try {
-      final List<StockItem> items = await StockServices.getStockItems(itemIDs);
+      final dynamic items = await StockServices.getAllStockItems();
+      _allStockItems = items;
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchStockItems(List<String> stockItemIDs) async {
+    try {
+      final dynamic items = await StockServices.getStockItems(stockItemIDs);
+
       if (items.isNotEmpty) {
-        _allStockItems = items;
         _incomingStockItems = items
             .map((e) => {
                   'name': e.productName,
@@ -102,7 +119,7 @@ class StockTransferProvider extends ChangeNotifier {
 
     dynamic stockData = {
       'sendingBranch': _currentBranch!.branchID,
-      'stockItems': convertListToMap(_stockItems),
+      'transferData': convertListToMap(_stockItems),
       'receivingBranch': _toBranch!.branchID,
     };
     try {
@@ -158,14 +175,11 @@ class StockTransferProvider extends ChangeNotifier {
     notifyListeners();
     try {
       _currentBatch = batch;
-      List<String> stockItemKeys =
-          batch['stockItems'].keys.cast<String>().toList();
-      debugPrint(stockItemKeys.toString());
-      final items = await StockServices.getStockItems(stockItemKeys);
-      if (items.isNotEmpty) {
-        _incomingStockItems = items;
-      } else {
-        debugPrint('empty stock items, ie. not eligible');
+      List<dynamic> batchStockItems = (batch['stockItems'] as List<dynamic>)
+          .map((e) => {"name": e["name"], "quantity": e['quantityInTransit']})
+          .toList();
+      if (batchStockItems.isNotEmpty) {
+        _incomingStockItems = batchStockItems;
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -180,7 +194,7 @@ class StockTransferProvider extends ChangeNotifier {
     _toBranch = null;
     _stockItems = [];
     _products = [];
-    _allStockItems = [];
+    _allStockItems = null;
     _transferBatches = [];
     _currentBatch = null;
     _incomingStockItems = [];
