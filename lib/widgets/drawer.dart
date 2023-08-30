@@ -5,6 +5,7 @@ import 'package:frontend/pages/app/admin/suppliers/suppliers.dart';
 import 'package:frontend/pages/app/admin/users/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
+import 'package:frontend/pages/app/orders/cash_sales.dart';
 import 'package:frontend/pages/app/orders/stock_reception.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
@@ -105,8 +106,7 @@ class MyDrawer extends StatelessWidget {
                 const DrawerMenuItem(
                   title: 'Cash Sale',
                   itemIcon: Icons.attach_money_rounded,
-                  //TODO: Change page
-                  page: StockPurchasePage(),
+                  page: CashSalePage(),
                 ),
                 DrawerMenuItem(
                   visibility: orgProvider.isManufacturer,

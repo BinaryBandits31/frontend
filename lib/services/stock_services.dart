@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/utils/constants.dart';
@@ -198,5 +197,21 @@ class StockServices {
           .setTransferError(e.toString());
       throw Exception(e);
     }
+  }
+
+  static Future<bool> confirmSale(saleData) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+      final response = await http.post(Uri.parse('$port/org/sale'),
+          headers: {'token': token}, body: jsonEncode(saleData));
+      if (response.statusCode == 201) {
+        return true;
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
+    }
+    return false;
   }
 }

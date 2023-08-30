@@ -266,9 +266,15 @@ class _StockTransferPageState extends State<StockTransferPage> {
                           Divider(color: AppColor.grey1),
                           TriggerButton(
                               onPressed: () {
-                                if (quantityController.text.isEmpty) return;
+                                if (quantityController.text.isEmpty) {
+                                  dangerMessage('Please Enter Quantity');
+                                  return;
+                                }
                                 if (stockLevel! <
-                                    int.parse(quantityController.text)) return;
+                                    int.parse(quantityController.text)) {
+                                  dangerMessage('Not Enough Stock');
+                                  return;
+                                }
 
                                 _newProductItem['quantity'] =
                                     quantityController.text;
@@ -296,6 +302,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
                       ElevatedButton(
                           onPressed: () {
                             stockTransferProvider.cancelPurchase();
+                            quantityController.clear();
                             setState(() {
                               _displayedSearchItem = null;
                               stockLevel = null;

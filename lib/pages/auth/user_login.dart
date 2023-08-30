@@ -59,7 +59,7 @@ class _UserLoginState extends State<UserLogin> {
               children: [
                 addVerticalSpace(sH(100)),
                 BigText(
-                  orgProvider.organization!.name.capitalizeFirst,
+                  orgProvider.organization!.name.capitalize,
                   color: Colors.blue,
                 ),
                 addVerticalSpace(sH(50)),

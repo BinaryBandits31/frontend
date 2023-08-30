@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../models/stock_item.dart';
-import '../../../providers/stock_provider.dart';
 import '../../../providers/app_provider.dart';
 import 'package:intl/intl.dart';
 import '../../../services/stock_services.dart';

@@ -6,7 +6,7 @@ import '../utils/constants.dart';
 void dangerMessage(String text) {
   ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(
     backgroundColor: Colors.red,
-    content: Text(text),
+    content: Text(text.capitalize!),
     duration: const Duration(seconds: 2),
   ));
 }
@@ -14,7 +14,7 @@ void dangerMessage(String text) {
 void successMessage(String text) {
   ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(
     backgroundColor: Colors.green,
-    content: Text(text),
+    content: Text(text.capitalize!),
     duration: const Duration(seconds: 2),
   ));
 }

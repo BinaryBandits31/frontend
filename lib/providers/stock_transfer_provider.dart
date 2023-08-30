@@ -136,6 +136,30 @@ class StockTransferProvider extends ChangeNotifier {
     return res;
   }
 
+  Future<bool> confirmSale() async {
+    bool res = false;
+
+    dynamic saleData = {
+      'stockItems': convertListToMap(_stockItems),
+    };
+    try {
+      bool response = await StockServices.confirmSale(saleData);
+      if (response) {
+        res = true;
+        _stockItems = [];
+        await fetchAllStockItems();
+        _products = (_allStockItems[_currentBranch!.branchID] as List<dynamic>)
+            .map((e) => StockItem.fromJson(e))
+            .toList();
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      notifyListeners();
+    }
+    return res;
+  }
+
   Future<bool> confirmTransfer() async {
     bool res = false;
     try {
