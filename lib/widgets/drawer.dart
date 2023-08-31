@@ -51,11 +51,12 @@ class MyDrawer extends StatelessWidget {
                   itemIcon: Icons.maps_home_work_outlined,
                   page: CompanyLocationsPage(),
                 ),
-                const DrawerMenuItem(
+                DrawerMenuItem(
+                  visibility: !orgProvider.isManufacturer,
                   accessLevel: 2,
                   title: 'Suppliers',
                   itemIcon: Icons.support_agent_outlined,
-                  page: SuppliersPage(),
+                  page: const SuppliersPage(),
                 ),
                 const DrawerMenuItem(
                   accessLevel: 2,
@@ -107,14 +108,6 @@ class MyDrawer extends StatelessWidget {
                   title: 'Cash Sale',
                   itemIcon: Icons.attach_money_rounded,
                   page: CashSalePage(),
-                ),
-                DrawerMenuItem(
-                  visibility: orgProvider.isManufacturer,
-                  accessLevel: 2,
-                  title: 'Raw Materials Purchase',
-                  itemIcon: Icons.monetization_on_outlined,
-                  //TODO: Change page
-                  page: const StockPurchasePage(),
                 ),
                 DrawerMenuItem(
                   visibility: !orgProvider.isManufacturer,
