@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'providers/org_provider.dart';
 import 'providers/product_provider.dart';
+import 'providers/raw_material_provider.dart';
 import 'providers/user_provider.dart';
 
 void main() {
@@ -36,6 +37,8 @@ class MyApp extends StatelessWidget {
             create: (_) => StockPurchaseProvider()),
         ChangeNotifierProvider<StockTransferProvider>(
             create: (_) => StockTransferProvider()),
+        ChangeNotifierProvider<RawMaterialProvider>(
+            create: (_) => RawMaterialProvider()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/branch.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/pages/app/admin/users/create_user_dialog.dart';
 import 'package:frontend/providers/app_provider.dart';
@@ -39,7 +38,7 @@ class _UsersPageState extends State<UsersPage> {
         .split(' > ')[1];
     final userProvider = Provider.of<UserProvider>(context);
     final branchProvider = Provider.of<BranchProvider>(context);
-    final fellowUsers = userProvider.fellowUsers;
+    final fellowUsers = userProvider.filteredFellowUsers;
 
     return DataPage(
       refreshPageFunction: userProvider.fetchFellowUsers,

@@ -55,8 +55,6 @@ class _SuppliersPageState extends State<SuppliersPage> {
 }
 
 class SupplierDataTableSource extends DataTableSource {
-  // final supplierProvider =
-  //     Provider.of<SupplierProvider>(Get.context!, listen: true);
   final List<Supplier> suppliers;
 
   SupplierDataTableSource(this.suppliers);

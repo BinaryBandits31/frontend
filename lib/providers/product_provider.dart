@@ -77,21 +77,6 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> deleteProduct(String productId) async {
-    isLoading = true;
-    notifyListeners();
-    try {
-      return await ProductServices.deleteProduct(productId);
-    } catch (e) {
-      debugPrint(e.toString());
-      error = e.toString();
-      return false;
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-  }
-
   void productDispose() {
     _products = [];
     _filteredProducts = [];

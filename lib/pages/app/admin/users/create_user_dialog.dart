@@ -21,6 +21,7 @@ class CreateNewUserDialog extends StatefulWidget {
 class _CreateNewUserDialogState extends State<CreateNewUserDialog> {
   String dpEmpLevel = '1';
   Branch? dpEmpBranch;
+  List<Branch> _branches = [];
   DateTime? _selectedDOB;
   final _createNewUserData = {};
 
@@ -37,15 +38,29 @@ class _CreateNewUserDialogState extends State<CreateNewUserDialog> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final branchProvider =
           Provider.of<BranchProvider>(context, listen: false);
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
       if (branchProvider.branches.isEmpty) {
         await branchProvider.fetchBranches();
+      }
+
+      for (Branch branch in branchProvider.branches) {
+        if (branch.branchID == userProvider.user!.branchId) {
+          setState(() {
+            _branches = [branch];
+          });
+        }
+      }
+      if (_branches.isEmpty) {
+        setState(() {
+          _branches = branchProvider.branches;
+        });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final branchProvider = Provider.of<BranchProvider>(context, listen: true);
+    // final branchProvider = Provider.of<BranchProvider>(context, listen: true);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     _createNewUserData['emp_Type'] = 'CASHIER';
     _createNewUserData['emp_Level'] = int.parse(dpEmpLevel);
@@ -124,8 +139,7 @@ class _CreateNewUserDialogState extends State<CreateNewUserDialog> {
                   });
                   _createNewUserData['branch_Id'] = newValue?.branchID;
                 },
-                items: branchProvider.branches
-                    .map<DropdownMenuItem<Branch>>((Branch value) {
+                items: _branches.map<DropdownMenuItem<Branch>>((Branch value) {
                   return DropdownMenuItem<Branch>(
                     value: value,
                     child: Text(value.name),

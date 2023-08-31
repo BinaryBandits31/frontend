@@ -69,25 +69,4 @@ class ProductServices {
       throw Exception(e);
     }
   }
-
-  static Future<bool> deleteProduct(String productId) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString('userToken')!;
-
-      final response = await http.delete(
-        Uri.parse('$port$endpoint/$productId'),
-        headers: {'token': token},
-      );
-
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        throw Exception(jsonDecode(response.body)['error']);
-      }
-    } catch (e) {
-      await isTokenExpired(e);
-      throw Exception(e);
-    }
-  }
 }

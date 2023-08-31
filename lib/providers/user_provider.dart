@@ -37,6 +37,7 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> fetchFellowUsers() async {
     isLoadingFellowUsers = true;
+    notifyListeners();
     try {
       List<User>? users = await AuthServices.fetchFellowUsers();
       if (users != null) {

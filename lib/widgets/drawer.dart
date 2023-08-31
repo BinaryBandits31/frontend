@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/admin/branches/branches.dart';
 import 'package:frontend/pages/app/admin/products/products.dart';
+import 'package:frontend/pages/app/admin/raw_materials/raw_materials.dart';
 import 'package:frontend/pages/app/admin/suppliers/suppliers.dart';
 import 'package:frontend/pages/app/admin/users/users.dart';
 import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
+import 'package:frontend/pages/app/inventory_management/raw_material_stock.dart';
 import 'package:frontend/pages/app/orders/cash_sales.dart';
 import 'package:frontend/pages/app/orders/stock_reception.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
@@ -66,8 +68,7 @@ class MyDrawer extends StatelessWidget {
                   accessLevel: 2,
                   title: 'Raw Materials',
                   itemIcon: Icons.forest,
-                  //TODO: Change page
-                  page: const UsersPage(),
+                  page: const RawMaterialsPage(),
                 ),
                 const DrawerMenuItem(
                   accessLevel: 2,
@@ -88,13 +89,12 @@ class MyDrawer extends StatelessWidget {
                 ),
                 DrawerMenuItem(
                   title: 'Raw Materials Stock',
-                  itemIcon: Icons.library_books_outlined,
-                  //TODO: Change page
-                  page: ProductStockPage(),
+                  itemIcon: Icons.forest,
+                  page: RawMaterialStockPage(),
                 ),
                 DrawerMenuItem(
                   title: 'Products Stock',
-                  itemIcon: Icons.library_books_outlined,
+                  itemIcon: Icons.interests,
                   page: ProductStockPage(),
                 ),
               ],
@@ -188,7 +188,26 @@ class DrawerMenu extends StatefulWidget {
 }
 
 class _DrawerMenuState extends State<DrawerMenu> {
-  bool expanded = false;
+  bool? expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    for (DrawerMenuItem drawerItem in widget.items) {
+      Widget page = drawerItem.page;
+      if (page == appProvider.selectedTab) {
+        setState(() {
+          expanded = true;
+        });
+      }
+    }
+    if (expanded == null) {
+      setState(() {
+        expanded = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,27 +223,27 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ListTile(
             title: Text(
               widget.text,
-              style: TextStyle(color: expanded ? AppColor.orange3 : null),
+              style: TextStyle(color: expanded! ? AppColor.orange3 : null),
             ),
             leading: Icon(
               widget.icon,
-              color: expanded
+              color: expanded!
                   ? AppColor.orange3
                   : widget.hasAlert
                       ? Colors.blue
                       : null,
             ),
-            trailing: expanded
+            trailing: expanded!
                 ? const Icon(Icons.keyboard_arrow_up_outlined)
                 : const Icon(Icons.keyboard_arrow_down_outlined),
             onTap: () {
               setState(() {
-                expanded = !expanded;
+                expanded = !expanded!;
               });
             },
           ),
           Visibility(
-              visible: expanded,
+              visible: expanded!,
               child: Padding(
                 padding: EdgeInsets.only(left: sW(25)),
                 child: Column(children: [
@@ -267,18 +286,20 @@ class DrawerMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final userLevel = userProvider.getLevel();
+    final appProvider = Provider.of<AppProvider>(context);
     bool isVisible =
         (accessLevel == null ? true : (userLevel! >= accessLevel!)) &&
             visibility;
+    bool isSelectedPage = appProvider.selectedTab == page;
 
     return Visibility(
       visible: isVisible,
       child: ListTile(
+        selected: isSelectedPage,
+        selectedColor: Colors.blue,
         title: Text(title),
         leading: Icon(itemIcon),
         onTap: () {
-          final appProvider = Provider.of<AppProvider>(context, listen: false);
-
           if (appProvider.pathTitle != title) {
             appProvider.updatedSelectedTitle(
                 '${parentName ?? ''}${parentName != null ? '  >  ' : ''}$title');
