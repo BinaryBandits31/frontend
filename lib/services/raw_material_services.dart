@@ -28,8 +28,6 @@ class RawMaterialServices {
     }
   }
 
-  // static createNewUser(RawMaterial rawMaterial) {}
-
   static Future<bool> createNewUser(RawMaterial rawMaterial) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -49,27 +47,28 @@ class RawMaterialServices {
     }
   }
 
-  // static Future<bool> editProduct(Product product) async {
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     String token = prefs.getString('userToken')!;
+  static Future<bool> addRawMaterialStock(rawMaterialData) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+      String rawMaterialID = rawMaterialData['id'];
+      final response = await http.post(
+        Uri.parse('$port/org/material/add/$rawMaterialID'),
+        headers: {'token': token},
+        body: jsonEncode(rawMaterialData),
+      );
 
-  //     final response = await http.put(
-  //       Uri.parse('$port$endpoint/${product.id}'),
-  //       headers: {'token': token},
-  //       body: jsonEncode({'price': 44.99}),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     } else {
-  //       throw Exception(jsonDecode(response.body)['error']);
-  //     }
-  //   } catch (e) {
-  //     await isTokenExpired(e);
-  //     throw Exception(e);
-  //   }
-  // }
+      print(response.statusCode.toString());
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
+    }
+  }
 
   // static Future<bool> deleteProduct(String productId) async {
   //   try {

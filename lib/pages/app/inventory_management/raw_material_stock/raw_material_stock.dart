@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/raw_material.dart';
+import 'package:frontend/pages/app/inventory_management/raw_material_stock/add_rm_dialog.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/raw_material_provider.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import '../../../models/stock_item.dart';
-import '../../../widgets/data_page.dart';
+import '../../../../models/stock_item.dart';
+import '../../../../widgets/data_page.dart';
 
 class RawMaterialStockPage extends StatefulWidget {
   const RawMaterialStockPage({super.key});
@@ -35,7 +37,7 @@ class _RawMaterialStockPageState extends State<RawMaterialStockPage> {
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Provider.of<RawMaterialProvider>(context, listen: false).disposeRM();
+      Provider.of<RawMaterialProvider>(Get.context!, listen: false).disposeRM();
     });
   }
 
@@ -52,11 +54,7 @@ class _RawMaterialStockPageState extends State<RawMaterialStockPage> {
       isLoading: rawMaterialProvider.isLoading,
       dataList: rawMaterials,
       pageTitle: pageTitle,
-      columnNames: const [
-        'NAME',
-        'DESCRIPTION',
-        'QUANTITY',
-      ],
+      columnNames: const ['NAME', 'BASE UNIT', 'QUANTITY', ""],
       searchFunction: rawMaterialProvider.searchRawMaterial,
       createNewDialog: const SizedBox.shrink(),
       source: RawMaterialDataTableSource(rawMaterials), // Use
@@ -77,8 +75,19 @@ class RawMaterialDataTableSource extends DataTableSource {
       index: index,
       cells: [
         DataCell(Text(rawMaterial.name)),
-        DataCell(Text(rawMaterial.desc)),
+        DataCell(Text(rawMaterial.baseUnit)),
         DataCell(Text(rawMaterial.quantity.toString())),
+        DataCell(InkWell(
+          child: const Icon(
+            Icons.add,
+            color: Colors.blue,
+          ),
+          onTap: () => showDialog(
+            barrierDismissible: false,
+            context: Get.context!,
+            builder: (context) => AddRawMaterialDialog(rawMaterial),
+          ),
+        )),
       ],
     );
   }

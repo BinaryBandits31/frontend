@@ -99,4 +99,19 @@ class RawMaterialProvider extends ChangeNotifier {
     }
     return response;
   }
+
+  Future<bool> addRawMaterialStock(dynamic rawMaterialData) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      return await RawMaterialServices.addRawMaterialStock(rawMaterialData);
+    } catch (e) {
+      debugPrint(e.toString());
+      error = e.toString();
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

@@ -56,7 +56,7 @@ class ProductServices {
       final response = await http.put(
         Uri.parse('$port$endpoint/${product.id}'),
         headers: {'token': token},
-        body: jsonEncode({'price': 44.99}),
+        body: jsonEncode(product.toJson()),
       );
 
       if (response.statusCode == 200) {

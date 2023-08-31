@@ -95,7 +95,7 @@ class _StockPurchasePageState extends State<StockPurchasePage> {
           });
         }
       }
-      bool isNotOwner = userProvider.getLevel()! < 4;
+      bool isNotOwner = userProvider.getLevel()! < 3;
       if (isNotOwner) {
         branchList.add(_selectedBranch!);
         stockPurchaseProvider.setBranch(_selectedBranch!);

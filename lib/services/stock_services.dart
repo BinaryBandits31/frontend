@@ -32,8 +32,8 @@ class StockServices {
     }
   }
 
-  static Future<List<StockItem>> getStockItems(
-      List<String> stockItemIDs) async {
+  static Future<List<StockItem>> getStockItems(List<String> stockItemIDs,
+      {String? branchID}) async {
     String endpoint = '/org/stock/item';
     try {
       final userProvider =
@@ -47,8 +47,8 @@ class StockServices {
           body: jsonEncode({'stockItems': stockItemIDs}));
 
       if (response.statusCode == 200) {
-        final res = (jsonDecode(response.body)[userProvider.user!.branchId]
-                as List<dynamic>)
+        branchID ??= userProvider.user!.branchId;
+        final res = (jsonDecode(response.body)[branchID] as List<dynamic>)
             .map((json) => StockItem.fromJson(json))
             .toList();
         return res;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/product.dart';
 import 'package:frontend/models/raw_material.dart';
 import 'package:frontend/pages/app/admin/users/create_user_dialog.dart';
 import 'package:frontend/providers/raw_material_provider.dart';

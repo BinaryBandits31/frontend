@@ -10,10 +10,12 @@ class LabeledTextField extends StatelessWidget {
       this.isRequired = false,
       this.margin = true,
       this.initialValue = '',
-      this.inputType});
+      this.inputType,
+      this.isEditable = true});
 
   final String label;
   final bool? isRequired;
+  final bool? isEditable;
   final void Function(String?) onSaved;
   final bool margin;
   final String initialValue;
@@ -35,6 +37,7 @@ class LabeledTextField extends StatelessWidget {
             ),
           ),
           TextFormField(
+            enabled: isEditable,
             obscureText:
                 label.toLowerCase().contains('password') ? true : false,
             initialValue: initialValue,

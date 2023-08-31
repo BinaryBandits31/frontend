@@ -17,6 +17,7 @@ class DataPage extends StatelessWidget {
     required this.searchFunction,
     required this.refreshPageFunction,
     required this.adminPage,
+    this.filterWidget,
   });
 
   final bool isLoading;
@@ -27,6 +28,7 @@ class DataPage extends StatelessWidget {
   final Widget createNewDialog;
   final DataTableSource source;
   final Function searchFunction;
+  final Widget? filterWidget;
   final bool adminPage;
 
   @override
@@ -66,40 +68,55 @@ class DataPage extends StatelessWidget {
                       addVerticalSpace(20),
                       // Search Section
                       SizedBox(
-                        width: screenWidth * 0.25,
-                        child: Card(
-                          color: AppColor.black1,
-                          child: Padding(
-                            padding: EdgeInsets.all(sH(20)),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                //Search Field
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('What are you looking for?',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    SizedBox(
-                                        width: screenWidth * 0.2,
-                                        child: TextField(
-                                          decoration: const InputDecoration(
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors.white)),
-                                              labelText: 'Search',
-                                              labelStyle: TextStyle(
-                                                  color: Colors.grey)),
-                                          onChanged: (value) =>
-                                              searchFunction(value),
-                                        ))
-                                  ],
+                        height: screenHeight * 0.16,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(
+                              width: screenWidth * 0.25,
+                              child: Card(
+                                color: AppColor.black1,
+                                child: Padding(
+                                  padding: EdgeInsets.all(sH(20)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('What are you looking for?',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      SizedBox(
+                                          width: screenWidth * 0.2,
+                                          child: TextField(
+                                            decoration: const InputDecoration(
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white)),
+                                                labelText: 'Search',
+                                                labelStyle: TextStyle(
+                                                    color: Colors.grey)),
+                                            onChanged: (value) =>
+                                                searchFunction(value),
+                                          ))
+                                    ],
+                                  ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                            addHorizontalSpace(20),
+                            if (filterWidget != null)
+                              SizedBox(
+                                child: Card(
+                                  color: AppColor.black1,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(sH(20)),
+                                    child: filterWidget,
+                                  ),
+                                ),
+                              )
+                          ],
                         ),
                       ),
                       // Result Section

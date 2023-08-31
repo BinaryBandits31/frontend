@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/branch.dart';
+import 'package:frontend/models/stock_item.dart';
 import 'package:frontend/services/product_services.dart';
+import 'package:frontend/services/stock_services.dart';
 
 import '../models/product.dart';
 
 class ProductProvider extends ChangeNotifier {
+  //Products
   List<Product> _products = [];
   List<Product> _filteredProducts = [];
   bool isLoading = false;
@@ -12,6 +16,15 @@ class ProductProvider extends ChangeNotifier {
   List<Product> get products => _products;
   List<Product> get filteredProducts => _filteredProducts;
 
+  //Product Stock
+  Branch? _selectedBranch;
+  List<StockItem> _productStock = [];
+  List<StockItem> _filteredProductStock = [];
+
+  List<StockItem> get productStock => _productStock;
+  List<StockItem> get filteredProductStock => _filteredProductStock;
+
+// Products
   Future<void> fetchProducts() async {
     isLoading = true;
     notifyListeners();
@@ -77,9 +90,57 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+// Stock
+  Future<void> fetchProductStock() async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      _productStock = await StockServices.getStockItems([],
+          branchID: _selectedBranch!.branchID);
+      _filteredProductStock = _productStock;
+    } catch (e) {
+      debugPrint(e.toString());
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void searchProductStock(String query) {
+    isLoading = true;
+    if (query.isNotEmpty) {
+      final String lowerCaseQuery = query.toLowerCase();
+      List<StockItem> filteredProductStock = [];
+      for (StockItem stockItem in _productStock) {
+        final String lowerCaseStockItemName =
+            stockItem.productName.toLowerCase();
+
+        if (lowerCaseStockItemName.contains(lowerCaseQuery)) {
+          filteredProductStock.add(stockItem);
+        }
+      }
+      _filteredProductStock = filteredProductStock;
+    } else {
+      _filteredProductStock = _productStock;
+    }
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void setSelectedBranch(Branch branch) async {
+    if (_selectedBranch != branch) {
+      _selectedBranch = branch;
+      await fetchProductStock();
+      notifyListeners();
+    }
+  }
+
   void productDispose() {
     _products = [];
     _filteredProducts = [];
+    _productStock = [];
+    _filteredProductStock = [];
     isLoading = false;
     error = null;
     notifyListeners();

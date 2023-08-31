@@ -51,8 +51,6 @@ class _CompanyLocationsPageState extends State<CompanyLocationsPage> {
 }
 
 class BranchDataTableSource extends DataTableSource {
-  // final branchProvider =
-  //     Provider.of<BranchProvider>(Get.context!, listen: true);
   final List<Branch> branches;
 
   BranchDataTableSource(this.branches);

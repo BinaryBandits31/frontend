@@ -73,7 +73,7 @@ class _StockTransferPageState extends State<StockTransferPage> {
           });
         }
       }
-      bool isNotOwner = userProvider.getLevel()! < 4;
+      bool isNotOwner = userProvider.getLevel()! < 3;
       if (isNotOwner) {
         _fromBranchList.add(_selectedFromBranch!);
         stockTransferProvider.setCurrentBranch(_selectedFromBranch!);

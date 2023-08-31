@@ -87,7 +87,7 @@ class _CashSalePageState extends State<CashSalePage> {
           });
         }
       }
-      bool isNotOwner = userProvider.getLevel()! < 4;
+      bool isNotOwner = userProvider.getLevel()! < 3;
       if (isNotOwner) {
         _fromBranchList.add(_selectedCompanyLocation!);
         stockTransferProvider.setCurrentBranch(_selectedCompanyLocation!);
