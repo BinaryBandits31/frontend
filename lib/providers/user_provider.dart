@@ -42,6 +42,7 @@ class UserProvider extends ChangeNotifier {
       List<User>? users = await AuthServices.fetchFellowUsers();
       if (users != null) {
         _fellowUsers = users;
+        _filteredFellowUsers = _fellowUsers;
       }
     } catch (e) {
       debugPrint(e.toString());

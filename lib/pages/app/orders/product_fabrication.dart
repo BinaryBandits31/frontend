@@ -44,6 +44,8 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
       });
       List<RawMaterial> rawMaterials =
           Provider.of<RawMaterialProvider>(context, listen: false).rawMaterials;
+      final selectedLocation =
+          Provider.of<ProductProvider>(context, listen: false).selectedBranch;
       List<String> constKeys = product.constituents!.keys.toList();
 
       List constValues = product.constituents!.values.toList();
@@ -53,8 +55,7 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
         final rm = rawMaterials.firstWhere((e) => e.id == key);
         String name = rm.name;
         String req = constValues[i].toString();
-        String stock =
-            rm.quantity[_selectedCompanyLocation!.branchID].toString();
+        String stock = rm.quantity![selectedLocation!.branchID].toString();
         setState(() {
           ingredientsAndStock.add({
             "name": name,
@@ -73,16 +74,16 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
   }
 
   void fabricateProduct() async {
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
     if (_displayedYield == null || quantityController.text.isEmpty) return;
     if (_displayedYield! < int.parse(quantityController.text)) {
       dangerMessage('Not Enough Raw Materials.');
       return;
     }
     _submissionData['quantity'] = int.parse(quantityController.text);
-    _submissionData['branch_Id'] = _selectedCompanyLocation!.branchID;
+    _submissionData['branch_Id'] = productProvider.selectedBranch!.branchID;
 
-    final productProvider =
-        Provider.of<ProductProvider>(context, listen: false);
     final rawMaterialProvider =
         Provider.of<RawMaterialProvider>(context, listen: false);
     bool res = await productProvider.fabricateProduct(_submissionData);
@@ -110,7 +111,7 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
           Provider.of<RawMaterialProvider>(context, listen: false);
 
       if (rawMaterialsProvider.rawMaterials.isEmpty) {
-        await rawMaterialsProvider.fetchRawMaterials();
+        await rawMaterialsProvider.fetchRawMaterials().then((value) => null);
       }
 
       if (branchProvider.branches.isEmpty) {
@@ -129,6 +130,7 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
       bool isNotOwner = userProvider.getLevel()! < 3;
       if (isNotOwner) {
         _fromBranchList.add(_selectedCompanyLocation!);
+        productProvider.setSelectedBranch(_selectedCompanyLocation!);
       } else {
         setState(() {
           _fromBranchList = branchProvider.branches;

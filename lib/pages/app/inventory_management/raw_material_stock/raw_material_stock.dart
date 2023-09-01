@@ -121,7 +121,7 @@ class RawMaterialDataTableSource extends DataTableSource {
     try {
       if (rawMaterialProvider.selectedBranch != null) {
         quantity =
-            rawMaterial.quantity[rawMaterialProvider.selectedBranch!.branchID];
+            rawMaterial.quantity![rawMaterialProvider.selectedBranch!.branchID];
       }
     } catch (e) {
       null;

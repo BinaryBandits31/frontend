@@ -4,7 +4,7 @@ class RawMaterial {
   final String desc;
   final String package;
   final String baseUnit;
-  final Map<String, dynamic> quantity;
+  final Map<String, dynamic>? quantity;
   final double qtyPerPack;
   final double price;
 

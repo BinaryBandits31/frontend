@@ -48,10 +48,9 @@ class _CustomSearchFieldState<T> extends State<CustomSearchField<T>> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
+            enabled: widget.itemList.isNotEmpty,
             focusNode: focusNode,
-            onTap: () {
-              _filterItems('');
-            },
+            onTap: () => _filterItems(''),
             onChanged: _filterItems,
             decoration: InputDecoration(
               labelText: 'Search $T',
