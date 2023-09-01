@@ -37,15 +37,11 @@ class _DashboardState extends State<Dashboard> {
                         child: salesSummary["LatestSales"] == null
                             ? SalesReportWidget(
                                 total: abbreviateNumber(
-                                    salesSummary["totalEarnings"] == 0
-                                        ? 0.0
-                                        : salesSummary["totalEarnings"]),
+                                    salesSummary["totalEarnings"]),
                               )
                             : SalesReportWidget(
                                 total: abbreviateNumber(
-                                    salesSummary["totalEarnings"] == 0
-                                        ? 0.0
-                                        : salesSummary["totalEarnings"]),
+                                    salesSummary["totalEarnings"]),
                                 branchData: salesSummary["LatestSales"],
                               )),
                     addHorizontalSpace(20),

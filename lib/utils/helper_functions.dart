@@ -1,6 +1,9 @@
 import 'package:intl/intl.dart';
 
-String abbreviateNumber(double? number) {
+String abbreviateNumber(dynamic number) {
+  if (number is int) {
+    number = double.parse(number.toString());
+  }
   if (number == null) return '';
   if (number < 1000) {
     return number.toStringAsFixed(
