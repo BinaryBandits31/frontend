@@ -19,8 +19,6 @@ class ProductsPageHandler extends StatelessWidget {
         .organization!
         .isManufacturer;
 
-    print('org type is manu : ${isManufacturingOrg.toString()}');
-
     return isManufacturingOrg
         ? const ManufacturesProductPage()
         : const ProductsPage();

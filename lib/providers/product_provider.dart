@@ -202,6 +202,7 @@ class ProductProvider extends ChangeNotifier {
     _filteredProductStock = [];
     _localProducts = [];
     _filteredLocalProducts = [];
+    _selectedBranch = null;
     isLoading = false;
     error = null;
     notifyListeners();

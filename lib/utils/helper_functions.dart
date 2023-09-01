@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
-String abbreviateNumber(double number) {
+String abbreviateNumber(double? number) {
+  if (number == null) return '';
   if (number < 1000) {
     return number.toStringAsFixed(
         0); // No abbreviation needed for numbers less than 1000
@@ -15,7 +16,8 @@ String abbreviateNumber(double number) {
   }
 }
 
-String formatTimeAgoFromString(String dateString) {
+String formatTimeAgoFromString(String? dateString) {
+  if (dateString == null) return '';
   dateString = dateString.split(' +')[0];
   final timestamp = DateTime.parse(dateString);
   final now = DateTime.now();

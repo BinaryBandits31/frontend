@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/home.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/org_provider.dart';
+import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
 import 'package:frontend/widgets/buttons.dart';
@@ -17,8 +18,11 @@ import '../../widgets/notify.dart';
 import 'org/auth.dart';
 
 class UserLogin extends StatefulWidget {
+  final Widget? previousPage;
+
   const UserLogin({
     super.key,
+    this.previousPage,
   });
 
   @override
@@ -46,6 +50,19 @@ class _UserLoginState extends State<UserLogin> {
       } else if (provider.error != null) {
         dangerMessage('${provider.error}');
       }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.previousPage.toString() == 'HomePage') {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        Future.delayed(const Duration(milliseconds: 200)).then((_) async {
+          await AuthServices.clearAppData();
+        });
+      });
     }
   }
 

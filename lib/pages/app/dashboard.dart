@@ -30,7 +30,6 @@ class _DashboardState extends State<Dashboard> {
     Map<String, dynamic> dashboardData = appProvider.dashboardData;
     dynamic salesSummary = dashboardData['salesSummary'];
     dynamic productionSummary = dashboardData['productionSummary'];
-
     return Padding(
         padding: EdgeInsets.all(sH(20)),
         child: Column(
@@ -42,14 +41,20 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     Expanded(
                         // Sales Report
-                        child: SalesReportWidget(
-                      total: abbreviateNumber(salesSummary != null
-                          ? salesSummary["totalEarnings"]
-                          : 0.0),
-                      branchData: salesSummary != null
-                          ? salesSummary["LatestSales"]
-                          : [{}, {}, {}],
-                    )),
+                        child: salesSummary["LatestSales"] == null
+                            ? SalesReportWidget(
+                                total: abbreviateNumber(
+                                    salesSummary["totalEarnings"] == 0
+                                        ? 0.0
+                                        : salesSummary["totalEarnings"]),
+                              )
+                            : SalesReportWidget(
+                                total: abbreviateNumber(
+                                    salesSummary["totalEarnings"] == 0
+                                        ? 0.0
+                                        : salesSummary["totalEarnings"]),
+                                branchData: salesSummary["LatestSales"],
+                              )),
                     addHorizontalSpace(20),
                     // Estimates RM Stock
                     Expanded(
@@ -173,7 +178,7 @@ class ReportBox extends StatelessWidget {
 
 class SalesReportWidget extends StatelessWidget {
   final String? total;
-  final List<dynamic> branchData;
+  final List<dynamic>? branchData;
 
   const SalesReportWidget({
     super.key,
@@ -206,25 +211,25 @@ class SalesReportWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: RecentSaleTab(
-                  branchName: branchData[0]['name'],
-                  total: abbreviateNumber(branchData[0]['total']),
-                  timeStamp: formatTimeAgoFromString(branchData[0]['time']),
+                  branchName: branchData![0]['name'],
+                  total: abbreviateNumber(branchData![0]['total']),
+                  timeStamp: formatTimeAgoFromString(branchData![0]['time']),
                 ),
               ),
               addHorizontalSpace(sW(10)),
               Expanded(
                 child: RecentSaleTab(
-                  branchName: branchData[1]['name'],
-                  total: abbreviateNumber(branchData[1]['total']),
-                  timeStamp: formatTimeAgoFromString(branchData[1]['time']),
+                  branchName: branchData![1]['name'],
+                  total: abbreviateNumber(branchData![1]['total']),
+                  timeStamp: formatTimeAgoFromString(branchData![1]['time']),
                 ),
               ),
               addHorizontalSpace(sW(10)),
               Expanded(
                 child: RecentSaleTab(
-                  branchName: branchData[2]['name'],
-                  total: abbreviateNumber(branchData[2]['total']),
-                  timeStamp: formatTimeAgoFromString(branchData[2]['time']),
+                  branchName: branchData![2]['name'],
+                  total: abbreviateNumber(branchData![2]['total']),
+                  timeStamp: formatTimeAgoFromString(branchData![2]['time']),
                 ),
               ),
             ],

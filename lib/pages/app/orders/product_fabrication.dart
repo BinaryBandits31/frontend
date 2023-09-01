@@ -34,6 +34,15 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
 
   void _selectProduct(Product product) {
     if (product != _displayedSearchItem) {
+      List<RawMaterial> rawMaterials =
+          Provider.of<RawMaterialProvider>(context, listen: false).rawMaterials;
+      final selectedLocation =
+          Provider.of<ProductProvider>(context, listen: false).selectedBranch;
+      if (selectedLocation == null) {
+        dangerMessage('Please Select Location First');
+        return;
+      }
+
       setState(() {
         ingredientsAndStock = [];
       });
@@ -42,10 +51,7 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
       setState(() {
         _displayedSearchItem = product;
       });
-      List<RawMaterial> rawMaterials =
-          Provider.of<RawMaterialProvider>(context, listen: false).rawMaterials;
-      final selectedLocation =
-          Provider.of<ProductProvider>(context, listen: false).selectedBranch;
+
       List<String> constKeys = product.constituents!.keys.toList();
 
       List constValues = product.constituents!.values.toList();

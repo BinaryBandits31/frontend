@@ -29,7 +29,6 @@ class _LoginOrgState extends State<LoginOrg> {
   void _loginOrg(OrgProvider provider) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print('here1');
 
       await provider.validateOrg(_organizationID);
 
@@ -37,7 +36,6 @@ class _LoginOrgState extends State<LoginOrg> {
         final SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         sharedPreferences.setString('orgID', provider.organization!.id);
-        print('here2');
 
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const UserLogin()));

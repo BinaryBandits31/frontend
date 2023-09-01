@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/organization.dart';
+import 'package:frontend/pages/app/home.dart';
 import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/providers/product_provider.dart';
@@ -8,6 +9,7 @@ import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/utils/constants.dart';
+import 'package:frontend/widgets/notify.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -127,8 +129,10 @@ class AuthServices {
 
   static Future<void> appLogout() async {
     // Handle logout action
-    Get.off(() => const UserLogin());
+    Get.off(() => const UserLogin(previousPage: HomePage()));
+  }
 
+  static Future<void> clearAppData() async {
     Provider.of<AppProvider>(Get.context!, listen: false).appDispose();
 
     Provider.of<UserProvider>(Get.context!, listen: false).userDispose();
@@ -146,6 +150,7 @@ class AuthServices {
 
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove('userToken');
+    successMessage("Logout successfully.");
   }
 
   static Future<List<User>?> fetchFellowUsers() async {
