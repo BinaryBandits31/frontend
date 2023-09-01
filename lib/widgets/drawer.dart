@@ -51,18 +51,11 @@ class MyDrawer extends StatelessWidget {
                   itemIcon: Icons.maps_home_work_outlined,
                   page: CompanyLocationsPage(),
                 ),
-                DrawerMenuItem(
-                  visibility: !orgProvider.isManufacturer,
+                const DrawerMenuItem(
                   accessLevel: 2,
                   title: 'Suppliers',
                   itemIcon: Icons.support_agent_outlined,
-                  page: const SuppliersPage(),
-                ),
-                const DrawerMenuItem(
-                  accessLevel: 2,
-                  title: 'Products',
-                  itemIcon: Icons.interests,
-                  page: ProductsPage(),
+                  page: SuppliersPage(),
                 ),
                 DrawerMenuItem(
                   visibility: orgProvider.isManufacturer,
@@ -70,6 +63,12 @@ class MyDrawer extends StatelessWidget {
                   title: 'Raw Materials',
                   itemIcon: Icons.forest,
                   page: const RawMaterialsPage(),
+                ),
+                const DrawerMenuItem(
+                  accessLevel: 2,
+                  title: 'Products',
+                  itemIcon: Icons.interests,
+                  page: ProductsPage(),
                 ),
                 const DrawerMenuItem(
                   accessLevel: 2,

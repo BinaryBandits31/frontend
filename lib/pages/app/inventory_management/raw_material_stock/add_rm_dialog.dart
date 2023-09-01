@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/raw_material.dart';
 import 'package:frontend/pages/app/admin/users/create_user_dialog.dart';
 import 'package:frontend/providers/raw_material_provider.dart';
-import 'package:frontend/utils/constants.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../models/branch.dart';
-import '../../../../providers/branch_provider.dart';
 import '../../../../widgets/buttons.dart';
 import '../../../../widgets/helper_widgets.dart';
 import '../../../../widgets/notify.dart';
@@ -118,6 +116,9 @@ class _AddRawMaterialDialogState extends State<AddRawMaterialDialog> {
                 _addRawMaterialData['numberOfPacks'] = 0;
                 _addRawMaterialData['numberOfUnits'] = _quantity;
               }
+
+              _addRawMaterialData['branch_Id'] =
+                  rawMaterialProvider.selectedBranch!.branchID;
 
               final res = await rawMaterialProvider
                   .addRawMaterialStock(_addRawMaterialData);

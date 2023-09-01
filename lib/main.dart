@@ -4,6 +4,7 @@ import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/providers/stock_purchase_provider.dart';
 import 'package:frontend/providers/stock_transfer_provider.dart';
 import 'package:frontend/providers/supplier_provider.dart';
+import 'package:frontend/services/activity_logs_services.dart';
 import 'package:frontend/theme/dark_theme.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +40,16 @@ class MyApp extends StatelessWidget {
             create: (_) => StockTransferProvider()),
         ChangeNotifierProvider<RawMaterialProvider>(
             create: (_) => RawMaterialProvider()),
+        // StreamProvider<Map<dynamic, dynamic>>(
+        //     initialData: const {},
+        //     create: (context) {
+        //       final stream =
+        //           ActivityLogsServices.fetchDashboardData().asStream();
+        //       stream.listen((data) {
+        //         print('Received data from the stream: $data');
+        //       });
+        //       return stream;
+        //     })
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

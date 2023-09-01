@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/branch.dart';
 import 'package:frontend/models/raw_material.dart';
 import 'package:frontend/services/raw_material_services.dart';
 
 class RawMaterialProvider extends ChangeNotifier {
   List<RawMaterial> _rawMaterials = [];
   List<RawMaterial> _filteredRawMaterials = [];
+  Branch? _selectedBranch;
   bool isLoading = false;
   String? error;
 
   List<RawMaterial> get rawMaterials => _rawMaterials;
   List<RawMaterial> get filteredRawMaterials => _filteredRawMaterials;
+  Branch? get selectedBranch => _selectedBranch;
 
   Future<void> fetchRawMaterials() async {
     isLoading = true;
@@ -26,35 +29,12 @@ class RawMaterialProvider extends ChangeNotifier {
     }
   }
 
-  // Future<bool> createProduct(Product product) async {
-  //   isLoading = true;
-  //   notifyListeners();
-  //   try {
-  //     return await ProductServices.createProduct(product);
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //     error = e.toString();
-  //     return false;
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
-
-  // Future<bool> editProduct(Product product) async {
-  //   isLoading = true;
-  //   notifyListeners();
-  //   try {
-  //     return await ProductServices.editProduct(product);
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //     error = e.toString();
-  //     return false;
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
+  void setBranch(Branch branch) {
+    if (_selectedBranch != branch) {
+      _selectedBranch = branch;
+      notifyListeners();
+    }
+  }
 
   void searchRawMaterial(String query) {
     isLoading = true;
@@ -80,6 +60,7 @@ class RawMaterialProvider extends ChangeNotifier {
     _rawMaterials = [];
     _filteredRawMaterials = [];
     isLoading = false;
+    _selectedBranch = null;
     error = null;
     notifyListeners();
   }

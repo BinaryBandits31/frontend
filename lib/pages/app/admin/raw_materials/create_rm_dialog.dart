@@ -137,6 +137,7 @@ class _CreateRMDialogState extends State<CreateRMDialog> {
           SubmitButton(
             label: 'Create',
             onPressed: () async {
+              print(_createRMData.toString());
               final res = await rawMaterialProvider
                   .createRawMaterial(RawMaterial.fromJson(_createRMData));
               if (res) {

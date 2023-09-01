@@ -27,4 +27,24 @@ class ActivityLogsServices {
       throw Exception(e);
     }
   }
+
+  static Future<Map<dynamic, dynamic>> fetchDashboardData() async {
+    String endpoint = "/org/dashboard/";
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http
+          .get(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
+    }
+  }
 }

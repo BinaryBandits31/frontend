@@ -18,7 +18,7 @@ class EditProductDialog extends StatefulWidget {
 }
 
 class _EditProductDialogState extends State<EditProductDialog> {
-  var _editProductData = {};
+  dynamic _editProductData;
   bool isLoading = false;
 
   void toggleLoad() {
@@ -73,19 +73,6 @@ class _EditProductDialogState extends State<EditProductDialog> {
               },
               inputType: const TextInputType.numberWithOptions(decimal: true),
             ),
-            addVerticalSpace(20),
-            LabeledTextField(
-              initialValue: widget.product.quantity.toString(),
-              margin: false,
-              label: 'Quantity',
-              isRequired: true,
-              onSaved: (value) {
-                if (value != null) {
-                  _editProductData['quantity'] = int.parse(value);
-                }
-              },
-              inputType: TextInputType.number,
-            )
           ],
         ),
         actions: [

@@ -48,22 +48,17 @@ class _ProductsPageState extends State<ProductsPage> {
         'NAME',
         'DESCRIPTION',
         'PRICE',
-        'QUANTITY',
         "",
       ],
       searchFunction: productProvider.searchProduct,
       createNewDialog: CreateProductDialog(), // Use the create product dialog
-      source:
-          ProductDataTableSource(products), // Use
-      adminPage: true,// the ProductDataTableSource
+      source: ProductDataTableSource(products), // Use
+      adminPage: true, // the ProductDataTableSource
     );
   }
 }
 
 class ProductDataTableSource extends DataTableSource {
-  // final productProvider =
-  //     Provider.of<ProductProvider>(Get.context!, listen: true);
-
   final userProvider = Provider.of<UserProvider>(Get.context!, listen: false);
   final List<Product> products;
 
@@ -77,7 +72,6 @@ class ProductDataTableSource extends DataTableSource {
       DataCell(Text(product.name)),
       DataCell(Text(product.description)),
       DataCell(Text(product.price.toString())),
-      DataCell(Text(product.quantity.toString())),
       userProvider.getLevel()! >= 2
           ? DataCell(const SizedBox(),
               showEditIcon: true,

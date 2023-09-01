@@ -61,8 +61,10 @@ class ProductProvider extends ChangeNotifier {
     try {
       return await ProductServices.editProduct(product);
     } catch (e) {
+      debugPrint('error dey here naa');
       debugPrint(e.toString());
       error = e.toString();
+      notifyListeners();
       return false;
     } finally {
       isLoading = false;

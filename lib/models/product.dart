@@ -1,15 +1,17 @@
+import 'dart:convert';
+
 class Product {
   final String name;
   final String description;
   final double price;
-  final int quantity;
+  final Map<String, int>? constituents;
   final String? id;
 
   Product({
     required this.name,
     required this.description,
     required this.price,
-    required this.quantity,
+    this.constituents,
     this.id,
   });
 
@@ -17,7 +19,7 @@ class Product {
         name: json['name'],
         description: json['desc'],
         price: json['price'].toDouble(),
-        quantity: json['quantity'],
+        constituents: json['constituents'],
         id: json['product_Id'],
       );
 
@@ -25,6 +27,7 @@ class Product {
         'name': name,
         'desc': description,
         'price': price,
-        'quantity': quantity,
+        'constituents': constituents,
+        'product_Id': id,
       };
 }

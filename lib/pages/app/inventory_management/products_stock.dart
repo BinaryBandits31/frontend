@@ -8,7 +8,6 @@ import 'package:frontend/widgets/custom_widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../models/stock_item.dart';
 import 'package:intl/intl.dart';
-import '../../../services/stock_services.dart';
 import '../../../widgets/data_page.dart';
 
 class ProductStockPage extends StatefulWidget {
@@ -26,10 +25,6 @@ class _ProductStockPageState extends State<ProductStockPage> {
   @override
   void initState() {
     super.initState();
-    // StockServices.getStockItems([]).then((value) => setState(() {
-    //       stockItems = value;
-    //       isLoading = false;
-    //     }));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final branchProvider =
           Provider.of<BranchProvider>(context, listen: false);
@@ -65,8 +60,8 @@ class _ProductStockPageState extends State<ProductStockPage> {
         .split(' > ')[1];
     final branchProvider = Provider.of<BranchProvider>(context, listen: false);
 
-    final productProvider = Provider.of<ProductProvider>(context);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final productProvider = Provider.of<ProductProvider>(context);
 
     List<StockItem> stockList = productProvider.filteredProductStock;
 

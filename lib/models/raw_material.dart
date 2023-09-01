@@ -4,10 +4,9 @@ class RawMaterial {
   final String desc;
   final String package;
   final String baseUnit;
-  final int? quantity;
+  final Map<String, dynamic> quantity;
   final double qtyPerPack;
-  //TODO: price shouldn't be nullable
-  final double? price;
+  final double price;
 
   RawMaterial({
     required this.desc,
