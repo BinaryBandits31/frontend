@@ -8,6 +8,7 @@ import 'package:frontend/pages/app/inventory_management/products_price.dart';
 import 'package:frontend/pages/app/inventory_management/products_stock.dart';
 import 'package:frontend/pages/app/inventory_management/raw_material_stock/raw_material_stock.dart';
 import 'package:frontend/pages/app/orders/cash_sales.dart';
+import 'package:frontend/pages/app/orders/product_fabrication.dart';
 import 'package:frontend/pages/app/orders/stock_reception.dart';
 import 'package:frontend/pages/app/orders/stock_purchase.dart';
 import 'package:frontend/pages/app/orders/stock_transfer.dart';
@@ -68,7 +69,7 @@ class MyDrawer extends StatelessWidget {
                   accessLevel: 2,
                   title: 'Products',
                   itemIcon: Icons.interests,
-                  page: ProductsPage(),
+                  page: ProductsPageHandler(),
                 ),
                 const DrawerMenuItem(
                   accessLevel: 2,
@@ -129,8 +130,7 @@ class MyDrawer extends StatelessWidget {
                   visibility: orgProvider.isManufacturer,
                   title: 'Product Fabrication',
                   itemIcon: Icons.factory_sharp,
-                  //TODO: Change page
-                  page: const StockReceptionPage(),
+                  page: const ProductFabricationPage(),
                 ),
               ],
             ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/branch.dart';
 import 'package:frontend/models/product.dart';
-import 'package:frontend/models/stock_item.dart';
+import 'package:frontend/models/raw_material.dart';
 import 'package:frontend/providers/branch_provider.dart';
 import 'package:frontend/providers/product_provider.dart';
-import 'package:frontend/providers/stock_transfer_provider.dart';
+import 'package:frontend/providers/raw_material_provider.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/buttons.dart';
@@ -15,47 +15,82 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/user_provider.dart';
 
-class CashSalePage extends StatefulWidget {
-  const CashSalePage({super.key});
+class ProductFabricationPage extends StatefulWidget {
+  const ProductFabricationPage({super.key});
 
   @override
-  State<CashSalePage> createState() => _CashSalePageState();
+  State<ProductFabricationPage> createState() => _ProductFabricationPageState();
 }
 
-class _CashSalePageState extends State<CashSalePage> {
+class _ProductFabricationPageState extends State<ProductFabricationPage> {
   List<Branch> _fromBranchList = [];
   Branch? _selectedCompanyLocation;
-  StockItem? _displayedSearchItem;
-  dynamic _newProductItem = {};
-  int? _displayedStockLevel;
-  double? _displayedPrice;
+  Product? _displayedSearchItem;
+  int? _displayedYield;
+  final _submissionData = {};
   final quantityController = TextEditingController();
   final quantityFocusNode = FocusNode();
+  List<dynamic> ingredientsAndStock = [];
 
-  void _selectProduct(StockItem item) {
-    if (item != _displayedSearchItem) {
-      quantityFocusNode.requestFocus();
-      List<Product> products =
-          Provider.of<ProductProvider>(context, listen: false).products;
+  void _selectProduct(Product product) {
+    if (product != _displayedSearchItem) {
       setState(() {
-        _displayedSearchItem = item;
-        _displayedStockLevel = item.quantity;
-        _displayedPrice = products
-            .firstWhere((element) => element.name == item.productName)
-            .price;
+        ingredientsAndStock = [];
       });
-      _newProductItem['product_Id'] = item.stockItemID;
-      _newProductItem['productName'] = item.productName;
-      _newProductItem['price'] = _displayedPrice;
+
+      quantityFocusNode.requestFocus();
+      setState(() {
+        _displayedSearchItem = product;
+      });
+      List<RawMaterial> rawMaterials =
+          Provider.of<RawMaterialProvider>(context, listen: false).rawMaterials;
+      List<String> constKeys = product.constituents!.keys.toList();
+
+      List constValues = product.constituents!.values.toList();
+      List constDivisions = [];
+      for (int i = 0; i < constKeys.length; i++) {
+        String key = constKeys[i];
+        final rm = rawMaterials.firstWhere((e) => e.id == key);
+        String name = rm.name;
+        String req = constValues[i].toString();
+        String stock =
+            rm.quantity[_selectedCompanyLocation!.branchID].toString();
+        setState(() {
+          ingredientsAndStock.add({
+            "name": name,
+            "requiredStock": req,
+            "actualStock": stock,
+          });
+        });
+        constDivisions.add(int.parse(stock) ~/ int.parse(req));
+      }
+      setState(() {
+        _displayedYield =
+            constDivisions.reduce((curr, next) => curr < next ? curr : next);
+      });
+      _submissionData['id'] = product.id;
     }
   }
 
-  void confirmSale() async {
-    final stockPurchaseProvider =
-        Provider.of<StockTransferProvider>(context, listen: false);
-    bool res = await stockPurchaseProvider.confirmSale();
+  void fabricateProduct() async {
+    if (_displayedYield == null || quantityController.text.isEmpty) return;
+    if (_displayedYield! < int.parse(quantityController.text)) {
+      dangerMessage('Not Enough Raw Materials.');
+      return;
+    }
+    _submissionData['quantity'] = int.parse(quantityController.text);
+    _submissionData['branch_Id'] = _selectedCompanyLocation!.branchID;
+
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    final rawMaterialProvider =
+        Provider.of<RawMaterialProvider>(context, listen: false);
+    bool res = await productProvider.fabricateProduct(_submissionData);
     if (res) {
-      successMessage('Sale completed successfully.');
+      successMessage('Product Fabricated successfully.');
+      clearData();
+      await productProvider.fetchLocalProducts();
+      await rawMaterialProvider.fetchRawMaterials();
     } else {
       dangerMessage('Something went wrong.');
     }
@@ -70,15 +105,19 @@ class _CashSalePageState extends State<CashSalePage> {
       final productProvider =
           Provider.of<ProductProvider>(context, listen: false);
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final stockTransferProvider =
-          Provider.of<StockTransferProvider>(context, listen: false);
-      await stockTransferProvider.fetchAllStockItems();
+
+      final rawMaterialsProvider =
+          Provider.of<RawMaterialProvider>(context, listen: false);
+
+      if (rawMaterialsProvider.rawMaterials.isEmpty) {
+        await rawMaterialsProvider.fetchRawMaterials();
+      }
 
       if (branchProvider.branches.isEmpty) {
         await branchProvider.fetchBranches();
       }
-      if (productProvider.products.isEmpty) {
-        await productProvider.fetchProducts();
+      if (productProvider.localProducts.isEmpty) {
+        await productProvider.fetchLocalProducts();
       }
       for (Branch branch in branchProvider.branches) {
         if (branch.branchID == userProvider.user!.branchId) {
@@ -90,7 +129,6 @@ class _CashSalePageState extends State<CashSalePage> {
       bool isNotOwner = userProvider.getLevel()! < 3;
       if (isNotOwner) {
         _fromBranchList.add(_selectedCompanyLocation!);
-        stockTransferProvider.setCurrentBranch(_selectedCompanyLocation!);
       } else {
         setState(() {
           _fromBranchList = branchProvider.branches;
@@ -103,20 +141,26 @@ class _CashSalePageState extends State<CashSalePage> {
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Provider.of<StockTransferProvider>(Get.context!, listen: false)
-          .disposeST();
+      Provider.of<ProductProvider>(Get.context!, listen: false)
+          .productDispose();
+    });
+  }
+
+  void clearData() {
+    quantityController.clear();
+    setState(() {
+      _displayedSearchItem = null;
+      _displayedYield = null;
+      _submissionData.clear();
+      ingredientsAndStock = [];
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final branchProvider = Provider.of<BranchProvider>(context, listen: true);
-
-    final stockTransferProvider =
-        Provider.of<StockTransferProvider>(context, listen: true);
-    final stockItems = stockTransferProvider.stockItems;
-    final List<StockItem> productList =
-        Provider.of<StockTransferProvider>(context, listen: true).products;
+    final productProvider = Provider.of<ProductProvider>(context, listen: true);
+    final products = productProvider.filteredLocalProducts;
 
     return SingleChildScrollView(
       child: Container(
@@ -135,13 +179,13 @@ class _CashSalePageState extends State<CashSalePage> {
                     child: CustomDropDown<Branch>(
                       isLoading: branchProvider.isLoading,
                       labelText: 'Company Location',
-                      value: stockTransferProvider.currentBranch ??
+                      value: productProvider.selectedBranch ??
                           _selectedCompanyLocation,
                       itemList: _fromBranchList,
                       displayItem: (Branch branch) => branch.name,
                       onChanged: (Branch? newValue) {
-                        if (newValue != stockTransferProvider.currentBranch) {
-                          stockTransferProvider.setCurrentBranch(newValue!);
+                        if (newValue != productProvider.selectedBranch) {
+                          productProvider.setSelectedBranch(newValue!);
                         }
                       },
                     ),
@@ -149,11 +193,11 @@ class _CashSalePageState extends State<CashSalePage> {
                   addVerticalSpace(sH(20)),
                   //Search Product
                   PaneContainer(
-                    child: CustomSearchField<StockItem>(
-                      itemList: productList,
-                      getItemName: (stockItem) => stockItem.productName,
-                      onItemSelected: (stockItem) {
-                        _selectProduct(stockItem);
+                    child: CustomSearchField<Product>(
+                      itemList: products,
+                      getItemName: (product) => product.name,
+                      onItemSelected: (product) {
+                        _selectProduct(product);
                       },
                     ),
                   ),
@@ -166,9 +210,9 @@ class _CashSalePageState extends State<CashSalePage> {
                           const ListTile(
                             title: Row(
                               children: [
-                                Expanded(child: Text('Product Name')),
-                                Expanded(child: Text('Price')),
-                                Expanded(child: Text('Quantity')),
+                                Expanded(child: Text('Raw Material')),
+                                Expanded(child: Text('Required')),
+                                Expanded(child: Text('In Stock')),
                               ],
                             ),
                             trailing: Icon(
@@ -180,30 +224,23 @@ class _CashSalePageState extends State<CashSalePage> {
                           const Divider(),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: stockItems.length,
+                              itemCount: ingredientsAndStock.length,
                               itemBuilder: (context, index) {
-                                dynamic product = stockItems[index];
+                                dynamic rmData = ingredientsAndStock[index];
                                 return ListTile(
                                   tileColor:
                                       index.isOdd ? AppColor.grey1 : null,
                                   title: Row(
                                     children: [
                                       Expanded(
+                                          child: Text('${rmData['name']}')),
+                                      Expanded(
                                           child: Text(
-                                              '${product['productName']}')),
+                                              '${rmData['requiredStock']}')),
                                       Expanded(
-                                          child: Text('${product['price']}')),
-                                      Expanded(
-                                          child: Text('${product['quantity']}'))
+                                          child:
+                                              Text('${rmData['actualStock']}'))
                                     ],
-                                  ),
-                                  trailing: IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () => stockTransferProvider
-                                        .removeIndexedProduct(index),
                                   ),
                                 );
                               },
@@ -233,26 +270,19 @@ class _CashSalePageState extends State<CashSalePage> {
                           CardField(
                             title: 'Product Name',
                             value: _displayedSearchItem != null
-                                ? _displayedSearchItem!.productName
+                                ? _displayedSearchItem!.name
                                 : '',
                           ),
                           Divider(color: AppColor.grey1),
                           CardField(
-                            title: 'Selling Price',
-                            value: _displayedPrice != null
-                                ? _displayedPrice.toString()
+                            title: 'Possible Yield',
+                            value: _displayedYield != null
+                                ? _displayedYield.toString()
                                 : '',
                           ),
                           Divider(color: AppColor.grey1),
                           CardField(
-                            title: 'Stock Level',
-                            value: _displayedStockLevel != null
-                                ? _displayedStockLevel.toString()
-                                : '',
-                          ),
-                          Divider(color: AppColor.grey1),
-                          CardField(
-                            title: 'Quantity',
+                            title: 'Quantity to Produce',
                             isValueWidget: true,
                             widget: TextFormField(
                               controller: quantityController,
@@ -263,59 +293,25 @@ class _CashSalePageState extends State<CashSalePage> {
                             ),
                           ),
                           Divider(color: AppColor.grey1),
-                          TriggerButton(
-                              onPressed: () {
-                                if (quantityController.text.isEmpty) {
-                                  dangerMessage('Please Enter Quantity');
-                                  return;
-                                }
-                                if (_displayedStockLevel! <
-                                    int.parse(quantityController.text)) {
-                                  dangerMessage('Not Enough Stock');
-                                  return;
-                                }
-
-                                _newProductItem['quantity'] =
-                                    quantityController.text;
-                                stockTransferProvider
-                                    .addSelectedProduct(_newProductItem);
-                                quantityController.clear();
-                                setState(() {
-                                  _displayedStockLevel = null;
-                                  _displayedSearchItem = null;
-                                  _displayedPrice = null;
-                                  _newProductItem = {};
-                                });
-                              },
-                              title: 'Add to List')
+                          //Submit Transaction
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SubmitButton(
+                                  label: 'Fabricate Product',
+                                  onPressed: () => fabricateProduct()),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    clearData();
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(color: Colors.red),
+                                  ))
+                            ],
+                          )
                         ],
                       )),
-
-                  //Submit Transaction
-                  PaneContainer(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SubmitButton(
-                          label: 'Confirm Sale',
-                          onPressed: () => confirmSale()),
-                      ElevatedButton(
-                          onPressed: () {
-                            stockTransferProvider.cancelPurchase();
-                            quantityController.clear();
-                            setState(() {
-                              _displayedSearchItem = null;
-                              _displayedStockLevel = null;
-                              _displayedPrice = null;
-                              _newProductItem = {};
-                            });
-                          },
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(color: Colors.red),
-                          ))
-                    ],
-                  ))
                 ],
               ),
             ),

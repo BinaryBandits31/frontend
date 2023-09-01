@@ -69,4 +69,68 @@ class ProductServices {
       throw Exception(e);
     }
   }
+
+  static Future<List<Product>> fetchLocalProducts() async {
+    String endpoint = "/org/manufacturer/product";
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http
+          .get(Uri.parse('$port$endpoint'), headers: {'token': token});
+
+      if (response.statusCode == 200) {
+        return (jsonDecode(response.body) as List<dynamic>)
+            .map((json) => Product.fromJson(json))
+            .toList();
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
+    }
+  }
+
+  static Future<bool> createLocalProduct(Product product) async {
+    String endpoint = "/org/manufacturer/product";
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http.post(Uri.parse('$port$endpoint'),
+          headers: {'token': token}, body: jsonEncode(product.toJson()));
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
+    }
+  }
+
+  static Future<bool> fabricateProduct(dynamic data) async {
+    String endpoint = "/org/manufacturer/product/add";
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('userToken')!;
+
+      final response = await http.post(
+          Uri.parse('$port$endpoint/${data['id']}'),
+          headers: {'token': token},
+          body: jsonEncode(data));
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(jsonDecode(response.body)['error']);
+      }
+    } catch (e) {
+      await isTokenExpired(e);
+      throw Exception(e);
+    }
+  }
 }

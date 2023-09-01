@@ -14,21 +14,6 @@ import '../../../../widgets/helper_widgets.dart';
 import '../../../../widgets/notify.dart';
 import '../../../../widgets/text_field.dart';
 
-class CreateProductDialog extends StatelessWidget {
-  const CreateProductDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final isManufacturingOrg = Provider.of<OrgProvider>(context, listen: false)
-        .organization!
-        .isManufacturer;
-
-    return isManufacturingOrg
-        ? const CreateManufactureProduct()
-        : const CreateManufactureProduct();
-  }
-}
-
 class CreatePurchaseProduct extends StatefulWidget {
   const CreatePurchaseProduct({
     super.key,
@@ -249,10 +234,10 @@ class _CreateManufactureProductState extends State<CreateManufactureProduct> {
               }
 
               final res = await productProvider
-                  .createProduct(Product.fromJson(_createProductData));
+                  .createLocalProduct(Product.fromJson(_createProductData));
               if (res) {
                 successMessage('Product created successfully!');
-                await productProvider.fetchProducts();
+                await productProvider.fetchLocalProducts();
                 Navigator.of(Get.context!).pop();
               } else {
                 dangerMessage(productProvider.error!);

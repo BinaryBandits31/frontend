@@ -4,7 +4,7 @@ class Product {
   final String name;
   final String description;
   final double price;
-  final Map<String, int>? constituents;
+  final Map<String, dynamic>? constituents;
   final String? id;
 
   Product({

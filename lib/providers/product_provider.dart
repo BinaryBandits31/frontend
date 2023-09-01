@@ -10,14 +10,20 @@ class ProductProvider extends ChangeNotifier {
   //Products
   List<Product> _products = [];
   List<Product> _filteredProducts = [];
+  List<Product> _localProducts = [];
+  List<Product> _filteredLocalProducts = [];
   bool isLoading = false;
   String? error;
 
   List<Product> get products => _products;
   List<Product> get filteredProducts => _filteredProducts;
 
+  List<Product> get localProducts => _localProducts;
+  List<Product> get filteredLocalProducts => _filteredLocalProducts;
+
   //Product Stock
   Branch? _selectedBranch;
+  Branch? get selectedBranch => _selectedBranch;
   List<StockItem> _productStock = [];
   List<StockItem> _filteredProductStock = [];
 
@@ -31,6 +37,21 @@ class ProductProvider extends ChangeNotifier {
     try {
       _products = await ProductServices.fetchProducts();
       _filteredProducts = _products;
+    } catch (e) {
+      debugPrint(e.toString());
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchLocalProducts() async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      _localProducts = await ProductServices.fetchLocalProducts();
+      _filteredLocalProducts = _localProducts;
     } catch (e) {
       debugPrint(e.toString());
       error = e.toString();
@@ -138,13 +159,66 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
+// Fabricate Product
+  Future<bool> fabricateProduct(dynamic data) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      return await ProductServices.fabricateProduct(data);
+    } catch (e) {
+      debugPrint(e.toString());
+      error = e.toString();
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void searchLocalProduct(String query) {
+    isLoading = true;
+    if (query.isNotEmpty) {
+      final String lowerCaseQuery = query.toLowerCase();
+      List<Product> filteredLocalProducts = [];
+      for (Product product in _localProducts) {
+        final String lowerCaseProductName = product.name.toLowerCase();
+
+        if (lowerCaseProductName.contains(lowerCaseQuery)) {
+          filteredLocalProducts.add(product);
+        }
+      }
+      _filteredLocalProducts = filteredLocalProducts;
+    } else {
+      _filteredLocalProducts = _localProducts;
+    }
+    isLoading = false;
+    notifyListeners();
+  }
+
   void productDispose() {
     _products = [];
     _filteredProducts = [];
     _productStock = [];
     _filteredProductStock = [];
+    _localProducts = [];
+    _filteredLocalProducts = [];
     isLoading = false;
     error = null;
     notifyListeners();
+  }
+
+  Future<bool> createLocalProduct(Product product) async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      return await ProductServices.createLocalProduct(product);
+    } catch (e) {
+      debugPrint(e.toString());
+      error = e.toString();
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }
