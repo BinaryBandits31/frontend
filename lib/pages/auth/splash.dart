@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/home.dart';
 import 'package:frontend/pages/auth/org/auth.dart';
 import 'package:frontend/pages/auth/user_login.dart';
+import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/utils/colors.dart';
@@ -46,6 +47,8 @@ class _SplashPageState extends State<SplashPage> {
           bool isValidToken = await userProvider.validateToken(userToken);
           if (isValidToken) {
             location = const HomePage();
+            await Provider.of<AppProvider>(Get.context!, listen: false)
+                .fetchDashboardData();
           }
         }
       }

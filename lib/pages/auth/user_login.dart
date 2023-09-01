@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/app/home.dart';
+import 'package:frontend/providers/app_provider.dart';
 import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/big_text.dart';
@@ -36,7 +37,10 @@ class _UserLoginState extends State<UserLogin> {
 
       if (provider.user != null) {
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('userToken', provider.user!.token!);
+        await prefs.setString('userToken', provider.user!.token!);
+
+        await Provider.of<AppProvider>(Get.context!, listen: false)
+            .fetchDashboardData();
 
         Get.off(() => const HomePage());
       } else if (provider.error != null) {

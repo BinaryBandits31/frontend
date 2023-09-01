@@ -241,8 +241,15 @@ class PaneContainer extends StatelessWidget {
   final Widget child;
   final double? height;
   final double? width;
-  const PaneContainer(
-      {super.key, required this.child, this.height, this.width});
+  final Color? color;
+
+  const PaneContainer({
+    super.key,
+    required this.child,
+    this.height,
+    this.width,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +257,7 @@ class PaneContainer extends StatelessWidget {
       height: height,
       width: width,
       child: Card(
+        color: color,
         margin: EdgeInsets.zero,
         child: Padding(padding: EdgeInsets.all(sH(10)), child: child),
       ),

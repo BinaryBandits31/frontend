@@ -40,16 +40,6 @@ class MyApp extends StatelessWidget {
             create: (_) => StockTransferProvider()),
         ChangeNotifierProvider<RawMaterialProvider>(
             create: (_) => RawMaterialProvider()),
-        // StreamProvider<Map<dynamic, dynamic>>(
-        //     initialData: const {},
-        //     create: (context) {
-        //       final stream =
-        //           ActivityLogsServices.fetchDashboardData().asStream();
-        //       stream.listen((data) {
-        //         print('Received data from the stream: $data');
-        //       });
-        //       return stream;
-        //     })
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

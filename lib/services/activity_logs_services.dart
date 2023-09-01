@@ -28,11 +28,13 @@ class ActivityLogsServices {
     }
   }
 
-  static Future<Map<dynamic, dynamic>> fetchDashboardData() async {
+  static Future<Map<String, dynamic>> fetchDashboardData() async {
     String endpoint = "/org/dashboard/";
     try {
       final prefs = await SharedPreferences.getInstance();
+      print('that part');
       String token = prefs.getString('userToken')!;
+      print('this part');
 
       final response = await http
           .get(Uri.parse('$port$endpoint'), headers: {'token': token});
