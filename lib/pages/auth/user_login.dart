@@ -60,7 +60,7 @@ class _UserLoginState extends State<UserLogin> {
     if (widget.previousPage.toString() == 'HomePage') {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         Future.delayed(const Duration(milliseconds: 200)).then((_) async {
-          await AuthServices.clearAppData();
+          await AuthServices.appLogOut();
         });
       });
     }

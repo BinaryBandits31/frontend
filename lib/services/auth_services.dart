@@ -127,12 +127,8 @@ class AuthServices {
     return false;
   }
 
-  static Future<void> appLogout() async {
+  static Future<void> appLogOut() async {
     // Handle logout action
-    Get.off(() => const UserLogin(previousPage: HomePage()));
-  }
-
-  static Future<void> clearAppData() async {
     Provider.of<AppProvider>(Get.context!, listen: false).appDispose();
 
     Provider.of<UserProvider>(Get.context!, listen: false).userDispose();
@@ -150,7 +146,6 @@ class AuthServices {
 
     final sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove('userToken');
-    successMessage("Logout successfully.");
   }
 
   static Future<List<User>?> fetchFellowUsers() async {

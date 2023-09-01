@@ -32,12 +32,20 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
   final quantityFocusNode = FocusNode();
   List<dynamic> ingredientsAndStock = [];
 
-  void _selectProduct(Product product) {
+  void _selectProduct(Product product) async {
     if (product != _displayedSearchItem) {
-      List<RawMaterial> rawMaterials =
-          Provider.of<RawMaterialProvider>(context, listen: false).rawMaterials;
+      final rmProvider =
+          Provider.of<RawMaterialProvider>(context, listen: false);
       final selectedLocation =
           Provider.of<ProductProvider>(context, listen: false).selectedBranch;
+
+      if (rmProvider.rawMaterials.isEmpty) {
+        await rmProvider
+            .fetchRawMaterials()
+            .then((_) => _selectProduct(product));
+      }
+
+      List<RawMaterial> rawMaterials = rmProvider.rawMaterials;
       if (selectedLocation == null) {
         dangerMessage('Please Select Location First');
         return;
@@ -61,7 +69,7 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
         final rm = rawMaterials.firstWhere((e) => e.id == key);
         String name = rm.name;
         String req = constValues[i].toString();
-        String stock = rm.quantity![selectedLocation!.branchID].toString();
+        String stock = rm.quantity![selectedLocation.branchID].toString();
         setState(() {
           ingredientsAndStock.add({
             "name": name,
@@ -151,6 +159,7 @@ class _ProductFabricationPageState extends State<ProductFabricationPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       Provider.of<ProductProvider>(Get.context!, listen: false)
           .productDispose();
+      Provider.of<RawMaterialProvider>(Get.context!, listen: false).disposeRM();
     });
   }
 

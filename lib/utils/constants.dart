@@ -1,3 +1,5 @@
+import 'package:frontend/pages/app/home.dart';
+import 'package:frontend/pages/auth/user_login.dart';
 import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/widgets/notify.dart';
 import 'package:get/get.dart';
@@ -18,7 +20,7 @@ double sW(double pixelWidth) {
 
 Future<void> isTokenExpired(Object e) async {
   if (e.toString().contains('token is expired')) {
-    AuthServices.appLogout();
+    Get.off(() => const UserLogin(previousPage: HomePage()));
     dangerMessage('Session expired. Please log in again.');
   }
 }

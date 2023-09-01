@@ -44,6 +44,7 @@ class _CashSalePageState extends State<CashSalePage> {
             .firstWhere((element) => element.name == item.productName)
             .price;
       });
+
       _newProductItem['product_Id'] = item.stockItemID;
       _newProductItem['productName'] = item.productName;
       _newProductItem['price'] = _displayedPrice;

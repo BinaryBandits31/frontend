@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:frontend/providers/org_provider.dart';
 import 'package:frontend/utils/constants.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/product.dart';
@@ -9,6 +12,14 @@ class ProductServices {
   static String endpoint = "/org/product";
 
   static Future<List<Product>> fetchProducts() async {
+    bool isManufacturingOrg =
+        Provider.of<OrgProvider>(Get.context!, listen: false)
+            .organization!
+            .isManufacturer;
+
+    if (isManufacturingOrg) {
+      endpoint = "/org/manufacturer/product";
+    }
     try {
       final prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('userToken')!;

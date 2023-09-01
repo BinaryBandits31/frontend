@@ -15,21 +15,14 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   @override
-  void initState() {
-    super.initState();
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   final appProvider = Provider.of<AppProvider>(context, listen: false);
-    //   await appProvider.fetchDashboardData();
-    // });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context);
     Map<String, dynamic> dashboardData = appProvider.dashboardData;
     dynamic salesSummary = dashboardData['salesSummary'];
     dynamic productionSummary = dashboardData['productionSummary'];
+    dynamic rawMaterialSummary = dashboardData['rawMaterialSummary'];
+    dynamic stockTransferSummary = dashboardData['stockTransferSummary'];
+
     return Padding(
         padding: EdgeInsets.all(sH(20)),
         child: Column(
@@ -69,14 +62,96 @@ class _DashboardState extends State<Dashboard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Major Report
-                    const Expanded(child: PaneContainer(child: Column())),
+                    Expanded(
+                        child: ReportBox(
+                            title: 'Recent Transfers',
+                            child: SizedBox(
+                              height: screenHeight * 0.32,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: RecentTransferReportWidget(
+                                      from: stockTransferSummary[0]['from'],
+                                      to: stockTransferSummary[0]['to'],
+                                    ),
+                                  ),
+                                  addVerticalSpace(sH(10)),
+                                  Expanded(
+                                    child: RecentTransferReportWidget(
+                                      from: stockTransferSummary[1]['from'],
+                                      to: stockTransferSummary[1]['to'],
+                                    ),
+                                  ),
+                                  addVerticalSpace(sH(10)),
+                                  Expanded(
+                                    child: RecentTransferReportWidget(
+                                      from: stockTransferSummary[2]['from'],
+                                      to: stockTransferSummary[2]['to'],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ))),
                     addHorizontalSpace(20),
                     // Major Report
-                    const Expanded(child: PaneContainer(child: Column())),
+                    Expanded(
+                        child: RawMaterialsReportWidget(
+                      rawMaterialSummary: rawMaterialSummary,
+                    )),
                   ],
                 ),
               ),
             ]));
+  }
+}
+
+class RecentTransferReportWidget extends StatelessWidget {
+  final String? from;
+  final String? to;
+  final String? timeStamp;
+
+  const RecentTransferReportWidget({
+    super.key,
+    this.from,
+    this.to,
+    this.timeStamp,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PaneContainer(
+        color: Colors.blueGrey,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: screenWidth * 0.18,
+              child: Text(
+                '$from',
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  fontSize: sH(40),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Icon(Icons.arrow_right_alt_sharp, size: sH(40)),
+            SizedBox(
+              width: screenWidth * 0.18,
+              child: Text(
+                '$to',
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  fontSize: sH(40),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }
 
@@ -133,7 +208,78 @@ class ProductEstimateReportWidget extends StatelessWidget {
                       Expanded(child: Text('${data["name"]}')),
                       Expanded(child: Text('${data["totalProduction"]}')),
                       Expanded(
-                          child: Text('${data["forecastedMaxProduction"]}')),
+                          child: Text(
+                        '${data["forecastedMaxProduction"]}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
+                    ],
+                  ),
+                );
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+// RM Stock Report
+class RawMaterialsReportWidget extends StatelessWidget {
+  const RawMaterialsReportWidget({
+    super.key,
+    required this.rawMaterialSummary,
+  });
+
+  final dynamic rawMaterialSummary;
+
+  @override
+  Widget build(BuildContext context) {
+    return ReportBox(
+      title: 'Raw Material Stock',
+      child: Column(
+        children: [
+          const ListTile(
+            title: Row(
+              children: [
+                Expanded(
+                    child: Text(
+                  'Raw Material',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
+                Expanded(
+                    child: Text(
+                  'Base Unit',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
+                Expanded(
+                    child: Text(
+                  'Stock',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: screenHeight * 0.25,
+            child: ListView.builder(
+              itemCount: rawMaterialSummary.length,
+              itemBuilder: (context, index) {
+                dynamic data = rawMaterialSummary[index];
+                return ListTile(
+                  title: Row(
+                    children: [
+                      Expanded(child: Text('${data["name"]}')),
+                      Expanded(child: Text('${data["unit"]}')),
+                      Expanded(child: Text('${data["qtyRemaining"]}')),
                     ],
                   ),
                 );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/auth/user_login.dart';
 import 'package:frontend/services/auth_services.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:frontend/widgets/buttons.dart';
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ],
-              onSelected: (String value) async {
+              onSelected: (String value) {
                 if (value == 'change_password') {
                   // Handle change password action
                   showDialog(
@@ -74,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (context) => ChangePasswordDialog(),
                   );
                 } else if (value == 'logout') {
-                  await AuthServices.appLogout();
+                  Get.off(() => const UserLogin(previousPage: HomePage()));
                 }
               },
               child: const CircleAvatar(

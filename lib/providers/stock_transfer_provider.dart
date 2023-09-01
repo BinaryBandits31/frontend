@@ -127,6 +127,10 @@ class StockTransferProvider extends ChangeNotifier {
       if (response) {
         res = true;
         _stockItems = [];
+        await fetchAllStockItems();
+        _products = (_allStockItems[_currentBranch!.branchID] as List<dynamic>)
+            .map((e) => StockItem.fromJson(e))
+            .toList();
       }
     } catch (e) {
       debugPrint(e.toString());
